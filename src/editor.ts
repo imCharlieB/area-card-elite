@@ -20,6 +20,7 @@ export class MyLitCardEditor extends LitElement implements LovelaceCardEditor {
 
   setConfig(config: CardConfig): void {
     this._config = config;
+    // Preload the HA Entity Picker
     this.loadEntityPicker();
   }
 
@@ -82,7 +83,11 @@ export class MyLitCardEditor extends LitElement implements LovelaceCardEditor {
     this.dispatchEvent(messageEvent);
   }
 
-  /** Need this to load the HA elements we want to re-use */
+  /**
+   * Need this to load the HA elements we want to re-use
+   * see: https://github.com/thomasloven/hass-config/wiki/PreLoading-Lovelace-Elements
+   * */
+
   async loadEntityPicker() {
     if (!window.customElements.get("ha-entity-picker")) {
       const ch = await (window as any).loadCardHelpers();
