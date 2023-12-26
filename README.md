@@ -49,6 +49,32 @@ As a default this is:
 
 **NOTE:** the `http://localhost:4000` server is started using the `watch` node script, which serves up the `/dist` folder.
 
+The Home Assistant configuration also sets up a `Showcase` Dashboard which you can use to showcase your custom card. The definition of the view for can be found in `.hass_dev/views/my-lit-card-preview.yaml`.
+
+If you need to setup any entities to showcase your custom card, you can define them by adding them as a `package` in `.hass-dev\packages`. See `.hass_dev/packages/number.yaml` for an example
+
+## Using it...
+
+The easiest way to use this repo is to clone it to your development machine and create a new git repo from it.
+
+Then make changes as you see fit for your custom component!
+
+e.g.:
+
+```bash
+> export MY_CARD_FOLDER="my_new_custom_card"
+> git clone https://github.com/grillp/ha-custom-card-rollup-ts-lit-starter.git $MY_CARD_FOLDER
+> cd $MY_CARD_FOLDER
+> rm -rf .git
+> git init
+> git add * .gitignore .hass_dev
+> git commit -m "Initial Commit"
+```
+
+**Note:** change `<my-new-custom-card>` to be your own repo
+
+Then do the necessary to push the repo to your choice of Git Hosting service.
+
 ## Installation
 
 1. Use you favourite node version manager to install an `LTS` version of Node.js (nvm/n/fvm)
@@ -65,12 +91,14 @@ Note that sometimes `rollup` can be a little fickle. I you make some major struc
 **`start:hass`**
 Starts the test Home Assistant docker container instance. This should be used in conjunction with the `watch` script.
 
+The test Home Assistant server is available at [`http://0.0.0.0:8123/onboarding.html`](http://0.0.0.0:8123/onboarding.html)
+
 **`format`**
 Formats your TS code with `Prettier`
 
 ## Packaging
 
-this is one node scripts defined to generate a production version of the your custom card code
+There is one node script defined to generate a production version of the your custom card code
 
 **`watch`**
 It uses the `rollup_terser` library to compact you code even further!
