@@ -24,6 +24,14 @@ This is where all the source code for the card sits.
 
 The [rollup configuration](./rollup.config.mjs) expectes that the entry code to the card is at `src\main.ts`
 
+There are 4 files in the source code:
+| File | Description |
+|-- |--
+| `main.ts` | This is the main entry point to the module It brings the `card`, `editor` and `common` files together and also has the code to register the custom components with Home Assistant
+| `card.ts` | Defined the Main Card class |
+| `editor.ts` | Defines the Card Editor class |
+| `common.ts`| Defines some common constants and interfaces. |
+
 ### `/dist`
 
 This is where the build targets will save all generated files.
@@ -91,7 +99,8 @@ Note that sometimes `rollup` can be a little fickle. I you make some major struc
 **`start:hass`**
 Starts the test Home Assistant docker container instance. This should be used in conjunction with the `watch` script.
 
-The test Home Assistant server is available at [`http://0.0.0.0:8123/onboarding.html`](http://0.0.0.0:8123/onboarding.html)
+The test Home Assistant server is available at [`http://0.0.0.0:8123`](http://0.0.0.0:8123). You will need to go through 3-4 screens of setup when you tun it the first time.
+Next time you should be able to just log in, remembering to check the `Keep me logged in` box as you will probably be reloading the page a lot.
 
 **`format`**
 Formats your TS code with `Prettier`
