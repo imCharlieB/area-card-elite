@@ -1,0 +1,8 @@
+mode: storage
+dashboards:
+  my-lit-card:
+    mode: yaml
+    title: Showcase
+    icon: mdi:window-maximize
+    show_in_sidebar: true
+    filename: my-lit-card.yaml

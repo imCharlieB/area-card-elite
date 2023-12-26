@@ -1,0 +1,19 @@
+input_number:
+  number_1:
+    name: Number 1
+    initial: 1
+    min: -5
+    max: 5
+    step: 0.25
+  number_2:
+    name: Number 3
+    initial: 1
+    min: -5
+    max: 5
+    step: 0.25
+  number_3:
+    name: Number 1
+    initial: 1
+    min: -5
+    max: 5
+    step: 0.25

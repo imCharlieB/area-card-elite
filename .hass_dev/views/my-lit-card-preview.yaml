@@ -1,0 +1,9 @@
+title: My Lit Card!
+icon: mdi:test-tube
+cards:
+  - type: entities
+    entities:
+      - entity: input_number.number_1
+  - type: custom:my-lit-card
+    title: "My Lit Card"
+    element_id: input_number.number_1
