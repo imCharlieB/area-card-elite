@@ -28,6 +28,7 @@ export default {
       sourcemap: true,
     },
   ],
+  external: ['custom-card-helpers'],
   plugins: [
     json(),
     nodeResolve(),
