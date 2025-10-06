@@ -6,10 +6,10 @@ import typescript from "@rollup/plugin-typescript";
 import serve from "rollup-plugin-serve";
 
 const production = !process.env.ROLLUP_WATCH;
-const output_file = "my-lit-card.js";
+const output_file = "area-card-elite.js";
 
 const serveOptions = {
-  contentBase: ["./dist"],
+  contentBase: ["./"],
   host: "0.0.0.0",
   port: 4000,
   allowCrossOrigin: true,
@@ -22,13 +22,12 @@ export default {
   input: "src/main.ts",
   output: [
     {
-      file: "dist/" + output_file,
-      format: "iife",
-      name: "version",
-      plugins: [terser()],
+      file: output_file,
+      format: "es",
       sourcemap: true,
     },
   ],
+  external: ['lit'],
   plugins: [
     json(),
     nodeResolve(),

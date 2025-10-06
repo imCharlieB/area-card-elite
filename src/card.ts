@@ -1,46 +1,55 @@
 import { LitElement, html } from "lit";
-import { state } from "lit/decorators.js";
-import { CardConfig, CUSTOM_CARD_ID } from "./common";
-import {
-  HomeAssistant,
-  LovelaceCardConfig,
-  formatNumber,
-} from "custom-card-helpers";
+import { property, state } from "lit/decorators.js";
+import { AreaCardEliteConfig, CUSTOM_CARD_ID, HomeAssistantExtended } from "./common";
 
-export class MyLitCard extends LitElement {
-  @state() _title: string = "";
-  private _element_id: string = "";
-  @state() _element_value = "";
+export class AreaCardElite extends LitElement {
+  @property({ attribute: false }) hass!: HomeAssistantExtended;
+  @state() _area: string = "";
+  @state() _name: string = "";
 
-  private _hass: any | undefined;
-
-  setConfig(config: CardConfig) {
-    this._title = config.title;
-    this._element_id = config.element_id;
-    if (this._hass) {
-      this.hass = this._hass;
-    }
-  }
-
-  set hass(hass: any) {
-    this._hass = hass;
-    if (this._element_id)
-      this._element_value = this._element_id
-        ? this._hass.formatEntityState(hass.states[this._element_id])
-        : "N/A";
+  setConfig(config: AreaCardEliteConfig) {
+    this._area = config.area;
+    this._name = config.name || "";
   }
 
   render() {
-    return html`<ha-card .header=${this._title}>
+    if (!this.hass || !this._area || !this.hass.areas) {
+      return html`<ha-card>Loading...</ha-card>`;
+    }
+
+    const area = this.hass.areas[this._area];
+    if (!area) {
+      return html`<ha-card>Area not found</ha-card>`;
+    }
+
+    const name = this._name || area.name;
+    const entities = Object.keys(this.hass.states).filter(entityId => {
+      const stateObj = this.hass.states[entityId];
+      return stateObj.attributes.area_id === this._area;
+    });
+
+    return html`<ha-card .header=${name}>
       <div class="card-content">
-        <h3>Welcome to Lit!</h3>
-        <span>${this._element_value}</span>
-      </div></ha-card
-    > `;
+        ${area.icon ? html`<ha-icon .icon=${area.icon}></ha-icon>` : ''}
+        <div class="sensors">
+          ${area.temperature_entity_id ? html`<div>Temperature: ${this.hass.states[area.temperature_entity_id]?.state}</div>` : ''}
+          ${area.humidity_entity_id ? html`<div>Humidity: ${this.hass.states[area.humidity_entity_id]?.state}</div>` : ''}
+        </div>
+        <ul>
+          ${entities.map(entityId => {
+            const stateObj = this.hass.states[entityId];
+            return html`<li>${stateObj.attributes.friendly_name || entityId}: ${stateObj.state}</li>`;
+          })}
+        </ul>
+      </div>
+    </ha-card>`;
   }
 
-  // card configuration
   static getConfigElement() {
     return document.createElement(CUSTOM_CARD_ID + "-editor");
+  }
+
+  static getStubConfig() {
+    return { area: "" };
   }
 }

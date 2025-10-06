@@ -1,7 +1,7 @@
 {
-  "name": "rollup-ts-lit-starter",
+  "name": "area-card-elite",
   "version": "1.0.0",
-  "description": "Basic Building Blocks to build a Home Assistan/Users/gpeeters/work/personal/cards/www/cards/power-distribution/LICENSEt Card using Rollup, TS and Lit",
+  "description": "An enhanced area card for Home Assistant",
   "main": "index.js",
   "scripts": {
     "build": "rollup -c",
