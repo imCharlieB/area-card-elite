@@ -17,5 +17,3 @@ window.customCards.push({
   name: "Area Card Elite",
   description: "An enhanced area card for Home Assistant",
 });
-
-console.log("Area Card Elite loaded");

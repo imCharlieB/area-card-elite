@@ -8,7 +8,17 @@ export class AreaCardEliteEditor extends LitElement {
 
   private _schema = [
     { name: "area", selector: { area: {} } },
-    { name: "name", selector: { text: {} } }
+    { name: "name", selector: { text: {} } },
+    { name: "color", selector: { text: {} } },
+    { name: "display_type", selector: { select: { options: ["compact", "icon", "picture", "camera"] } } },
+    { name: "camera_view", selector: { select: { options: ["auto", "live"] } } },
+    { name: "aspect_ratio", selector: { text: {} } },
+    { name: "navigation_path", selector: { text: {} } },
+    { name: "alert_classes", selector: { object: {} } },
+    { name: "sensor_classes", selector: { object: {} } },
+    { name: "features", selector: { object: {} } },
+    { name: "features_position", selector: { select: { options: ["bottom", "inline"] } } },
+    { name: "exclude_entities", selector: { object: {} } }
   ];
 
   setConfig(config: AreaCardEliteConfig): void {
