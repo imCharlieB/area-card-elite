@@ -23,11 +23,11 @@ export default {
   output: [
     {
       file: output_file,
-      format: "es",
+      format: "iife",
+      name: "version",
       sourcemap: true,
     },
   ],
-  external: ['lit'],
   plugins: [
     json(),
     nodeResolve(),
