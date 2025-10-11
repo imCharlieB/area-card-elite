@@ -278,48 +278,75 @@ export class AreaCardElite extends LitElement {
       }));
   }
 
+  private _getAreaName(): string {
+    if (this._config?.name) return this._config.name;
+    
+    const area = this._areas[this._config?.area || ""];
+    return area?.name || this._config?.area || "Unknown Area";
+  }
+
+  private _getAreaIcon(): string {
+    if (this._config?.icon) return this._config.icon;
+    
+    const area = this._areas[this._config?.area || ""];
+    return area?.icon || "mdi:home";
+  }
+
   // Update the render method to handle different display types
   render() {
-    if (!this.hass || !this._config?.area) {
-      return html`<ha-card>Loading...</ha-card>`;
+    if (!this.hass || !this._config) {
+      return nothing;
     }
 
-    const area = this._areas[this._config.area];
-    if (!area) {
-      return html`<ha-card>Area not found</ha-card>`;
-    }
-
-    const name = this._config.name || area.name;
-    const displayType = this._config.display_type || "compact";
+    const areaName = this._getAreaName();
+    const areaIcon = this._getAreaIcon();
     
-    // Get background styles based on display type
-    const backgroundStyles = this._getBackgroundStyles();
-    const cardClasses = {
-      'display-compact': displayType === 'compact',
-      'display-icon': displayType === 'icon', 
-      'display-picture': displayType === 'picture',
-      'display-camera': displayType === 'camera'
-    };
+    // Apply custom colors from config
+    const areaNameColor = this._config.area_name_color ? `color: ${this._config.area_name_color};` : '';
+    const areaIconColor = this._config.area_icon_color ? `color: ${this._config.area_icon_color};` : '';
+    
+    // Determine layout classes
+    const layoutClass = this._config.mirror_card_layout ? 
+      `mirror-layout mirror-${this._config.layout || 'vertical'}` : 
+      '';
 
     return html`
-      <ha-card class=${classMap(cardClasses)} style=${styleMap(backgroundStyles)}>
-        ${this._renderBackground()}
-        
-        <div class="icon-container">
-          ${this._renderIcon(area)}
-        </div>
-
+      <ha-card class="${this._config.display_type || 'compact'} ${layoutClass}">
         <div class="content">
-          <div class="right">
-            ${this._renderAlerts()}
-            ${this._renderButtons()}
+          ${this._config.display_type === "picture" && this._config.background_image ? html`
+            <div class="background-image" style="background-image: url('${this._config.background_image}')"></div>
+          ` : ''}
+          
+          ${this._config.display_type === "camera" && this._config.camera_entity ? html`
+            <hui-image 
+              .hass=${this.hass}
+              .entity=${this._config.camera_entity}
+              .cameraImage=${this._config.camera_view}
+              class="camera-view"
+            ></hui-image>
+          ` : ''}
+
+          <div class="area-info ${this._config.mirror_card_layout ? 'mirror-info' : ''}">
+            ${this._config.display_type !== "compact" ? html`
+              <div class="area-icon" style="${areaIconColor}">
+                <ha-icon icon="${areaIcon}"></ha-icon>
+              </div>
+            ` : ''}
+            
+            <div class="area-details">
+              <div class="area-name" style="${areaNameColor}">
+                ${this._config.display_type === "compact" ? html`
+                  <ha-icon icon="${areaIcon}" style="${areaIconColor}"></ha-icon>
+                ` : ''}
+                ${areaName}
+              </div>
+              
+              ${this._renderAlerts()}
+              ${this._renderSensors()}
+            </div>
           </div>
 
-          <div class="bottom">
-            <div class="name">${name}</div>
-            ${this._renderSensors()}
-            ${this._renderFeatures()}
-          </div>
+          ${this._renderFeatures()}
         </div>
       </ha-card>
     `;
@@ -482,125 +509,162 @@ export class AreaCardElite extends LitElement {
       height: 100%;
       padding: 16px;
       transition: all 0.3s ease;
+      /* Remove hardcoded sizing to respect user's card size selection */
     }
 
-    /* Display Type Styles */
-    .display-compact {
-      min-height: 120px;
+    /* Mirror Card Layout Styles */
+    .mirror-layout {
+      display: flex;
+      flex-direction: column;
     }
 
-    .display-icon {
-      min-height: 200px;
+    .mirror-layout.mirror-horizontal {
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .mirror-layout.mirror-vertical {
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .mirror-layout.mirror-v1 {
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .mirror-layout.mirror-v2 {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .mirror-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mirror-layout.mirror-vertical .mirror-info {
+      flex-direction: column;
       text-align: center;
     }
 
-    .display-icon .icon-container {
-      position: relative;
-      top: auto;
-      left: auto;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 16px;
+    .mirror-layout.mirror-horizontal .mirror-info {
+      flex-direction: row;
+      flex: 1;
     }
 
-    .display-icon .large-icon {
-      font-size: 64px;
-      width: 64px;
-      height: 64px;
+    .mirror-layout.mirror-v1 .mirror-info {
+      flex-direction: row;
+      align-items: flex-start;
     }
 
-    .display-picture, .display-camera {
-      position: relative;
-      min-height: 200px;
+    .mirror-layout.mirror-v2 .mirror-info {
+      flex-direction: column;
+      align-items: flex-start;
     }
 
-    .display-picture .picture-background,
-    .display-camera .camera-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      background-size: cover;
-      background-position: center;
-    }
-
-    .display-picture .picture-background {
-      opacity: 0.7;
-    }
-
-    .display-camera hui-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    /* Overlay for picture/camera modes */
-    .display-picture .content,
-    .display-camera .content {
-      position: relative;
-      z-index: 2;
-      background: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.1) 0%,
-        rgba(0, 0, 0, 0.8) 100%
-      );
-      height: 100%;
-      padding: 16px;
-      margin: -16px;
-    }
-
-    .display-picture .name,
-    .display-camera .name {
-      color: white;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-    }
-
-    .display-picture .sensor-value,
-    .display-camera .sensor-value {
-      color: rgba(255, 255, 255, 0.8);
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
-    }
-
-    /* Icon Container */
-    .icon-container {
-      position: absolute;
-      top: 16px;
-      left: 16px;
-      color: var(--primary-color);
-      z-index: 3;
-    }
-
-    .display-picture .icon-container,
-    .display-camera .icon-container {
-      color: white;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-    }
-
-    /* Content Layout */
-    .content {
+    /* Area Info Styles */
+    .area-info {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      height: 100%;
-      min-height: 120px;
-    }
-
-    .right {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-end;
-      align-items: flex-start;
       gap: 8px;
-      margin-bottom: auto;
+      flex: 1;
     }
 
-    .buttons, .alerts {
+    .area-icon {
+      font-size: 2.5rem;
+      color: var(--primary-color);
+    }
+
+    .mirror-layout .area-icon {
+      font-size: 2rem;
+    }
+
+    .area-details {
       display: flex;
       flex-direction: column;
       gap: 4px;
+    }
+
+    .area-name {
+      font-weight: bold;
+      font-size: 1.2em;
+      color: var(--primary-text-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mirror-layout.mirror-vertical .area-name {
+      justify-content: center;
+    }
+
+    /* Display Type Styles - Remove hardcoded heights */
+    .compact .content {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .icon .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 16px;
+    }
+
+    .picture .content,
+    .camera .content {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    /* Background Images */
+    .background-image,
+    .camera-view {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-size: cover;
+      background-position: center;
+      border-radius: inherit;
+    }
+
+    .picture .area-info,
+    .camera .area-info {
+      position: relative;
+      z-index: 2;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+      padding: 16px;
+      margin: -16px;
+      margin-top: auto;
+    }
+
+    .picture .area-name,
+    .camera .area-name,
+    .picture .sensor-value,
+    .camera .sensor-value {
+      color: white;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Alert and Sensor Styles */
+    .alerts,
+    .sensors {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .icon-with-count {
@@ -620,43 +684,36 @@ export class AreaCardElite extends LitElement {
       background-color: rgba(var(--rgb-primary-text-color), 0.15);
     }
 
-    .display-picture .icon-with-count,
-    .display-camera .icon-with-count {
+    .picture .icon-with-count,
+    .camera .icon-with-count {
       background: rgba(255, 255, 255, 0.2);
       border-color: rgba(255, 255, 255, 0.3);
       backdrop-filter: blur(4px);
     }
 
-    .display-picture .icon-with-count:hover,
-    .display-camera .icon-with-count:hover {
-      background: rgba(255, 255, 255, 0.3);
+    .sensor {
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
+    .sensor-value {
+      color: var(--secondary-text-color);
+      font-size: 0.9em;
+      font-weight: 500;
+    }
+
+    /* Toggle States */
     .toggle-on {
-      color: var(--primary-text-color);
+      color: var(--primary-color);
     }
 
     .toggle-off {
       color: var(--secondary-text-color);
     }
 
-    .display-picture .toggle-on,
-    .display-camera .toggle-on {
-      color: white;
-    }
-
-    .display-picture .toggle-off,
-    .display-camera .toggle-off {
-      color: rgba(255, 255, 255, 0.6);
-    }
-
     .alert {
       color: var(--error-color);
-    }
-
-    .display-picture .alert,
-    .display-camera .alert {
-      color: #ff6b6b;
     }
 
     .active-count.on {
@@ -668,92 +725,60 @@ export class AreaCardElite extends LitElement {
       color: var(--secondary-text-color);
     }
 
-    .display-picture .active-count,
-    .display-camera .active-count {
-      color: white;
-    }
-
-    /* Bottom Section */
-    .bottom {
-      margin-top: auto;
-    }
-
-    .name {
-      font-weight: bold;
-      font-size: 1.2em;
-      margin-bottom: 8px;
-      color: var(--primary-text-color);
-    }
-
-    .display-icon .name {
-      text-align: center;
-      font-size: 1.4em;
-    }
-
-    .sensors {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .display-icon .sensors {
-      text-align: center;
-      justify-content: center;
-    }
-
-    .sensor-value {
-      color: var(--secondary-text-color);
-      font-size: 0.9em;
-    }
-
-    .display-icon .sensor-value {
-      font-size: 1.1em;
-      font-weight: 500;
-    }
-
     /* Features */
     .features {
       display: flex;
       gap: 8px;
-      margin-top: 8px;
+      margin-top: 12px;
       flex-wrap: wrap;
+    }
+
+    .features.bottom {
+      margin-top: auto;
+      padding-top: 12px;
     }
 
     .features.inline {
       margin-top: 0;
-      margin-left: 8px;
+      margin-left: auto;
     }
 
     .features ha-button {
       --mdc-theme-primary: var(--primary-color);
       font-size: 0.8em;
       min-width: auto;
+      padding: 4px 8px;
     }
 
-    .display-picture .features ha-button,
-    .display-camera .features ha-button {
-      --mdc-theme-primary: white;
-      --mdc-theme-on-primary: black;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(4px);
-      border-radius: 8px;
-    }
-
-    /* Responsive adjustments */
+    /* Responsive Design */
     @media (max-width: 600px) {
-      .display-icon .large-icon {
-        font-size: 48px;
-        width: 48px;
-        height: 48px;
+      .area-icon {
+        font-size: 2rem;
       }
       
-      .name {
+      .mirror-layout .area-icon {
+        font-size: 1.5rem;
+      }
+      
+      .area-name {
         font-size: 1em;
       }
       
-      .display-icon .name {
-        font-size: 1.2em;
+      .icon-with-count {
+        min-width: 32px;
+        padding: 2px 4px;
       }
+    }
+
+    /* Ensure card respects container size */
+    :host {
+      display: block;
+      height: 100%;
+    }
+
+    ha-card {
+      height: 100%;
+      box-sizing: border-box;
     }
   `;
 }

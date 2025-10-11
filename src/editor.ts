@@ -88,6 +88,7 @@ export class AreaCardEliteEditor extends LitElement {
       sensor_classes: [],
       features_position: "bottom",
       exclude_entities: [],
+      layout: "vertical", // Add layout option
       ...config
     };
   }
@@ -160,6 +161,17 @@ export class AreaCardEliteEditor extends LitElement {
 
   private _buildSelectOptions(domain: string): Array<{value: string, label: string}> {
     const classes = this._getDeviceClasses(domain);
+    
+    // If no classes found for the domain, return default options
+    if (classes.length === 0) {
+      if (domain === 'binary_sensor') {
+        return DEVICE_CLASSES.binary_sensor.map((cls: string) => ({
+          value: cls,
+          label: this.hass.localize(`ui.dialogs.entity_registry.editor.device_classes.binary_sensor.${cls}`) || cls
+        }));
+      }
+    }
+    
     return classes.map((cls: string) => ({
       value: cls,
       label: this.hass.localize(`ui.dialogs.entity_registry.editor.device_classes.${domain}.${cls}`) || cls
@@ -202,9 +214,53 @@ export class AreaCardEliteEditor extends LitElement {
           ></ha-selector>
         </div>
 
-        <!-- Display Options -->
+        <!-- Appearance Section -->
         <ha-expansion-panel header="Appearance" outlined>
           <div class="content">
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{ text: {} }}
+                .value=${this._config.name || ""}
+                .configValue=${"name"}
+                .label=${"Area Name"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{ icon: {} }}
+                .value=${this._config.icon || ""}
+                .configValue=${"icon"}
+                .label=${"Area Icon"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{ color_rgb: {} }}
+                .value=${this._config.area_name_color || ""}
+                .configValue=${"area_name_color"}
+                .label=${"Area Name Color"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{ color_rgb: {} }}
+                .value=${this._config.area_icon_color || ""}
+                .configValue=${"area_icon_color"}
+                .label=${"Area Icon Color"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
             <div class="option">
               <ha-selector
                 .hass=${this.hass}
@@ -303,6 +359,71 @@ export class AreaCardEliteEditor extends LitElement {
                 ></ha-selector>
               </div>
             ` : ''}
+
+            <!-- Mirror Card Layout -->
+            <div class="option">
+              <label class="switch-label">
+                <ha-switch
+                  .checked=${this._config.mirror_card_layout || false}
+                  .configValue=${"mirror_card_layout"}
+                  @change=${this._valueChanged}
+                ></ha-switch>
+                Mirror Card Layout
+              </label>
+            </div>
+
+            ${this._config.mirror_card_layout ? html`
+              <div class="layout-options">
+                <div class="layout-grid">
+                  <div class="layout-item ${this._config.layout === 'vertical' ? 'selected' : ''}"
+                       @click=${() => this._setLayout('vertical')}>
+                    <div class="layout-preview vertical">
+                      <div class="layout-icon"></div>
+                      <div class="layout-text"></div>
+                    </div>
+                    <div class="layout-label">Vertical</div>
+                  </div>
+                  
+                  <div class="layout-item ${this._config.layout === 'horizontal' ? 'selected' : ''}"
+                       @click=${() => this._setLayout('horizontal')}>
+                    <div class="layout-preview horizontal">
+                      <div class="layout-icon"></div>
+                      <div class="layout-text"></div>
+                    </div>
+                    <div class="layout-label">Horizontal</div>
+                  </div>
+                  
+                  <div class="layout-item ${this._config.layout === 'v1' ? 'selected' : ''}"
+                       @click=${() => this._setLayout('v1')}>
+                    <div class="layout-preview v1">
+                      <div class="layout-icon"></div>
+                      <div class="layout-text"></div>
+                    </div>
+                    <div class="layout-label">V1</div>
+                  </div>
+                  
+                  <div class="layout-item ${this._config.layout === 'v2' ? 'selected' : ''}"
+                       @click=${() => this._setLayout('v2')}>
+                    <div class="layout-preview v2">
+                      <div class="layout-icon"></div>
+                      <div class="layout-text"></div>
+                    </div>
+                    <div class="layout-label">V2</div>
+                  </div>
+                </div>
+              </div>
+            ` : ''}
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{ text: {} }}
+                .value=${this._config.theme || ""}
+                .configValue=${"theme"}
+                .label=${"Theme (optional)"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
           </div>
         </ha-expansion-panel>
 
@@ -432,6 +553,43 @@ export class AreaCardEliteEditor extends LitElement {
     `;
   }
 
+  private _setLayout(layout: string) {
+    if (this._config) {
+      this._config = {
+        ...this._config,
+        mirror_card_layout: true,
+        layout: layout as "vertical" | "horizontal" | "v1" | "v2"
+      };
+      
+      fireEvent(this, "config-changed", { config: this._config });
+      this.requestUpdate();
+    }
+  }
+
+  private _layoutChanged(ev: CustomEvent): void {
+    if (this._config && ev.detail) {
+      const layout = ev.detail.value as "vertical" | "horizontal" | "v1" | "v2";
+      
+      this._config = {
+        ...this._config,
+        mirror_card_layout: true,
+        layout: layout
+      };
+      
+      fireEvent(this, "config-changed", { config: this._config });
+      this.requestUpdate();
+    }
+  }
+
+  private _configChanged(): void {
+    const event = new CustomEvent('config-changed', {
+      detail: { config: this._config },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(event);
+  }
+
   static get styles() {
     return css`
       :host {
@@ -461,6 +619,111 @@ export class AreaCardEliteEditor extends LitElement {
       }
       ha-selector {
         width: 100%;
+      }
+      
+      .switch-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+      
+      .layout-options {
+        margin-top: 12px;
+      }
+      
+      .layout-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      
+      .layout-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 12px;
+        border: 2px solid var(--divider-color);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      
+      .layout-item:hover {
+        border-color: var(--primary-color);
+        background-color: var(--primary-color-light);
+      }
+      
+      .layout-item.selected {
+        border-color: var(--primary-color);
+        background-color: var(--primary-color-light);
+      }
+      
+      .layout-preview {
+        width: 40px;
+        height: 30px;
+        border: 1px solid var(--secondary-text-color);
+        border-radius: 4px;
+        position: relative;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--card-background-color);
+      }
+      
+      .layout-preview.vertical {
+        flex-direction: column;
+        gap: 2px;
+      }
+      
+      .layout-preview.horizontal {
+        flex-direction: row;
+        gap: 2px;
+      }
+      
+      .layout-preview.v1 {
+        flex-direction: column;
+        gap: 1px;
+      }
+      
+      .layout-preview.v2 {
+        flex-direction: row;
+        gap: 1px;
+      }
+      
+      .layout-icon {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--primary-text-color);
+      }
+      
+      .layout-text {
+        width: 12px;
+        height: 2px;
+        background-color: var(--secondary-text-color);
+        border-radius: 1px;
+      }
+      
+      .layout-preview.vertical .layout-text {
+        width: 16px;
+      }
+      
+      .layout-preview.horizontal .layout-text {
+        height: 8px;
+        width: 16px;
+      }
+      
+      .layout-label {
+        font-size: 12px;
+        color: var(--secondary-text-color);
+        text-align: center;
+      }
+      
+      .layout-item.selected .layout-label {
+        color: var(--primary-color);
+        font-weight: 500;
       }
     `;
   }
