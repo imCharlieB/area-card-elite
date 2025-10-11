@@ -895,13 +895,13 @@ export class AreaCardElite extends LitElement {
 
     /* Position based on features position - FINE-TUNED */
     .features-right .main-entity-background {
-      bottom: 16px;
-      left: 16px;
+      bottom: -60px;  /* Half of 120px to center on bottom edge */
+      left: -60px;    /* Half of 120px to center on left edge */
     }
 
     .features-left .main-entity-background {
-      bottom: 16px;
-      right: 16px;
+      bottom: -60px;  /* Half of 120px to center on bottom edge */
+      right: -60px;   /* Half of 120px to center on right edge */
     }
 
     .features-top .main-entity-background,
