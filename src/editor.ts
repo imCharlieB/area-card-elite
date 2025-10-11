@@ -66,27 +66,58 @@ export class AreaCardEliteEditor extends LitElement {
     let value = ev.detail?.value;
     let configValue = target.configValue;
     
+    // Debug logging to see what's happening
+    console.log('Value changed:', {
+      type: ev.type,
+      tagName: target.tagName,
+      configValue: configValue,
+      value: value,
+      detail: ev.detail
+    });
+    
     // Handle different event types and components
     if (value === undefined || value === null) {
+      // For input events (textfields)
       if (ev.type === 'input' && target.value !== undefined) {
         value = target.value;
-      } else if (target.value !== undefined) {
+      }
+      // For select events
+      else if (ev.type === 'selected' && target.value !== undefined) {
+        value = target.value;
+      }
+      // For other cases, try target.value
+      else if (target.value !== undefined) {
         value = target.value;
       }
     }
     
-    // Handle ha-area-picker specifically
+    // Handle specific components
     if (target.tagName === 'HA-AREA-PICKER') {
       configValue = 'area';
+    } else if (target.tagName === 'HA-ENTITY-PICKER') {
+      configValue = target.configValue || 'exclude_entities';
+    }
+    
+    // Handle multiple selections (arrays)
+    if (target.multiple && Array.isArray(value)) {
+      // For multiple selects, value should already be an array
+    } else if (target.multiple && typeof value === 'string') {
+      // Sometimes single values come as strings for multi-select
+      value = [value];
     }
     
     if (configValue && value !== undefined) {
+      console.log('Setting config:', configValue, '=', value);
+      
       this._config = {
         ...this._config,
         [configValue]: value
       };
       
       fireEvent(this, "config-changed", { config: this._config });
+      
+      // Force re-render to update UI
+      this.requestUpdate();
     }
   }
 
@@ -193,6 +224,17 @@ export class AreaCardEliteEditor extends LitElement {
 
             ${this._config.display_type === "camera" ? html`
               <div class="option">
+                <ha-entity-picker
+                  .hass=${this.hass}
+                  .value=${this._config.camera_entity}
+                  .configValue=${"camera_entity"}
+                  .includeDomains=${["camera"]}
+                  .entityFilter=${(entity: any) => entity.attributes?.area_id === this._config?.area}
+                  label="Camera Entity"
+                  @value-changed=${this._valueChanged}
+                ></ha-entity-picker>
+              </div>
+              <div class="option">
                 <ha-select
                   naturalMenuWidth
                   fixedMenuPosition
@@ -205,6 +247,18 @@ export class AreaCardEliteEditor extends LitElement {
                   <mwc-list-item value="auto">Auto</mwc-list-item>
                   <mwc-list-item value="live">Live</mwc-list-item>
                 </ha-select>
+              </div>
+            ` : ''}
+            
+            ${this._config.display_type === "picture" ? html`
+              <div class="option">
+                <ha-textfield
+                  label="Background Image URL"
+                  .configValue=${"background_image"}
+                  .value=${this._config.background_image || ""}
+                  @input=${this._valueChanged}
+                  helper="Enter image URL or /local/image.jpg for local files"
+                ></ha-textfield>
               </div>
             ` : ''}
           </div>

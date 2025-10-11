@@ -9,6 +9,8 @@ export interface AreaCardEliteConfig extends LovelaceCardConfig {
   color?: string;
   aspect_ratio?: string;
   camera_view?: "auto" | "live";
+  camera_entity?: string;
+  background_image?: string;
   navigation_path?: string;
   alert_classes?: string[];
   sensor_classes?: string[];
