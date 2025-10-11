@@ -188,10 +188,6 @@ export class AreaCardEliteEditor extends LitElement {
     }
 
     const alertOptions = this._buildSelectOptions('binary_sensor');
-    const sensorOptions = DEVICE_CLASSES.sensor.map((cls: string) => ({
-      value: cls,
-      label: this.hass.localize(`ui.dialogs.entity_registry.editor.device_classes.sensor.${cls}`) || cls
-    }));
 
     return html`
       <div class="card-config">
@@ -421,7 +417,8 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     domain: "sensor",
-                    device_class: "temperature"
+                    device_class: "temperature",
+                    area: this._config.area
                   }
                 }}
                 .value=${this._config.temperature_entity || ""}
@@ -437,7 +434,8 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     domain: "sensor",
-                    device_class: "humidity"
+                    device_class: "humidity",
+                    area: this._config.area
                   }
                 }}
                 .value=${this._config.humidity_entity || ""}
@@ -453,7 +451,8 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     domain: "sensor",
-                    device_class: "illuminance"
+                    device_class: "illuminance",
+                    area: this._config.area
                   }
                 }}
                 .value=${this._config.illuminance_entity || ""}
@@ -469,7 +468,8 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     domain: "sensor",
-                    device_class: "power"
+                    device_class: "power",
+                    area: this._config.area
                   }
                 }}
                 .value=${this._config.power_entity || ""}
@@ -485,7 +485,8 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     domain: "sensor",
-                    device_class: "energy"
+                    device_class: "energy",
+                    area: this._config.area
                   }
                 }}
                 .value=${this._config.energy_entity || ""}
@@ -501,7 +502,8 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     domain: "sensor",
-                    device_class: "battery"
+                    device_class: "battery",
+                    area: this._config.area
                   }
                 }}
                 .value=${this._config.battery_entity || ""}
@@ -513,48 +515,180 @@ export class AreaCardEliteEditor extends LitElement {
           </div>
         </ha-expansion-panel>
 
-        <!-- Alert Classes -->
-        <ha-expansion-panel header="Alert Classes" outlined>
+        <!-- Area Controls -->
+        <ha-expansion-panel header="Area Controls" outlined>
           <div class="content">
+            <div class="helper-text">Select entities to show as clickable control buttons</div>
+            
             <div class="option">
               <ha-selector
                 .hass=${this.hass}
                 .selector=${{
-                  select: {
-                    multiple: true,
-                    options: alertOptions.map((opt: any) => ({
-                      value: opt.value,
-                      label: opt.label
-                    }))
+                  entity: {
+                    domain: "light",
+                    area: this._config.area
                   }
                 }}
-                .value=${this._config.alert_classes || []}
-                .configValue=${"alert_classes"}
-                .label=${"Alert Classes"}
+                .value=${this._config.light_entity || ""}
+                .configValue=${"light_entity"}
+                .label=${"Main Light"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  entity: {
+                    domain: "climate",
+                    area: this._config.area
+                  }
+                }}
+                .value=${this._config.climate_entity || ""}
+                .configValue=${"climate_entity"}
+                .label=${"Climate Control"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  entity: {
+                    domain: "switch",
+                    area: this._config.area
+                  }
+                }}
+                .value=${this._config.switch_entity || ""}
+                .configValue=${"switch_entity"}
+                .label=${"Main Switch"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  entity: {
+                    domain: "fan",
+                    area: this._config.area
+                  }
+                }}
+                .value=${this._config.fan_entity || ""}
+                .configValue=${"fan_entity"}
+                .label=${"Fan Control"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  entity: {
+                    multiple: true,
+                    domain: ["light", "switch", "fan", "climate", "cover", "media_player"],
+                    area: this._config.area
+                  }
+                }}
+                .value=${this._config.additional_controls || []}
+                .configValue=${"additional_controls"}
+                .label=${"Additional Controls"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
             </div>
           </div>
         </ha-expansion-panel>
 
-        <!-- Sensor Classes -->
-        <ha-expansion-panel header="Sensor Classes" outlined>
+        <!-- Alert Sensors -->
+        <ha-expansion-panel header="Alert Sensors" outlined>
           <div class="content">
+            <div class="helper-text">Select specific binary sensors to show as alerts</div>
+            
             <div class="option">
               <ha-selector
                 .hass=${this.hass}
                 .selector=${{
-                  select: {
-                    multiple: true,
-                    options: sensorOptions.map((opt: any) => ({
-                      value: opt.value,
-                      label: opt.label
-                    }))
+                  entity: {
+                    domain: "binary_sensor",
+                    device_class: "motion",
+                    area: this._config.area
                   }
                 }}
-                .value=${this._config.sensor_classes || []}
-                .configValue=${"sensor_classes"}
-                .label=${"Sensor Classes"}
+                .value=${this._config.motion_sensor || ""}
+                .configValue=${"motion_sensor"}
+                .label=${"Motion Sensor"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  entity: {
+                    domain: "binary_sensor",
+                    device_class: "occupancy",
+                    area: this._config.area
+                  }
+                }}
+                .value=${this._config.occupancy_sensor || ""}
+                .configValue=${"occupancy_sensor"}
+                .label=${"Occupancy Sensor"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  entity: {
+                    domain: "binary_sensor",
+                    device_class: "door",
+                    area: this._config.area
+                  }
+                }}
+                .value=${this._config.door_sensor || ""}
+                .configValue=${"door_sensor"}
+                .label=${"Door Sensor"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  entity: {
+                    domain: "binary_sensor",
+                    device_class: "window",
+                    area: this._config.area
+                  }
+                }}
+                .value=${this._config.window_sensor || ""}
+                .configValue=${"window_sensor"}
+                .label=${"Window Sensor"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  entity: {
+                    multiple: true,
+                    domain: "binary_sensor",
+                    area: this._config.area
+                  }
+                }}
+                .value=${this._config.additional_alerts || []}
+                .configValue=${"additional_alerts"}
+                .label=${"Additional Alert Sensors"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
             </div>

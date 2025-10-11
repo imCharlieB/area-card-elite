@@ -34,4 +34,18 @@ export interface AreaCardEliteConfig extends LovelaceCardConfig {
   power_entity?: string;
   energy_entity?: string;
   battery_entity?: string;
+  
+  // Area control entity selectors
+  light_entity?: string;
+  climate_entity?: string;
+  switch_entity?: string;
+  fan_entity?: string;
+  additional_controls?: string[];
+  
+  // Alert sensor entity selectors
+  motion_sensor?: string;
+  occupancy_sensor?: string;
+  door_sensor?: string;
+  window_sensor?: string;
+  additional_alerts?: string[];
 }

@@ -205,47 +205,30 @@ export class AreaCardElite extends LitElement {
     `;
   }
 
-  private _renderAlerts() {
-    const entitiesByDomain = this._getEntitiesByDomain();
-    const alertClasses = this._config?.alert_classes || DEVICE_CLASSES.binary_sensor;
-    
-    if (!entitiesByDomain.binary_sensor?.length) return nothing;
-
-    return html`
-      <div class="alerts">
-        ${alertClasses.map((deviceClass: string) => {
-          const activeEntities = this._getActiveEntities("binary_sensor", deviceClass);
-          const activeCount = activeEntities.length;
-          
-          if (activeCount === 0) return nothing;
-          
-          return html`
-            <div class="icon-with-count">
-              <ha-icon
-                .icon=${this._getDomainIcon("binary_sensor", "on", deviceClass)}
-                class="alert"
-              ></ha-icon>
-              <span class="active-count on">${activeCount}</span>
-            </div>
-          `;
-        })}
-      </div>
-    `;
-  }
-
   private _renderSensors() {
     if (!this._config) return nothing;
 
     const sensors = [];
     
-    // Temperature sensor
+    // Temperature sensor with colored icon
     if (this._config.temperature_entity && this.hass.states[this._config.temperature_entity]) {
       const entity = this.hass.states[this._config.temperature_entity];
       if (!UNAVAILABLE_STATES.includes(entity.state)) {
+        const temp = parseFloat(entity.state);
+        let tempColor = "#03a9f4"; // Default blue
+        if (!isNaN(temp)) {
+          if (temp >= 80) tempColor = "#f44336"; // Hot - red
+          else if (temp >= 75) tempColor = "#ff9800"; // Warm - orange  
+          else if (temp >= 70) tempColor = "#ffc107"; // Mild - yellow
+          else if (temp >= 60) tempColor = "#4caf50"; // Cool - green
+          else tempColor = "#03a9f4"; // Cold - blue
+        }
+        
         sensors.push({
           icon: "mdi:thermometer",
           value: this.hass.formatEntityState(entity),
-          deviceClass: "temperature"
+          deviceClass: "temperature",
+          color: tempColor
         });
       }
     }
@@ -257,70 +240,77 @@ export class AreaCardElite extends LitElement {
         sensors.push({
           icon: "mdi:water-percent",
           value: this.hass.formatEntityState(entity),
-          deviceClass: "humidity"
+          deviceClass: "humidity",
+          color: "#2196f3"
         });
       }
     }
 
-    // Illuminance sensor
+    // Other sensors with appropriate colors...
     if (this._config.illuminance_entity && this.hass.states[this._config.illuminance_entity]) {
       const entity = this.hass.states[this._config.illuminance_entity];
       if (!UNAVAILABLE_STATES.includes(entity.state)) {
         sensors.push({
           icon: "mdi:brightness-6",
           value: this.hass.formatEntityState(entity),
-          deviceClass: "illuminance"
+          deviceClass: "illuminance",
+          color: "#ffeb3b"
         });
       }
     }
 
-    // Power sensor
     if (this._config.power_entity && this.hass.states[this._config.power_entity]) {
       const entity = this.hass.states[this._config.power_entity];
       if (!UNAVAILABLE_STATES.includes(entity.state)) {
         sensors.push({
           icon: "mdi:flash",
           value: this.hass.formatEntityState(entity),
-          deviceClass: "power"
+          deviceClass: "power",
+          color: "#ff9800"
         });
       }
     }
 
-    // Energy sensor
     if (this._config.energy_entity && this.hass.states[this._config.energy_entity]) {
       const entity = this.hass.states[this._config.energy_entity];
       if (!UNAVAILABLE_STATES.includes(entity.state)) {
         sensors.push({
           icon: "mdi:lightning-bolt",
           value: this.hass.formatEntityState(entity),
-          deviceClass: "energy"
+          deviceClass: "energy",
+          color: "#9c27b0"
         });
       }
     }
 
-    // Battery sensor
     if (this._config.battery_entity && this.hass.states[this._config.battery_entity]) {
       const entity = this.hass.states[this._config.battery_entity];
       if (!UNAVAILABLE_STATES.includes(entity.state)) {
         const batteryLevel = Number(entity.state);
         let icon = "mdi:battery";
+        let color = "#4caf50"; // Default green
+        
         if (!isNaN(batteryLevel)) {
-          if (batteryLevel <= 10) icon = "mdi:battery-outline";
-          else if (batteryLevel <= 20) icon = "mdi:battery-20";
-          else if (batteryLevel <= 30) icon = "mdi:battery-30";
-          else if (batteryLevel <= 40) icon = "mdi:battery-40";
-          else if (batteryLevel <= 50) icon = "mdi:battery-50";
-          else if (batteryLevel <= 60) icon = "mdi:battery-60";
-          else if (batteryLevel <= 70) icon = "mdi:battery-70";
-          else if (batteryLevel <= 80) icon = "mdi:battery-80";
-          else if (batteryLevel <= 90) icon = "mdi:battery-90";
-          else icon = "mdi:battery";
+          if (batteryLevel <= 10) {
+            icon = "mdi:battery-outline";
+            color = "#f44336"; // Red for critical
+          } else if (batteryLevel <= 20) {
+            icon = "mdi:battery-20";
+            color = "#ff5722"; // Orange-red for low
+          } else if (batteryLevel <= 50) {
+            icon = "mdi:battery-50";
+            color = "#ff9800"; // Orange for medium
+          } else {
+            icon = "mdi:battery";
+            color = "#4caf50"; // Green for good
+          }
         }
         
         sensors.push({
           icon: icon,
           value: this.hass.formatEntityState(entity),
-          deviceClass: "battery"
+          deviceClass: "battery",
+          color: color
         });
       }
     }
@@ -331,7 +321,7 @@ export class AreaCardElite extends LitElement {
       <div class="sensors">
         ${sensors.map(sensor => html`
           <div class="sensor">
-            <ha-icon icon="${sensor.icon}"></ha-icon>
+            <ha-icon icon="${sensor.icon}" style="color: ${sensor.color}"></ha-icon>
             <span class="sensor-value">${sensor.value}</span>
           </div>
         `)}
@@ -339,7 +329,212 @@ export class AreaCardElite extends LitElement {
     `;
   }
 
-  // Add new method to get area cameras
+  private _renderAlerts() {
+    if (!this._config) return nothing;
+
+    const alerts = [];
+
+    // Motion sensor
+    if (this._config.motion_sensor && this.hass.states[this._config.motion_sensor]) {
+      const entity = this.hass.states[this._config.motion_sensor];
+      if (entity.state === "on") {
+        alerts.push({
+          icon: "mdi:motion-sensor",
+          name: "Motion",
+          entityId: this._config.motion_sensor
+        });
+      }
+    }
+
+    // Occupancy sensor
+    if (this._config.occupancy_sensor && this.hass.states[this._config.occupancy_sensor]) {
+      const entity = this.hass.states[this._config.occupancy_sensor];
+      if (entity.state === "on") {
+        alerts.push({
+          icon: "mdi:account",
+          name: "Occupied",
+          entityId: this._config.occupancy_sensor
+        });
+      }
+    }
+
+    // Door sensor
+    if (this._config.door_sensor && this.hass.states[this._config.door_sensor]) {
+      const entity = this.hass.states[this._config.door_sensor];
+      if (entity.state === "on") {
+        alerts.push({
+          icon: "mdi:door-open",
+          name: "Door Open",
+          entityId: this._config.door_sensor
+        });
+      }
+    }
+
+    // Window sensor
+    if (this._config.window_sensor && this.hass.states[this._config.window_sensor]) {
+      const entity = this.hass.states[this._config.window_sensor];
+      if (entity.state === "on") {
+        alerts.push({
+          icon: "mdi:window-open-variant",
+          name: "Window Open",
+          entityId: this._config.window_sensor
+        });
+      }
+    }
+
+    // Additional alert sensors
+    if (this._config.additional_alerts) {
+      this._config.additional_alerts.forEach(entityId => {
+        const entity = this.hass.states[entityId];
+        if (entity && entity.state === "on") {
+          alerts.push({
+            icon: this._getDomainIcon("binary_sensor", "on", entity.attributes.device_class),
+            name: entity.attributes.friendly_name || entityId.split(".")[1],
+            entityId: entityId
+          });
+        }
+      });
+    }
+
+    if (alerts.length === 0) return nothing;
+
+    return html`
+      <div class="alerts">
+        ${alerts.map(alert => html`
+          <div class="icon-with-count alert" @click=${() => this._handleEntityClick(alert.entityId)}>
+            <ha-icon icon="${alert.icon}"></ha-icon>
+            <span class="alert-label">${alert.name}</span>
+          </div>
+        `)}
+      </div>
+    `;
+  }
+
+  private _renderAreaControls() {
+    if (!this._config) return nothing;
+
+    const controls = [];
+
+    // Main light
+    if (this._config.light_entity && this.hass.states[this._config.light_entity]) {
+      const entity = this.hass.states[this._config.light_entity];
+      const isOn = entity.state === "on";
+      controls.push({
+        icon: isOn ? "mdi:lightbulb" : "mdi:lightbulb-outline",
+        name: entity.attributes.friendly_name || "Light",
+        entityId: this._config.light_entity,
+        isOn: isOn,
+        color: isOn ? "#ffc107" : "#757575"
+      });
+    }
+
+    // Climate control
+    if (this._config.climate_entity && this.hass.states[this._config.climate_entity]) {
+      const entity = this.hass.states[this._config.climate_entity];
+      const isOn = entity.state !== "off";
+      const mode = entity.state;
+      let icon = "mdi:thermostat";
+      let color = "#757575";
+      
+      if (mode === "heat") {
+        icon = "mdi:fire";
+        color = "#f44336";
+      } else if (mode === "cool") {
+        icon = "mdi:snowflake";
+        color = "#2196f3";
+      } else if (mode === "auto") {
+        icon = "mdi:thermostat-auto";
+        color = "#4caf50";
+      }
+
+      controls.push({
+        icon: icon,
+        name: entity.attributes.friendly_name || "Climate",
+        entityId: this._config.climate_entity,
+        isOn: isOn,
+        color: color
+      });
+    }
+
+    // Main switch
+    if (this._config.switch_entity && this.hass.states[this._config.switch_entity]) {
+      const entity = this.hass.states[this._config.switch_entity];
+      const isOn = entity.state === "on";
+      controls.push({
+        icon: isOn ? "mdi:toggle-switch" : "mdi:toggle-switch-off",
+        name: entity.attributes.friendly_name || "Switch",
+        entityId: this._config.switch_entity,
+        isOn: isOn,
+        color: isOn ? "#4caf50" : "#757575"
+      });
+    }
+
+    // Fan control
+    if (this._config.fan_entity && this.hass.states[this._config.fan_entity]) {
+      const entity = this.hass.states[this._config.fan_entity];
+      const isOn = entity.state === "on";
+      controls.push({
+        icon: isOn ? "mdi:fan" : "mdi:fan-off",
+        name: entity.attributes.friendly_name || "Fan",
+        entityId: this._config.fan_entity,
+        isOn: isOn,
+        color: isOn ? "#03a9f4" : "#757575"
+      });
+    }
+
+    // Additional controls
+    if (this._config.additional_controls) {
+      this._config.additional_controls.forEach(entityId => {
+        const entity = this.hass.states[entityId];
+        if (entity) {
+          const domain = entityId.split(".")[0];
+          const isOn = !STATES_OFF.includes(entity.state) && !UNAVAILABLE_STATES.includes(entity.state);
+          controls.push({
+            icon: this._getDomainIcon(domain, entity.state),
+            name: entity.attributes.friendly_name || entityId.split(".")[1],
+            entityId: entityId,
+            isOn: isOn,
+            color: isOn ? "#2196f3" : "#757575"
+          });
+        }
+      });
+    }
+
+    if (controls.length === 0) return nothing;
+
+    return html`
+      <div class="area-controls">
+        ${controls.map(control => html`
+          <div class="control-button ${control.isOn ? 'active' : ''}" 
+               @click=${() => this._handleControlClick(control.entityId)}>
+            <ha-icon icon="${control.icon}" style="color: ${control.color}"></ha-icon>
+          </div>
+        `)}
+      </div>
+    `;
+  }
+
+  private _handleControlClick(entityId: string) {
+    const domain = entityId.split(".")[0];
+    
+    if (domain === "climate") {
+      // Open climate more-info dialog
+      this._handleEntityClick(entityId);
+    } else {
+      // Toggle the entity
+      this.hass.callService(domain, "toggle", {}, { entity_id: entityId });
+    }
+  }
+
+  private _handleEntityClick(entityId: string) {
+    const event = new CustomEvent("hass-more-info", {
+      detail: { entityId: entityId },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(event);
+  }
+
   private _getAreaCameras() {
     if (!this._config?.area) return [];
     
@@ -369,7 +564,6 @@ export class AreaCardElite extends LitElement {
     return area?.icon || "mdi:home";
   }
 
-  // Update the render method to handle different display types
   render() {
     if (!this.hass || !this._config) {
       return nothing;
@@ -386,6 +580,8 @@ export class AreaCardElite extends LitElement {
     const layoutClass = this._config.mirror_card_layout ? 
       `mirror-layout mirror-${this._config.layout || 'vertical'}` : 
       '';
+
+    const showAreaControls = this._config.features?.includes("area-controls");
 
     return html`
       <ha-card class="${this._config.display_type || 'compact'} ${layoutClass}">
@@ -423,6 +619,7 @@ export class AreaCardElite extends LitElement {
             </div>
           </div>
 
+          ${showAreaControls ? this._renderAreaControls() : nothing}
           ${this._renderFeatures()}
         </div>
       </ha-card>
@@ -501,8 +698,6 @@ export class AreaCardElite extends LitElement {
       <div class="features ${position}">
         ${features.map(feature => {
           switch (feature) {
-            case "area-controls":
-              return this._renderAreaControls();
             case "more-info":
               return this._renderMoreInfoButton();
             case "toggle-all":
@@ -512,15 +707,6 @@ export class AreaCardElite extends LitElement {
           }
         })}
       </div>
-    `;
-  }
-
-  private _renderAreaControls() {
-    return html`
-      <ha-button @click=${this._handleAreaControls}>
-        <ha-icon icon="mdi:tune"></ha-icon>
-        Controls
-      </ha-button>
     `;
   }
 
@@ -540,17 +726,6 @@ export class AreaCardElite extends LitElement {
         Toggle All
       </ha-button>
     `;
-  }
-
-  private _handleAreaControls() {
-    if (this._config?.navigation_path) {
-      history.pushState(null, "", this._config.navigation_path);
-      const event = new CustomEvent("location-changed", {
-        bubbles: true,
-        composed: true
-      });
-      window.dispatchEvent(event);
-    }
   }
 
   private _handleMoreInfo() {
@@ -825,6 +1000,71 @@ export class AreaCardElite extends LitElement {
       font-size: 0.8em;
       min-width: auto;
       padding: 4px 8px;
+    }
+
+    /* Area Controls */
+    .area-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .control-button {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(var(--rgb-primary-text-color), 0.05);
+      border: 1px solid rgba(var(--rgb-primary-text-color), 0.12);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .control-button:hover {
+      background: rgba(var(--rgb-primary-text-color), 0.1);
+      transform: scale(1.05);
+    }
+
+    .control-button.active {
+      background: rgba(var(--rgb-primary-color), 0.15);
+      border-color: var(--primary-color);
+    }
+
+    .control-button ha-icon {
+      --mdc-icon-size: 24px;
+    }
+
+    /* Compact layout - area controls on the right */
+    .compact .content {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .compact .area-controls {
+      margin-left: auto;
+      margin-top: 0;
+    }
+
+    /* Alert label styling */
+    .alert-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--error-color);
+      margin-left: 4px;
+    }
+
+    .alerts .icon-with-count {
+      background: rgba(var(--error-color), 0.1);
+      border-color: rgba(var(--error-color), 0.3);
+      color: var(--error-color);
     }
 
     /* Responsive Design */
