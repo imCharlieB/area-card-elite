@@ -254,8 +254,8 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
     /* Large background entity icon - positioned based on features position */
     .main-entity-background {
       position: absolute;
-      width: 80px;
-      height: 80px;
+      width: 120px;
+      height: 120px;
       z-index: 1;
       display: flex;
       align-items: center;
@@ -270,13 +270,13 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
 
     /* Position based on features position - FINE-TUNED */
     .features-right .main-entity-background {
-      bottom: 20px;
-      left: 20px;
+      bottom: 16px;
+      left: 16px;
     }
 
     .features-left .main-entity-background {
-      bottom: 20px;
-      right: 20px;
+      bottom: 16px;
+      right: 16px;
     }
 
     .features-top .main-entity-background,
@@ -287,18 +287,9 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
     }
 
     .main-entity-background ha-icon {
-      --mdc-icon-size: 40px;
+      --mdc-icon-size: 60px;
       opacity: 0.8;
       transition: opacity 0.2s ease;
-    }
-
-    .main-entity-background:hover {
-      background: rgba(var(--rgb-primary-text-color), 0.12);
-      border-color: rgba(var(--rgb-primary-text-color), 0.2);
-    }
-
-    .main-entity-background:hover ha-icon {
-      opacity: 1;
     }
 
     /* FIXED STATE COLORS - Green when locked/on, red when unlocked/off */
