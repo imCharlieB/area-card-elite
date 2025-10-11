@@ -602,18 +602,27 @@ export class AreaCardElite extends LitElement {
       mainEntity.state, 
       mainEntity.attributes.device_class
     ) : null;
-    const mainEntityColor = mainEntity && mainEntity.state !== 'off' && !UNAVAILABLE_STATES.includes(mainEntity.state) 
-      ? 'var(--primary-color)' : 'rgba(var(--rgb-primary-text-color), 0.1)';
+    
+    // Fix color logic - red when unlocked/off, primary color when locked/on
+    let mainEntityColor = 'rgba(var(--rgb-primary-text-color), 0.1)'; // Default gray
+    if (mainEntity && !UNAVAILABLE_STATES.includes(mainEntity.state)) {
+      if (STATES_OFF.includes(mainEntity.state) || mainEntity.state === 'unlocked') {
+        mainEntityColor = '#f44336'; // Red when off/unlocked
+      } else {
+        mainEntityColor = 'var(--primary-color)'; // Primary color when on/locked
+      }
+    }
 
     return html`
       <ha-card class="${this._config.display_type || 'compact'} layout-${layout} features-${featuresPosition}">
         <div class="content">
           <!-- Large background entity icon -->
           ${mainEntityIcon ? html`
-            <div class="main-entity-background">
+            <div class="main-entity-background ${mainEntity && !UNAVAILABLE_STATES.includes(mainEntity.state) && 
+              !STATES_OFF.includes(mainEntity.state) && mainEntity.state !== 'unlocked' ? 'active' : ''} 
+              ${mainEntity && (STATES_OFF.includes(mainEntity.state) || mainEntity.state === 'unlocked') ? 'unlocked' : ''}">
               <ha-icon 
                 icon="${mainEntityIcon}" 
-                style="color: ${mainEntityColor};"
                 @click=${() => this._config?.main_entity && this._handleEntityClick(this._config.main_entity)}
               ></ha-icon>
             </div>
@@ -1411,26 +1420,59 @@ export class AreaCardElite extends LitElement {
     /* Large Background Entity Icon - Like your dashboard image */
     .main-entity-background {
       position: absolute;
-      bottom: 8px;
-      left: 8px;
-      width: 120px;
-      height: 120px;
+      bottom: 20px;
+      left: 20px;
+      width: 80px;
+      height: 80px;
       z-index: 1;
       pointer-events: auto;
-    }
-
-    .main-entity-background ha-icon {
-      --mdc-icon-size: 120px;
-      width: 120px;
-      height: 120px;
-      opacity: 0.15;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* Add circular background like your dashboard */
+      border-radius: 50%;
+      background: rgba(var(--rgb-primary-text-color), 0.05);
+      border: 2px solid rgba(var(--rgb-primary-text-color), 0.15);
       transition: all 0.3s ease;
       cursor: pointer;
     }
 
-    .main-entity-background ha-icon:hover {
-      opacity: 0.3;
+    .main-entity-background:hover {
+      background: rgba(var(--rgb-primary-text-color), 0.08);
+      border-color: rgba(var(--rgb-primary-text-color), 0.2);
       transform: scale(1.05);
+    }
+
+    .main-entity-background ha-icon {
+      --mdc-icon-size: 40px;
+      width: 40px;
+      height: 40px;
+      opacity: 0.8;
+      transition: all 0.3s ease;
+    }
+
+    .main-entity-background:hover ha-icon {
+      opacity: 1;
+    }
+
+    /* Active state - when entity is on/locked */
+    .main-entity-background.active {
+      background: rgba(var(--rgb-primary-color), 0.15);
+      border-color: var(--primary-color);
+    }
+
+    .main-entity-background.active ha-icon {
+      color: var(--primary-color);
+    }
+
+    /* Unlocked/off state - red like your dashboard */
+    .main-entity-background.unlocked {
+      background: rgba(244, 67, 54, 0.15);
+      border-color: #f44336;
+    }
+
+    .main-entity-background.unlocked ha-icon {
+      color: #f44336;
     }
 
     /* Make sure content appears above the background icon */
@@ -1443,5 +1485,332 @@ export class AreaCardElite extends LitElement {
     }
 
     /* Ensure card respects container size */
+
+    /* Large Background Entity Icon - Centered like your dashboard */
+    .main-entity-background {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 140px;
+      height: 140px;
+      z-index: 1;
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .main-entity-background ha-icon {
+      --mdc-icon-size: 140px;
+      width: 140px;
+      height: 140px;
+      opacity: 0.3;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .main-entity-background ha-icon:hover {
+      opacity: 0.5;
+      transform: scale(1.05);
+    }
+
+    /* Layout for your dashboard style */
+    .layout-vertical .content {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 120px;
+      padding: 12px;
+    }
+
+    /* Area name at the top */
+    .layout-vertical .area-info {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: auto;
+    }
+
+    .layout-vertical .area-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .layout-vertical .area-name {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: var(--primary-text-color);
+    }
+
+    /* Sensors in bottom-left corner like your dashboard */
+    .layout-vertical .area-sensors {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .layout-vertical .area-sensors .sensors {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .layout-vertical .area-sensors .sensor {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(var(--rgb-card-background-color), 0.8);
+      backdrop-filter: blur(4px);
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-size: 0.8em;
+    }
+
+    .layout-vertical .area-sensors .sensor ha-icon {
+      --mdc-icon-size: 16px;
+    }
+
+    .layout-vertical .area-sensors .sensor-value {
+      font-size: 0.8em;
+      font-weight: 500;
+    }
+
+    /* Controls on the right side, stacked vertically */
+    .layout-vertical.features-right .controls-section {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+    }
+
+    .layout-vertical.features-right .area-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Make control buttons smaller to match your dashboard */
+    .layout-vertical .control-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(var(--rgb-primary-text-color), 0.1);
+      border: 1px solid rgba(var(--rgb-primary-text-color), 0.2);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .layout-vertical .control-button ha-icon {
+      --mdc-icon-size: 20px;
+    }
+
+    .layout-vertical .control-button:hover {
+      background: rgba(var(--rgb-primary-text-color), 0.2);
+      transform: scale(1.1);
+    }
+
+    .layout-vertical .control-button.active {
+      background: rgba(var(--rgb-primary-color), 0.2);
+      border-color: var(--primary-color);
+    }
+
+    /* Make sure content appears above the background icon */
+    .area-info,
+    .sensors-section,
+    .controls-section,
+    .alerts {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Large Central Entity Icon - Like your dashboard */
+    .main-entity-background {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 160px;
+      height: 160px;
+      z-index: 1;
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .main-entity-background ha-icon {
+      --mdc-icon-size: 160px;
+      width: 160px;
+      height: 160px;
+      opacity: 0.4;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .main-entity-background ha-icon:hover {
+      opacity: 0.6;
+      transform: scale(1.02);
+    }
+
+    /* Layout exactly like your dashboard */
+    .layout-vertical .content {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 140px;
+      padding: 16px;
+    }
+
+    /* Area name at the top - no icon, just name */
+    .layout-vertical .area-info {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+    }
+
+    .layout-vertical .area-icon {
+      display: none; /* Hide area icon in vertical layout */
+    }
+
+    .layout-vertical .area-name {
+      font-size: 1.2em;
+      font-weight: 600;
+      color: var(--primary-text-color);
+      margin: 0;
+    }
+
+    /* Don't show area icon in compact vertical layout */
+    .layout-vertical .area-name ha-icon {
+      display: none;
+    }
+
+    /* Sensors in bottom-left corner exactly like your dashboard */
+    .layout-vertical .area-sensors {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .layout-vertical .area-sensors .sensors {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .layout-vertical .area-sensors .sensor {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(var(--rgb-card-background-color), 0.9);
+      backdrop-filter: blur(6px);
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.85em;
+      border: 1px solid rgba(var(--rgb-primary-text-color), 0.1);
+    }
+
+    .layout-vertical .area-sensors .sensor ha-icon {
+      --mdc-icon-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .layout-vertical .area-sensors .sensor-value {
+      font-size: 0.85em;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* Controls on the right side, centered vertically */
+    .layout-vertical.features-right .controls-section {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+    }
+
+    .layout-vertical.features-right .area-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Control buttons to match your dashboard style */
+    .layout-vertical .control-button {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(var(--rgb-primary-text-color), 0.08);
+      border: 1px solid rgba(var(--rgb-primary-text-color), 0.15);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(4px);
+    }
+
+    .layout-vertical .control-button ha-icon {
+      --mdc-icon-size: 22px;
+    }
+
+    .layout-vertical .control-button:hover {
+      background: rgba(var(--rgb-primary-text-color), 0.15);
+      transform: scale(1.08);
+    }
+
+    .layout-vertical .control-button.active {
+      background: rgba(var(--rgb-primary-color), 0.2);
+      border-color: var(--primary-color);
+    }
+
+    /* Alerts in top-right corner */
+    .layout-vertical .alerts {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 2;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .layout-vertical .alerts .icon-with-count {
+      padding: 4px 8px;
+      font-size: 0.8em;
+      min-width: 32px;
+      background: rgba(var(--error-color), 0.15);
+      border-color: rgba(var(--error-color), 0.3);
+      color: var(--error-color);
+    }
+
+    /* Make sure content appears above the background icon */
+    .area-info,
+    .sensors-section,
+    .controls-section,
+    .alerts {
+      position: relative;
+      z-index: 2;
+    }
   `;
 }
