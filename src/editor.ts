@@ -38,21 +38,39 @@ export class AreaCardEliteEditor extends LitElement {
 
   protected _valueChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    if (!this._config || !ev.detail?.value) {
+    if (!this._config) {
       return;
     }
     
     const target = ev.target as any;
-    const value = ev.detail.value;
+    let value = ev.detail?.value;
+    let configValue = target.configValue;
     
-    if (target.configValue) {
-      this._config = {
-        ...this._config,
-        [target.configValue]: value
-      };
+    // Handle different event types and components
+    if (value === undefined || value === null) {
+      // For input events, get value from target
+      if (ev.type === 'input' && target.value !== undefined) {
+        value = target.value;
+      }
+      // For select events, try to get from target.value
+      else if (target.value !== undefined) {
+        value = target.value;
+      }
     }
     
-    fireEvent(this, "config-changed", { config: this._config });
+    // Handle ha-area-picker specifically
+    if (target.tagName === 'HA-AREA-PICKER') {
+      configValue = 'area';
+    }
+    
+    if (configValue && value !== undefined) {
+      this._config = {
+        ...this._config,
+        [configValue]: value
+      };
+      
+      fireEvent(this, "config-changed", { config: this._config });
+    }
   }
 
   private _getAreaEntities() {
@@ -113,21 +131,14 @@ export class AreaCardEliteEditor extends LitElement {
       <div class="card-config">
         <!-- Basic Configuration -->
         <div class="option">
-          <ha-select
-            naturalMenuWidth
-            fixedMenuPosition
-            label="Area"
-            .configValue=${"area"}
+          <ha-area-picker
+            .hass=${this.hass}
             .value=${this._config.area}
-            @selected=${this._valueChanged}
-            @closed=${(ev: Event) => ev.stopPropagation()}
-          >
-            ${Object.keys(this.hass.areas || {}).map((areaId) => html`
-              <mwc-list-item .value=${areaId}>
-                ${this.hass.areas[areaId].name}
-              </mwc-list-item>
-            `)}
-          </ha-select>
+            .configValue=${"area"}
+            label="Area"
+            @value-changed=${this._valueChanged}
+            allow-custom-entity
+          ></ha-area-picker>
         </div>
 
         <div class="option">
