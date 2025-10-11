@@ -1208,14 +1208,13 @@ export class AreaCardElite extends LitElement {
       box-sizing: border-box;
     }
 
-    /* New Layout System */
-    .layout-vertical .content {
+    /* New Layout System - FIXED */
+    .layout-compact .content {
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      min-height: 80px;
     }
 
     .layout-horizontal .content {
@@ -1225,12 +1224,13 @@ export class AreaCardElite extends LitElement {
       gap: 16px;
     }
 
-    .layout-compact .content {
+    .layout-vertical .content {
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
+      min-height: 80px;
     }
 
     /* Vertical Layout - Your Dashboard Style */
@@ -1286,72 +1286,57 @@ export class AreaCardElite extends LitElement {
       white-space: nowrap;
     }
 
-    /* Controls Positioning */
-    .controls-right .controls-section {
-      order: 3;
-      flex: 0 0 auto;
-    }
-
-    .controls-left .controls-section {
-      order: 1;
-      flex: 0 0 auto;
-    }
-
-    .controls-top .content {
-      flex-direction: column;
-    }
-
-    .controls-top .controls-section {
-      order: 1;
-      align-self: stretch;
-    }
-
-    .controls-bottom .content {
-      flex-direction: column;
-    }
-
-    .controls-bottom .controls-section {
-      order: 3;
-      align-self: stretch;
-    }
-
-    /* Area Controls Styling */
-    .controls-section .area-controls {
+    /* Horizontal Layout */
+    .layout-horizontal .area-info {
       display: flex;
-      gap: 8px;
+      flex-direction: row;
       align-items: center;
+      gap: 12px;
+      flex: 0 0 auto;
     }
 
-    .controls-top .area-controls,
-    .controls-bottom .area-controls {
+    .layout-horizontal .sensors-section {
+      display: flex;
+      flex: 1;
       justify-content: center;
     }
 
-    .controls-left .area-controls,
-    .controls-right .area-controls {
-      flex-direction: column;
-      gap: 6px;
+    .layout-horizontal .sensors {
+      display: flex;
+      gap: 16px;
+      align-items: center;
     }
 
-    .layout-vertical.controls-right .area-controls {
+    .layout-horizontal .sensor {
+      display: flex;
       flex-direction: row;
+      align-items: center;
       gap: 8px;
     }
 
-    /* Alert positioning */
-    .layout-vertical .alerts {
-      position: absolute;
-      top: 8px;
-      right: 8px;
+    /* Compact Layout */
+    .layout-compact .area-info {
       display: flex;
-      gap: 4px;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .layout-compact .sensors-section {
+      display: flex;
+      justify-content: center;
+    }
+
+    .layout-compact .sensors {
+      display: flex;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
-    .layout-vertical .alerts .icon-with-count {
-      padding: 2px 6px;
-      font-size: 0.8em;
-      min-width: 32px;
+    .layout-compact .sensor {
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
   `;
 }

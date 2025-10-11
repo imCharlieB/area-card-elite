@@ -291,28 +291,6 @@ export class AreaCardEliteEditor extends LitElement {
               ></ha-selector>
             </div>
 
-            ${this._config.layout !== "compact" ? html`
-              <div class="option">
-                <ha-selector
-                  .hass=${this.hass}
-                  .selector=${{
-                    select: {
-                      options: [
-                        { value: "top", label: "Top" },
-                        { value: "bottom", label: "Bottom" },
-                        { value: "left", label: "Left" },
-                        { value: "right", label: "Right" }
-                      ]
-                    }
-                  }}
-                  .value=${this._config.controls_position || "right"}
-                  .configValue=${"controls_position"}
-                  .label=${"Controls Position"}
-                  @value-changed=${this._valueChanged}
-                ></ha-selector>
-              </div>
-            ` : ''}
-
             <div class="option">
               <ha-selector
                 .hass=${this.hass}
@@ -704,6 +682,26 @@ export class AreaCardEliteEditor extends LitElement {
                 .value=${this._config.features_position || "bottom"}
                 .configValue=${"features_position"}
                 .label=${"Features Position"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  select: {
+                    options: [
+                      { value: "top", label: "Top" },
+                      { value: "bottom", label: "Bottom" },
+                      { value: "left", label: "Left" },
+                      { value: "right", label: "Right" }
+                    ]
+                  }
+                }}
+                .value=${this._config.controls_position || "right"}
+                .configValue=${"controls_position"}
+                .label=${"Controls Position"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
             </div>
