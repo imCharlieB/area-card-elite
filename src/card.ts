@@ -618,10 +618,10 @@ export class AreaCardElite extends LitElement {
         <div class="content">
           <!-- Large background entity icon - ONLY for icon display type -->
           ${this._config.display_type === "icon" && mainEntityIcon ? html`
-            <div class="main-entity-background ${mainEntity && mainEntity.state === 'locked' ? 'active' : ''} 
-              ${mainEntity && mainEntity.state === 'unlocked' ? 'unlocked' : ''}">
+            <div class="main-entity-background ${mainEntity && (mainEntity.state === 'locked' || !STATES_OFF.includes(mainEntity.state)) ? 'active' : ''} 
+              ${mainEntity && (mainEntity.state === 'unlocked' || STATES_OFF.includes(mainEntity.state)) ? 'unlocked' : ''}">
               <ha-icon 
-                icon="${mainEntityIcon}" 
+                icon="${mainEntity?.state === 'locked' ? 'mdi:lock' : mainEntity?.state === 'unlocked' ? 'mdi:lock-open' : mainEntityIcon}" 
                 @click=${() => this._config?.main_entity && this._handleEntityClick(this._config.main_entity)}
               ></ha-icon>
             </div>

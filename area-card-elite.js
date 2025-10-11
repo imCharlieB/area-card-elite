@@ -98,10 +98,10 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
         <div class="content">
           <!-- Large background entity icon - ONLY for icon display type -->
           ${"icon"===this._config.display_type&&c?F`
-            <div class="main-entity-background ${l&&"locked"===l.state?"active":""} 
-              ${l&&"unlocked"===l.state?"unlocked":""}">
+            <div class="main-entity-background ${!l||"locked"!==l.state&&Me.includes(l.state)?"":"active"} 
+              ${l&&("unlocked"===l.state||Me.includes(l.state))?"unlocked":""}">
               <ha-icon 
-                icon="${c}" 
+                icon="${"locked"===(null==l?void 0:l.state)?"mdi:lock":"unlocked"===(null==l?void 0:l.state)?"mdi:lock-open":c}" 
                 @click=${()=>{var e;return(null===(e=this._config)||void 0===e?void 0:e.main_entity)&&this._handleEntityClick(this._config.main_entity)}}
               ></ha-icon>
             </div>
