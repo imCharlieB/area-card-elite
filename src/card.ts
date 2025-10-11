@@ -912,12 +912,12 @@ export class AreaCardElite extends LitElement {
     }
 
     .main-entity-background ha-icon {
-      --mdc-icon-size: 70px;  /* Keep icon size same */
+      --mdc-icon-size: 90px;  /* Much larger icon */
       opacity: 0.9;
       transition: opacity 0.2s ease;
-      /* Position icon more toward center, not touching edges */
-      margin-top: -50px;
-      margin-left: 50px;
+      /* Position icon better in the visible circle area */
+      margin-top: -30px;
+      margin-left: 30px;
     }
 
     .main-entity-background:hover {
