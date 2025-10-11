@@ -854,12 +854,103 @@ export class AreaCardElite extends LitElement {
       justify-content: center;
     }
 
-    /* Display Type Styles - Remove hardcoded heights */
+    /* Display Type Styles - Updated for better dashboard layout */
     .compact .content {
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
+      gap: 16px;
+      min-height: 80px;
+    }
+
+    /* Vertical layout like in your dashboard image */
+    .mirror-layout.mirror-vertical .content {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    /* Area info section - left side */
+    .mirror-layout.mirror-vertical .area-info {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      flex: 0 0 auto;
+    }
+
+    .mirror-layout.mirror-vertical .area-icon {
+      font-size: 2.5rem;
+      flex-shrink: 0;
+    }
+
+    .mirror-layout.mirror-vertical .area-name {
+      font-size: 1.3em;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    /* Sensors section - middle */
+    .mirror-layout.mirror-vertical .sensors {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      margin: 0 16px;
+    }
+
+    .mirror-layout.mirror-vertical .sensor {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .mirror-layout.mirror-vertical .sensor ha-icon {
+      --mdc-icon-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .mirror-layout.mirror-vertical .sensor-value {
+      font-size: 0.9em;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* Area controls section - right side */
+    .mirror-layout.mirror-vertical .area-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex: 0 0 auto;
+      margin: 0;
+    }
+
+    /* Alert positioning for vertical layout */
+    .mirror-layout.mirror-vertical .alerts {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      gap: 4px;
+    }
+
+    .mirror-layout.mirror-vertical .alerts .icon-with-count {
+      padding: 2px 4px;
+      font-size: 0.8em;
+      min-width: 24px;
+    }
+
+    /* Horizontal layout - keep existing */
+    .mirror-layout.mirror-horizontal .content {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
       gap: 16px;
     }
 

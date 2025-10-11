@@ -409,7 +409,7 @@ export class AreaCardEliteEditor extends LitElement {
         <!-- Sensor Display -->
         <ha-expansion-panel header="Sensor Display" outlined>
           <div class="content">
-            <div class="helper-text">Select specific sensors from this area to display</div>
+            <div class="helper-text">Select specific sensors to display on the card</div>
             
             <div class="option">
               <ha-selector
@@ -417,8 +417,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     domain: "sensor",
-                    device_class: "temperature",
-                    area: this._config.area
+                    device_class: "temperature"
                   }
                 }}
                 .value=${this._config.temperature_entity || ""}
@@ -434,8 +433,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     domain: "sensor",
-                    device_class: "humidity",
-                    area: this._config.area
+                    device_class: "humidity"
                   }
                 }}
                 .value=${this._config.humidity_entity || ""}
@@ -451,8 +449,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     domain: "sensor",
-                    device_class: "illuminance",
-                    area: this._config.area
+                    device_class: "illuminance"
                   }
                 }}
                 .value=${this._config.illuminance_entity || ""}
@@ -468,8 +465,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     domain: "sensor",
-                    device_class: "power",
-                    area: this._config.area
+                    device_class: "power"
                   }
                 }}
                 .value=${this._config.power_entity || ""}
@@ -485,8 +481,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     domain: "sensor",
-                    device_class: "energy",
-                    area: this._config.area
+                    device_class: "energy"
                   }
                 }}
                 .value=${this._config.energy_entity || ""}
@@ -502,8 +497,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     domain: "sensor",
-                    device_class: "battery",
-                    area: this._config.area
+                    device_class: "battery"
                   }
                 }}
                 .value=${this._config.battery_entity || ""}
@@ -525,8 +519,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .hass=${this.hass}
                 .selector=${{
                   entity: {
-                    domain: "light",
-                    area: this._config.area
+                    domain: "light"
                   }
                 }}
                 .value=${this._config.light_entity || ""}
@@ -541,8 +534,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .hass=${this.hass}
                 .selector=${{
                   entity: {
-                    domain: "climate",
-                    area: this._config.area
+                    domain: "climate"
                   }
                 }}
                 .value=${this._config.climate_entity || ""}
@@ -557,8 +549,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .hass=${this.hass}
                 .selector=${{
                   entity: {
-                    domain: "switch",
-                    area: this._config.area
+                    domain: "switch"
                   }
                 }}
                 .value=${this._config.switch_entity || ""}
@@ -573,8 +564,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .hass=${this.hass}
                 .selector=${{
                   entity: {
-                    domain: "fan",
-                    area: this._config.area
+                    domain: "fan"
                   }
                 }}
                 .value=${this._config.fan_entity || ""}
@@ -590,8 +580,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     multiple: true,
-                    domain: ["light", "switch", "fan", "climate", "cover", "media_player"],
-                    area: this._config.area
+                    domain: ["light", "switch", "fan", "climate", "cover", "media_player"]
                   }
                 }}
                 .value=${this._config.additional_controls || []}
@@ -614,8 +603,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     domain: "binary_sensor",
-                    device_class: "motion",
-                    area: this._config.area
+                    device_class: "motion"
                   }
                 }}
                 .value=${this._config.motion_sensor || ""}
@@ -631,8 +619,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     domain: "binary_sensor",
-                    device_class: "occupancy",
-                    area: this._config.area
+                    device_class: "occupancy"
                   }
                 }}
                 .value=${this._config.occupancy_sensor || ""}
@@ -648,8 +635,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     domain: "binary_sensor",
-                    device_class: "door",
-                    area: this._config.area
+                    device_class: "door"
                   }
                 }}
                 .value=${this._config.door_sensor || ""}
@@ -665,8 +651,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     domain: "binary_sensor",
-                    device_class: "window",
-                    area: this._config.area
+                    device_class: "window"
                   }
                 }}
                 .value=${this._config.window_sensor || ""}
@@ -682,8 +667,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   entity: {
                     multiple: true,
-                    domain: "binary_sensor",
-                    area: this._config.area
+                    domain: "binary_sensor"
                   }
                 }}
                 .value=${this._config.additional_alerts || []}
