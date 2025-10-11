@@ -814,7 +814,7 @@ export class AreaCardElite extends LitElement {
 
   static styles = css`
     ha-card {
-      overflow: visible;  /* Changed from hidden to visible to allow corner icon */
+      overflow: hidden;  /* Changed back to hidden to hide overflow circle */
       position: relative;
       height: 100%;
       padding: 16px;
@@ -879,8 +879,8 @@ export class AreaCardElite extends LitElement {
     /* Large background entity icon - positioned based on features position */
     .main-entity-background {
       position: absolute;
-      width: 160px;  /* Larger circle */
-      height: 160px; /* Larger circle */
+      width: 220px;  /* Much larger circle (60px bigger) */
+      height: 220px; /* Much larger circle (60px bigger) */
       z-index: 1;
       display: flex;
       align-items: center;
@@ -893,15 +893,15 @@ export class AreaCardElite extends LitElement {
       transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
-    /* Position based on features position - LARGER CIRCLE */
+    /* Position based on features position - ADJUSTED POSITIONING */
     .features-right .main-entity-background {
-      bottom: -80px;  /* Adjusted for larger circle */
-      left: -80px;    /* Adjusted for larger circle */
+      bottom: -120px;  /* Adjusted for much larger circle */
+      left: -120px;    /* Adjusted for much larger circle */
     }
 
     .features-left .main-entity-background {
-      bottom: -80px;  /* Adjusted for larger circle */
-      right: -80px;   /* Adjusted for larger circle */
+      bottom: -120px;  /* Adjusted for much larger circle */
+      right: -120px;   /* Adjusted for much larger circle */
     }
 
     .features-top .main-entity-background,
@@ -912,9 +912,12 @@ export class AreaCardElite extends LitElement {
     }
 
     .main-entity-background ha-icon {
-      --mdc-icon-size: 70px;  /* Larger icon, properly centered */
+      --mdc-icon-size: 70px;  /* Keep icon size same */
       opacity: 0.9;
       transition: opacity 0.2s ease;
+      /* Move icon toward top-right by 20px */
+      margin-top: -20px;
+      margin-left: 20px;
     }
 
     .main-entity-background:hover {
