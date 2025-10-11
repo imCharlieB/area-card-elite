@@ -595,9 +595,30 @@ export class AreaCardElite extends LitElement {
     const featuresPosition = this._config.features_position || 'bottom';
     const showAreaControls = this._config.features?.includes("area-controls");
 
+    // Get main entity for large background icon
+    const mainEntity = this._config.main_entity ? this.hass.states[this._config.main_entity] : null;
+    const mainEntityIcon = mainEntity ? this._getDomainIcon(
+      mainEntity.entity_id.split('.')[0], 
+      mainEntity.state, 
+      mainEntity.attributes.device_class
+    ) : null;
+    const mainEntityColor = mainEntity && mainEntity.state !== 'off' && !UNAVAILABLE_STATES.includes(mainEntity.state) 
+      ? 'var(--primary-color)' : 'rgba(var(--rgb-primary-text-color), 0.1)';
+
     return html`
       <ha-card class="${this._config.display_type || 'compact'} layout-${layout} features-${featuresPosition}">
         <div class="content">
+          <!-- Large background entity icon -->
+          ${mainEntityIcon ? html`
+            <div class="main-entity-background">
+              <ha-icon 
+                icon="${mainEntityIcon}" 
+                style="color: ${mainEntityColor};"
+                @click=${() => this._config?.main_entity && this._handleEntityClick(this._config.main_entity)}
+              ></ha-icon>
+            </div>
+          ` : nothing}
+
           ${this._config.display_type === "picture" && this._config.background_image ? html`
             <div class="background-image" style="background-image: url('${this._config.background_image}')"></div>
           ` : ''}
@@ -1386,5 +1407,41 @@ export class AreaCardElite extends LitElement {
     .features-right .area-controls {
       justify-content: flex-end;
     }
+
+    /* Large Background Entity Icon - Like your dashboard image */
+    .main-entity-background {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      width: 120px;
+      height: 120px;
+      z-index: 1;
+      pointer-events: auto;
+    }
+
+    .main-entity-background ha-icon {
+      --mdc-icon-size: 120px;
+      width: 120px;
+      height: 120px;
+      opacity: 0.15;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .main-entity-background ha-icon:hover {
+      opacity: 0.3;
+      transform: scale(1.05);
+    }
+
+    /* Make sure content appears above the background icon */
+    .area-info,
+    .sensors-section,
+    .controls-section,
+    .alerts {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Ensure card respects container size */
   `;
 }

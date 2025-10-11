@@ -203,6 +203,18 @@ export class AreaCardEliteEditor extends LitElement {
           ></ha-selector>
         </div>
 
+        <div class="option">
+          <ha-selector
+            .hass=${this.hass}
+            .selector=${{ entity: {} }}
+            .value=${this._config.main_entity || ""}
+            .configValue=${"main_entity"}
+            .label=${"Main Entity (Large Background Icon)"}
+            .helper=${"Choose the main entity whose icon will appear large in the background"}
+            @value-changed=${this._valueChanged}
+          ></ha-selector>
+        </div>
+
         <!-- Appearance Section -->
         <ha-expansion-panel header="Appearance" outlined>
           <div class="content">
