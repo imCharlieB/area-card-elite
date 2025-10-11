@@ -879,8 +879,8 @@ export class AreaCardElite extends LitElement {
     /* Large background entity icon - positioned based on features position */
     .main-entity-background {
       position: absolute;
-      width: 220px;  /* Much larger circle (60px bigger) */
-      height: 220px; /* Much larger circle (60px bigger) */
+      width: 320px;  /* 100px bigger (was 220px) */
+      height: 320px; /* 100px bigger (was 220px) */
       z-index: 1;
       display: flex;
       align-items: center;
@@ -893,15 +893,15 @@ export class AreaCardElite extends LitElement {
       transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
-    /* Position based on features position - ADJUSTED POSITIONING */
+    /* Position based on features position - ADJUSTED FOR LARGER CIRCLE */
     .features-right .main-entity-background {
-      bottom: -120px;  /* Adjusted for much larger circle */
-      left: -120px;    /* Adjusted for much larger circle */
+      bottom: -200px;  /* Adjusted for 320px circle */
+      left: -200px;    /* Adjusted for 320px circle */
     }
 
     .features-left .main-entity-background {
-      bottom: -120px;  /* Adjusted for much larger circle */
-      right: -120px;   /* Adjusted for much larger circle */
+      bottom: -200px;  /* Adjusted for 320px circle */
+      right: -200px;   /* Adjusted for 320px circle */
     }
 
     .features-top .main-entity-background,
@@ -915,9 +915,9 @@ export class AreaCardElite extends LitElement {
       --mdc-icon-size: 70px;  /* Keep icon size same */
       opacity: 0.9;
       transition: opacity 0.2s ease;
-      /* Move icon toward top-right by 20px */
-      margin-top: -20px;
-      margin-left: 20px;
+      /* Position icon more toward center, not touching edges */
+      margin-top: -50px;
+      margin-left: 50px;
     }
 
     .main-entity-background:hover {
