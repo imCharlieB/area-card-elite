@@ -24,16 +24,18 @@ export default {
     {
       file: output_file,
       format: "iife",
-      name: "version",
+      name: "AreaCardElite",
       sourcemap: true,
     },
   ],
-  external: ['custom-card-helpers'],
   plugins: [
     json(),
-    nodeResolve(),
-    filesize(),
+    nodeResolve({
+      browser: true,
+      preferBuiltins: false
+    }),
     typescript(),
+    filesize(),
     ...(production ? [terser()] : [serve(serveOptions)]),
   ],
 };

@@ -1,4 +1,7 @@
 {
   "name": "Area Card Elite",
-  "filename": "area-card-elite.js"
+  "content_in_root": false,
+  "filename": "area-card-elite.js",
+  "render_readme": true,
+  "homeassistant": "2023.1.0"
 }
