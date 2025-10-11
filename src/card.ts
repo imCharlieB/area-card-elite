@@ -856,8 +856,9 @@ export class AreaCardElite extends LitElement {
 
     .sensors {
       display: flex;
-      flex-direction: column;
-      gap: 2px;
+      flex-direction: row;
+      gap: 16px;
+      flex-wrap: wrap;
     }
 
     .sensor {
@@ -876,12 +877,9 @@ export class AreaCardElite extends LitElement {
       font-weight: 500;
     }
 
-    /* Large background entity icon - centered like your dashboard */
+    /* Large background entity icon - positioned based on features position */
     .main-entity-background {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
       width: 100px;
       height: 100px;
       z-index: 1;
@@ -889,6 +887,24 @@ export class AreaCardElite extends LitElement {
       align-items: center;
       justify-content: center;
       cursor: pointer;
+    }
+
+    /* Position based on features position */
+    .features-right .main-entity-background {
+      bottom: 16px;
+      left: 16px;
+    }
+
+    .features-left .main-entity-background {
+      bottom: 16px;
+      right: 16px;
+    }
+
+    .features-top .main-entity-background,
+    .features-bottom .main-entity-background {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
 
     .main-entity-background ha-icon {
@@ -950,6 +966,15 @@ export class AreaCardElite extends LitElement {
       display: flex;
       flex-direction: column;
       height: 100%;
+    }
+
+    /* Hide area icon in icon display mode */
+    .icon .area-icon {
+      display: none;
+    }
+
+    .icon .area-name ha-icon {
+      display: none;
     }
 
     /* FEATURES POSITION SUPPORT - All positions from editor */
