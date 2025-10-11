@@ -1302,38 +1302,75 @@ export class AreaCardElite extends LitElement {
       font-weight: 500;
     }
 
-    /* Controls positioning for features_position */
+    /* FIXED Controls positioning for features_position */
+    .features-right .content {
+      display: flex;
+      flex-direction: row;
+    }
+
     .features-right .controls-section {
       order: 3;
       flex: 0 0 auto;
+      align-self: flex-start;
+    }
+
+    .features-left .content {
+      display: flex;
+      flex-direction: row;
     }
 
     .features-left .controls-section {
       order: 1;
       flex: 0 0 auto;
+      align-self: flex-start;
     }
 
     .features-top .content {
+      display: flex;
       flex-direction: column;
     }
 
     .features-top .controls-section {
       order: 1;
-      align-self: stretch;
+      align-self: center;
+      margin-bottom: 16px;
     }
 
     .features-bottom .content {
+      display: flex;
       flex-direction: column;
     }
 
     .features-bottom .controls-section {
       order: 3;
-      align-self: stretch;
+      align-self: center;
+      margin-top: 16px;
     }
 
     .features-inline .controls-section {
       display: inline-flex;
       margin-left: auto;
+    }
+
+    /* FIXED Controls styling - VERTICAL STACKING for vertical layout */
+    .layout-vertical .features-right .area-controls,
+    .layout-vertical .features-left .area-controls {
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .layout-vertical .features-top .area-controls,
+    .layout-vertical .features-bottom .area-controls {
+      flex-direction: row;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    /* For non-vertical layouts, keep controls horizontal */
+    .layout-horizontal .area-controls,
+    .layout-compact .area-controls {
+      flex-direction: row;
+      gap: 8px;
     }
 
     /* Controls styling based on position */
@@ -1343,14 +1380,11 @@ export class AreaCardElite extends LitElement {
     }
 
     .features-left .area-controls {
-      flex-direction: column;
-      gap: 6px;
+      justify-content: flex-start;
     }
 
-    .features-right .area-controls,
-    .layout-vertical .area-controls {
-      flex-direction: row;
-      gap: 8px;
+    .features-right .area-controls {
+      justify-content: flex-end;
     }
   `;
 }
