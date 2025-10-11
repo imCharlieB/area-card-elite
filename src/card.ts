@@ -618,9 +618,8 @@ export class AreaCardElite extends LitElement {
         <div class="content">
           <!-- Large background entity icon - ONLY for icon display type -->
           ${this._config.display_type === "icon" && mainEntityIcon ? html`
-            <div class="main-entity-background ${mainEntity && !UNAVAILABLE_STATES.includes(mainEntity.state) && 
-              !STATES_OFF.includes(mainEntity.state) && mainEntity.state !== 'unlocked' ? 'active' : ''} 
-              ${mainEntity && (STATES_OFF.includes(mainEntity.state) || mainEntity.state === 'unlocked') ? 'unlocked' : ''}">
+            <div class="main-entity-background ${mainEntity && mainEntity.state === 'locked' ? 'active' : ''} 
+              ${mainEntity && mainEntity.state === 'unlocked' ? 'unlocked' : ''}">
               <ha-icon 
                 icon="${mainEntityIcon}" 
                 @click=${() => this._config?.main_entity && this._handleEntityClick(this._config.main_entity)}
@@ -880,13 +879,18 @@ export class AreaCardElite extends LitElement {
     /* Large background entity icon - positioned based on features position */
     .main-entity-background {
       position: absolute;
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
       z-index: 1;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      /* Add circular border like your dashboard */
+      border-radius: 50%;
+      background: rgba(var(--rgb-primary-text-color), 0.08);
+      border: 2px solid rgba(var(--rgb-primary-text-color), 0.15);
+      transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
     /* Position based on features position */
@@ -908,18 +912,33 @@ export class AreaCardElite extends LitElement {
     }
 
     .main-entity-background ha-icon {
-      --mdc-icon-size: 100px;
-      opacity: 0.6;
+      --mdc-icon-size: 40px;
+      opacity: 0.8;
       transition: opacity 0.2s ease;
     }
 
-    .main-entity-background:hover ha-icon {
-      opacity: 0.8;
+    .main-entity-background:hover {
+      background: rgba(var(--rgb-primary-text-color), 0.12);
+      border-color: rgba(var(--rgb-primary-text-color), 0.2);
     }
 
-    /* Green when locked/on, red when unlocked/off */
+    .main-entity-background:hover ha-icon {
+      opacity: 1;
+    }
+
+    /* FIXED STATE COLORS - Green when locked/on, red when unlocked/off */
+    .main-entity-background.active {
+      background: rgba(76, 175, 80, 0.15);
+      border-color: #4caf50;
+    }
+
     .main-entity-background.active ha-icon {
       color: #4caf50;
+    }
+
+    .main-entity-background.unlocked {
+      background: rgba(244, 67, 54, 0.15);
+      border-color: #f44336;
     }
 
     .main-entity-background.unlocked ha-icon {
@@ -979,19 +998,19 @@ export class AreaCardElite extends LitElement {
 
     /* FEATURES POSITION SUPPORT - All positions from editor */
     
-    /* Controls on the right side */
+    /* Controls on the right side - closer to edge */
     .features-right .controls-section {
       position: absolute;
-      right: 16px;
+      right: 8px;
       top: 50%;
       transform: translateY(-50%);
       z-index: 2;
     }
 
-    /* Controls on the left side */
+    /* Controls on the left side - closer to edge */
     .features-left .controls-section {
       position: absolute;
-      left: 16px;
+      left: 8px;
       top: 50%;
       transform: translateY(-50%);
       z-index: 2;
