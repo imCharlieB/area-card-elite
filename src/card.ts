@@ -893,15 +893,15 @@ export class AreaCardElite extends LitElement {
       transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
-    /* Position based on features position - ACTUALLY VISIBLE NOW */
+    /* Position based on features position - MORE CORNER OVERLAP */
     .features-right .main-entity-background {
-      bottom: -40px;  /* Adjusted so more of circle shows */
-      left: -40px;    /* Adjusted so more of circle shows */
+      bottom: -50px;  /* More overlap into corner */
+      left: -50px;    /* More overlap into corner */
     }
 
     .features-left .main-entity-background {
-      bottom: -40px;  /* Adjusted so more of circle shows */
-      right: -40px;   /* Adjusted so more of circle shows */
+      bottom: -50px;  /* More overlap into corner */
+      right: -50px;   /* More overlap into corner */
     }
 
     .features-top .main-entity-background,
