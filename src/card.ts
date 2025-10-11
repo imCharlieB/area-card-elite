@@ -879,45 +879,26 @@ export class AreaCardElite extends LitElement {
     /* Large background entity icon - positioned based on features position */
     .main-entity-background {
       position: absolute;
-      width: 320px;  /* 100px bigger (was 220px) */
-      height: 320px; /* 100px bigger (was 220px) */
+      width: 320px;
+      height: 320px;
       z-index: 1;
       display: flex;
-      align-items: center;
-      justify-content: center;
+      align-items: flex-start;  /* Move to top instead of center */
+      justify-content: flex-end;  /* Move to right instead of center */
       cursor: pointer;
-      /* Add circular border like your dashboard */
       border-radius: 50%;
       background: rgba(var(--rgb-primary-text-color), 0.08);
       border: 3px solid rgba(var(--rgb-primary-text-color), 0.15);
       transition: background-color 0.2s ease, border-color 0.2s ease;
-    }
-
-    /* Position based on features position - ADJUSTED FOR LARGER CIRCLE */
-    .features-right .main-entity-background {
-      bottom: -200px;  /* Adjusted for 320px circle */
-      left: -200px;    /* Adjusted for 320px circle */
-    }
-
-    .features-left .main-entity-background {
-      bottom: -200px;  /* Adjusted for 320px circle */
-      right: -200px;   /* Adjusted for 320px circle */
-    }
-
-    .features-top .main-entity-background,
-    .features-bottom .main-entity-background {
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      padding: 40px;  /* Add padding to move icon away from edges */
     }
 
     .main-entity-background ha-icon {
-      --mdc-icon-size: 90px;  /* Much larger icon */
-      opacity: 0.9;
+      --mdc-icon-size: 80px;
+      opacity: 1;
       transition: opacity 0.2s ease;
-      /* Position icon better in the visible circle area */
-      margin-top: -30px;
-      margin-left: 30px;
+      /* Remove margins - use flexbox positioning instead */
+      color: inherit;
     }
 
     .main-entity-background:hover {
@@ -946,6 +927,24 @@ export class AreaCardElite extends LitElement {
 
     .main-entity-background.unlocked ha-icon {
       color: #f44336;
+    }
+
+    /* Position based on features position - ADJUSTED FOR LARGER CIRCLE */
+    .features-right .main-entity-background {
+      bottom: -200px;  /* Adjusted for 320px circle */
+      left: -200px;    /* Adjusted for 320px circle */
+    }
+
+    .features-left .main-entity-background {
+      bottom: -200px;  /* Adjusted for 320px circle */
+      right: -200px;   /* Adjusted for 320px circle */
+    }
+
+    .features-top .main-entity-background,
+    .features-bottom .main-entity-background {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
 
     /* Hide unnecessary elements in icon mode */
