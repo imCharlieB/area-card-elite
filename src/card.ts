@@ -631,7 +631,7 @@ export class AreaCardElite extends LitElement {
           ${this._config.display_type === "picture" && this._config.background_image ? html`
             <div class="background-image" style="background-image: url('${this._config.background_image}')"></div>
           ` : ''}
-          
+
           ${this._config.display_type === "camera" && this._config.camera_entity ? html`
             <hui-image 
               .hass=${this.hass}
@@ -820,314 +820,328 @@ export class AreaCardElite extends LitElement {
       height: 100%;
       padding: 16px;
       transition: all 0.3s ease;
-      /* Remove hardcoded sizing to respect user's card size selection */
     }
 
-    /* Mirror Card Layout Styles */
-    .mirror-layout {
+    /* Main content layout */
+    .content {
+      position: relative;
       display: flex;
       flex-direction: column;
+      height: 100%;
+      min-height: 120px;
     }
 
-    .mirror-layout.mirror-horizontal {
-      flex-direction: row;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .mirror-layout.mirror-vertical {
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .mirror-layout.mirror-v1 {
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .mirror-layout.mirror-v2 {
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
-    .mirror-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .mirror-layout.mirror-vertical .mirror-info {
-      flex-direction: column;
-      text-align: center;
-    }
-
-    .mirror-layout.mirror-horizontal .mirror-info {
-      flex-direction: row;
-      flex: 1;
-    }
-
-    .mirror-layout.mirror-v1 .mirror-info {
-      flex-direction: row;
-      align-items: flex-start;
-    }
-
-    .mirror-layout.mirror-v2 .mirror-info {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    /* Area Info Styles */
+    /* Area info at top */
     .area-info {
+      position: relative;
+      z-index: 2;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      flex: 1;
-    }
-
-    .area-icon {
-      font-size: 2.5rem;
-      color: var(--primary-color);
-    }
-
-    .mirror-layout .area-icon {
-      font-size: 2rem;
-    }
-
-    .area-details {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
     }
 
     .area-name {
-      font-weight: bold;
       font-size: 1.2em;
+      font-weight: bold;
       color: var(--primary-text-color);
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
-    .mirror-layout.mirror-vertical .area-name {
+    /* Sensors directly under area name - SIMPLE */
+    .area-sensors {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .sensors {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .sensor {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9em;
+      color: var(--secondary-text-color);
+    }
+
+    .sensor ha-icon {
+      --mdc-icon-size: 16px;
+    }
+
+    .sensor-value {
+      font-weight: 500;
+    }
+
+    /* Large background entity icon - centered like your dashboard */
+    .main-entity-background {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: 100px;
+      z-index: 1;
+      display: flex;
+      align-items: center;
       justify-content: center;
+      cursor: pointer;
     }
 
-    /* Display Type Styles - Updated for better dashboard layout */
-    .compact .content {
+    .main-entity-background ha-icon {
+      --mdc-icon-size: 100px;
+      opacity: 0.6;
+      transition: opacity 0.2s ease;
+    }
+
+    .main-entity-background:hover ha-icon {
+      opacity: 0.8;
+    }
+
+    /* Green when locked/on, red when unlocked/off */
+    .main-entity-background.active ha-icon {
+      color: #4caf50;
+    }
+
+    .main-entity-background.unlocked ha-icon {
+      color: #f44336;
+    }
+
+    /* LAYOUT SUPPORT - Different layouts from editor */
+    
+    /* Compact layout */
+    .layout-compact .content {
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      min-height: 80px;
     }
 
-    /* Vertical layout like in your dashboard image */
-    .mirror-layout.mirror-vertical .content {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 16px;
-    }
-
-    /* Area info section - left side */
-    .mirror-layout.mirror-vertical .area-info {
-      display: flex;
+    .layout-compact .area-info {
       flex-direction: row;
       align-items: center;
       gap: 12px;
-      flex: 0 0 auto;
     }
 
-    .mirror-layout.mirror-vertical .area-icon {
-      font-size: 2.5rem;
-      flex-shrink: 0;
+    .layout-compact .area-sensors {
+      margin-top: 0;
+      margin-left: 16px;
     }
 
-    .mirror-layout.mirror-vertical .area-name {
-      font-size: 1.3em;
-      font-weight: bold;
-      white-space: nowrap;
-    }
-
-    /* Sensors section - middle */
-    .mirror-layout.mirror-vertical .sensors {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      justify-content: center;
-      flex: 1;
-      margin: 0 16px;
-    }
-
-    .mirror-layout.mirror-vertical .sensor {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      text-align: center;
-    }
-
-    .mirror-layout.mirror-vertical .sensor ha-icon {
-      --mdc-icon-size: 24px;
-      margin-bottom: 4px;
-    }
-
-    .mirror-layout.mirror-vertical .sensor-value {
-      font-size: 0.9em;
-      font-weight: 500;
-      white-space: nowrap;
-    }
-
-    /* Area controls section - right side */
-    .mirror-layout.mirror-vertical .area-controls {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex: 0 0 auto;
-      margin: 0;
-    }
-
-    /* Alert positioning for vertical layout */
-    .mirror-layout.mirror-vertical .alerts {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      gap: 4px;
-    }
-
-    .mirror-layout.mirror-vertical .alerts .icon-with-count {
-      padding: 2px 4px;
-      font-size: 0.8em;
-      min-width: 24px;
-    }
-
-    /* Horizontal layout - keep existing */
-    .mirror-layout.mirror-horizontal .content {
+    /* Horizontal layout */
+    .layout-horizontal .content {
       display: flex;
       flex-direction: row;
       align-items: center;
       gap: 16px;
     }
 
-    .icon .content {
+    .layout-horizontal .area-info {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    /* Vertical layout - your dashboard style */
+    .layout-vertical .content {
       display: flex;
       flex-direction: column;
+      height: 100%;
+    }
+
+    /* FEATURES POSITION SUPPORT - All positions from editor */
+    
+    /* Controls on the right side */
+    .features-right .controls-section {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+    }
+
+    /* Controls on the left side */
+    .features-left .controls-section {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+    }
+
+    /* Controls at the top */
+    .features-top .content {
+      flex-direction: column;
+    }
+
+    .features-top .controls-section {
+      order: 1;
+      align-self: center;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    /* Controls at the bottom */
+    .features-bottom .content {
+      flex-direction: column;
+    }
+
+    .features-bottom .controls-section {
+      order: 3;
+      align-self: center;
+      margin-top: auto;
+      position: relative;
+    }
+
+    /* Inline controls */
+    .features-inline .controls-section {
+      display: inline-flex;
+      margin-left: auto;
+      position: relative;
+    }
+
+    /* Area controls styling */
+    .area-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Horizontal controls for top/bottom positions */
+    .features-top .area-controls,
+    .features-bottom .area-controls,
+    .features-inline .area-controls {
+      flex-direction: row;
+      gap: 8px;
+    }
+
+    .control-button {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      gap: 16px;
+      background: rgba(var(--rgb-primary-text-color), 0.1);
+      border: 1px solid rgba(var(--rgb-primary-text-color), 0.2);
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
 
-    .picture .content,
-    .camera .content {
+    .control-button:hover {
+      background: rgba(var(--rgb-primary-text-color), 0.15);
+    }
+
+    .control-button.active {
+      background: rgba(var(--rgb-primary-color), 0.2);
+      border-color: var(--primary-color);
+    }
+
+    .control-button ha-icon {
+      --mdc-icon-size: 24px;
+    }
+
+    /* DISPLAY TYPE SUPPORT - All display types from editor */
+    
+    /* Picture display type */
+    .picture .content {
       position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
+      color: white;
     }
 
-    /* Background Images */
-    .background-image,
-    .camera-view {
+    .background-image {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: -16px;
+      left: -16px;
+      right: -16px;
+      bottom: -16px;
       background-size: cover;
       background-position: center;
       border-radius: inherit;
+      z-index: 0;
     }
 
     .picture .area-info,
-    .camera .area-info {
+    .picture .controls-section {
       position: relative;
       z-index: 2;
-      background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-      padding: 16px;
-      margin: -16px;
-      margin-top: auto;
     }
 
     .picture .area-name,
+    .picture .sensor-value {
+      color: white;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Camera display type */
+    .camera .content {
+      position: relative;
+      color: white;
+    }
+
+    .camera-view {
+      position: absolute;
+      top: -16px;
+      left: -16px;
+      right: -16px;
+      bottom: -16px;
+      z-index: 0;
+    }
+
+    .camera .area-info,
+    .camera .controls-section {
+      position: relative;
+      z-index: 2;
+    }
+
     .camera .area-name,
-    .picture .sensor-value,
     .camera .sensor-value {
       color: white;
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
     }
 
-    /* Alert and Sensor Styles */
-    .alerts,
-    .sensors {
+    /* Icon display type - shows large background icon */
+    .icon .main-entity-background {
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+    }
+
+    /* Compact display type - hide background icon */
+    .compact .main-entity-background {
+      display: none;
+    }
+
+    /* Alerts in top-right */
+    .alerts {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 2;
+      display: flex;
+      gap: 6px;
     }
 
     .icon-with-count {
       display: flex;
       align-items: center;
       gap: 4px;
-      background: rgba(var(--rgb-primary-text-color), 0.1);
-      border: solid 0.025rem rgba(var(--rgb-primary-text-color), 0.15);
-      padding: 4px 6px;
+      background: rgba(var(--error-color), 0.15);
+      border: 1px solid rgba(var(--error-color), 0.3);
+      color: var(--error-color);
+      padding: 4px 8px;
       border-radius: 4px;
-      min-width: 40px;
-      transition: background-color 0.2s ease;
+      font-size: 0.8em;
       cursor: pointer;
     }
 
-    .icon-with-count:hover {
-      background-color: rgba(var(--rgb-primary-text-color), 0.15);
-    }
-
-    .picture .icon-with-count,
-    .camera .icon-with-count {
-      background: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(4px);
-    }
-
-    .sensor {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .sensor-value {
-      color: var(--secondary-text-color);
-      font-size: 0.9em;
+    .alert-label {
+      font-size: 11px;
       font-weight: 500;
     }
 
-    /* Toggle States */
-    .toggle-on {
-      color: var(--primary-color);
-    }
-
-    .toggle-off {
-      color: var(--secondary-text-color);
-    }
-
-    .alert {
-      color: var(--error-color);
-    }
-
-    .active-count.on {
-      color: var(--primary-text-color);
-      font-weight: bold;
-    }
-
-    .active-count.off {
-      color: var(--secondary-text-color);
-    }
-
-    /* Features */
+    /* Features buttons */
     .features {
       display: flex;
       gap: 8px;
@@ -1152,661 +1166,29 @@ export class AreaCardElite extends LitElement {
       padding: 4px 8px;
     }
 
-    /* Area Controls */
-    .area-controls {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      align-items: center;
-    }
-
-    .control-button {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(var(--rgb-primary-text-color), 0.05);
-      border: 1px solid rgba(var(--rgb-primary-text-color), 0.12);
-      cursor: pointer;
-      transition: all 0.2s ease;
+    /* Make sure everything appears above background */
+    .area-info,
+    .controls-section,
+    .alerts,
+    .features {
       position: relative;
+      z-index: 2;
     }
 
-    .control-button:hover {
-      background: rgba(var(--rgb-primary-text-color), 0.1);
-      transform: scale(1.05);
-    }
-
-    .control-button.active {
-      background: rgba(var(--rgb-primary-color), 0.15);
-      border-color: var(--primary-color);
-    }
-
-    .control-button ha-icon {
-      --mdc-icon-size: 24px;
-    }
-
-    /* Compact layout - area controls on the right */
-    .compact .content {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .compact .area-controls {
-      margin-left: auto;
-      margin-top: 0;
-    }
-
-    /* Alert label styling */
-    .alert-label {
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--error-color);
-      margin-left: 4px;
-    }
-
-    .alerts .icon-with-count {
-      background: rgba(var(--error-color), 0.1);
-      border-color: rgba(var(--error-color), 0.3);
-      color: var(--error-color);
-    }
-
-    /* Responsive Design */
+    /* Responsive design */
     @media (max-width: 600px) {
-      .area-icon {
-        font-size: 2rem;
-      }
-      
-      .mirror-layout .area-icon {
-        font-size: 1.5rem;
-      }
-      
       .area-name {
         font-size: 1em;
       }
       
-      .icon-with-count {
-        min-width: 32px;
-        padding: 2px 4px;
+      .control-button {
+        width: 40px;
+        height: 40px;
       }
-    }
-
-    /* Ensure card respects container size */
-    :host {
-      display: block;
-      height: 100%;
-    }
-
-    ha-card {
-      height: 100%;
-      box-sizing: border-box;
-    }
-
-    /* New Layout System - FIXED */
-    .layout-compact .content {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .layout-horizontal .content {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .layout-vertical .content {
-      display: flex;
-      flex-direction: row;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      min-height: 80px;
-    }
-
-    /* Vertical Layout - Area info with sensors under name */
-    .layout-vertical .area-info {
-      display: flex;
-      flex-direction: row;
-      align-items: flex-start;
-      gap: 12px;
-      flex: 1;
-    }
-
-    .layout-vertical .area-icon {
-      font-size: 2.5rem;
-      flex-shrink: 0;
-      margin-top: 4px;
-    }
-
-    .layout-vertical .area-details {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      flex: 1;
-    }
-
-    .layout-vertical .area-name {
-      font-size: 1.3em;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    /* Sensors under the name in vertical layout */
-    .layout-vertical .area-sensors {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .layout-vertical .area-sensors .sensors {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .layout-vertical .area-sensors .sensor {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(var(--rgb-primary-text-color), 0.05);
-      padding: 4px 8px;
-      border-radius: 12px;
-    }
-
-    .layout-vertical .area-sensors .sensor ha-icon {
-      --mdc-icon-size: 20px;
-    }
-
-    .layout-vertical .area-sensors .sensor-value {
-      font-size: 0.9em;
-      font-weight: 500;
-    }
-
-    /* FIXED Controls positioning for features_position */
-    .features-right .content {
-      display: flex;
-      flex-direction: row;
-    }
-
-    .features-right .controls-section {
-      order: 3;
-      flex: 0 0 auto;
-      align-self: flex-start;
-    }
-
-    .features-left .content {
-      display: flex;
-      flex-direction: row;
-    }
-
-    .features-left .controls-section {
-      order: 1;
-      flex: 0 0 auto;
-      align-self: flex-start;
-    }
-
-    .features-top .content {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .features-top .controls-section {
-      order: 1;
-      align-self: center;
-      margin-bottom: 16px;
-    }
-
-    .features-bottom .content {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .features-bottom .controls-section {
-      order: 3;
-      align-self: center;
-      margin-top: 16px;
-    }
-
-    .features-inline .controls-section {
-      display: inline-flex;
-      margin-left: auto;
-    }
-
-    /* FIXED Controls styling - VERTICAL STACKING for vertical layout */
-    .layout-vertical .features-right .area-controls,
-    .layout-vertical .features-left .area-controls {
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .layout-vertical .features-top .area-controls,
-    .layout-vertical .features-bottom .area-controls {
-      flex-direction: row;
-      gap: 8px;
-      justify-content: center;
-    }
-
-    /* For non-vertical layouts, keep controls horizontal */
-    .layout-horizontal .area-controls,
-    .layout-compact .area-controls {
-      flex-direction: row;
-      gap: 8px;
-    }
-
-    /* Controls styling based on position */
-    .features-top .area-controls,
-    .features-bottom .area-controls {
-      justify-content: center;
-    }
-
-    .features-left .area-controls {
-      justify-content: flex-start;
-    }
-
-    .features-right .area-controls {
-      justify-content: flex-end;
-    }
-
-    /* Large Background Entity Icon - Like your dashboard image */
-    .main-entity-background {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      width: 80px;
-      height: 80px;
-      z-index: 1;
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      /* Add circular background like your dashboard */
-      border-radius: 50%;
-      background: rgba(var(--rgb-primary-text-color), 0.05);
-      border: 2px solid rgba(var(--rgb-primary-text-color), 0.15);
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .main-entity-background:hover {
-      background: rgba(var(--rgb-primary-text-color), 0.08);
-      border-color: rgba(var(--rgb-primary-text-color), 0.2);
-      transform: scale(1.05);
-    }
-
-    .main-entity-background ha-icon {
-      --mdc-icon-size: 40px;
-      width: 40px;
-      height: 40px;
-      opacity: 0.8;
-      transition: all 0.3s ease;
-    }
-
-    .main-entity-background:hover ha-icon {
-      opacity: 1;
-    }
-
-    /* Active state - when entity is on/locked */
-    .main-entity-background.active {
-      background: rgba(var(--rgb-primary-color), 0.15);
-      border-color: var(--primary-color);
-    }
-
-    .main-entity-background.active ha-icon {
-      color: var(--primary-color);
-    }
-
-    /* Unlocked/off state - red like your dashboard */
-    .main-entity-background.unlocked {
-      background: rgba(244, 67, 54, 0.15);
-      border-color: #f44336;
-    }
-
-    .main-entity-background.unlocked ha-icon {
-      color: #f44336;
-    }
-
-    /* Make sure content appears above the background icon */
-    .area-info,
-    .sensors-section,
-    .controls-section,
-    .alerts {
-      position: relative;
-      z-index: 2;
-    }
-
-    /* Ensure card respects container size */
-
-    /* Large Background Entity Icon - Centered like your dashboard */
-    .main-entity-background {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 140px;
-      height: 140px;
-      z-index: 1;
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .main-entity-background ha-icon {
-      --mdc-icon-size: 140px;
-      width: 140px;
-      height: 140px;
-      opacity: 0.3;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .main-entity-background ha-icon:hover {
-      opacity: 0.5;
-      transform: scale(1.05);
-    }
-
-    /* Layout for your dashboard style */
-    .layout-vertical .content {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      min-height: 120px;
-      padding: 12px;
-    }
-
-    /* Area name at the top */
-    .layout-vertical .area-info {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: auto;
-    }
-
-    .layout-vertical .area-icon {
-      font-size: 1.5rem;
-      flex-shrink: 0;
-    }
-
-    .layout-vertical .area-name {
-      font-size: 1.1em;
-      font-weight: bold;
-      color: var(--primary-text-color);
-    }
-
-    /* Sensors in bottom-left corner like your dashboard */
-    .layout-vertical .area-sensors {
-      position: absolute;
-      bottom: 12px;
-      left: 12px;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .layout-vertical .area-sensors .sensors {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .layout-vertical .area-sensors .sensor {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(var(--rgb-card-background-color), 0.8);
-      backdrop-filter: blur(4px);
-      padding: 2px 6px;
-      border-radius: 8px;
-      font-size: 0.8em;
-    }
-
-    .layout-vertical .area-sensors .sensor ha-icon {
-      --mdc-icon-size: 16px;
-    }
-
-    .layout-vertical .area-sensors .sensor-value {
-      font-size: 0.8em;
-      font-weight: 500;
-    }
-
-    /* Controls on the right side, stacked vertically */
-    .layout-vertical.features-right .controls-section {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 2;
-    }
-
-    .layout-vertical.features-right .area-controls {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    /* Make control buttons smaller to match your dashboard */
-    .layout-vertical .control-button {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(var(--rgb-primary-text-color), 0.1);
-      border: 1px solid rgba(var(--rgb-primary-text-color), 0.2);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .layout-vertical .control-button ha-icon {
-      --mdc-icon-size: 20px;
-    }
-
-    .layout-vertical .control-button:hover {
-      background: rgba(var(--rgb-primary-text-color), 0.2);
-      transform: scale(1.1);
-    }
-
-    .layout-vertical .control-button.active {
-      background: rgba(var(--rgb-primary-color), 0.2);
-      border-color: var(--primary-color);
-    }
-
-    /* Alerts in top-right corner */
-    .layout-vertical .alerts {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      z-index: 2;
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .layout-vertical .alerts .icon-with-count {
-      padding: 4px 8px;
-      font-size: 0.8em;
-      min-width: 32px;
-      background: rgba(var(--error-color), 0.15);
-      border-color: rgba(var (--error-color), 0.3);
-      color: var(--error-color);
-    }
-
-    /* Make sure content appears above the background icon */
-    .area-info,
-    .sensors-section,
-    .controls-section,
-    .alerts {
-      position: relative;
-      z-index: 2;
-    }
-
-    /* Large Background Entity Icon - FIXED positioning in lower left */
-    .main-entity-background {
-      position: absolute;
-      bottom: 16px;
-      left: 16px;
-      width: 60px;
-      height: 60px;
-      z-index: 1;
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background: rgba(var(--rgb-primary-text-color), 0.08);
-      border: 2px solid rgba(var(--rgb-primary-text-color), 0.15);
-      transition: background-color 0.2s ease, border-color 0.2s ease;
-      cursor: pointer;
-    }
-
-    .main-entity-background:hover {
-      background: rgba(var(--rgb-primary-text-color), 0.12);
-      border-color: rgba(var(--rgb-primary-text-color), 0.2);
-      /* REMOVED transform that was causing movement */
-    }
-
-    .main-entity-background ha-icon {
-      --mdc-icon-size: 32px;
-      width: 32px;
-      height: 32px;
-      opacity: 0.7;
-      transition: opacity 0.2s ease;
-      /* REMOVED transform that was causing movement */
-    }
-
-    .main-entity-background:hover ha-icon {
-      opacity: 0.9;
-      /* REMOVED scale transform */
-    }
-
-    /* Active state - when entity is on/locked */
-    .main-entity-background.active {
-      background: rgba(var(--rgb-primary-color), 0.15);
-      border-color: var(--primary-color);
-    }
-
-    .main-entity-background.active ha-icon {
-      color: var(--primary-color);
-    }
-
-    /* Unlocked/off state - red like your dashboard */
-    .main-entity-background.unlocked {
-      background: rgba(244, 67, 54, 0.15);
-      border-color: #f44336;
-    }
-
-    .main-entity-background.unlocked ha-icon {
-      color: #f44336;
-    }
-
-    /* FIXED: Sensors under the area name exactly like your dashboard */
-    .layout-vertical .area-sensors {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-top: 8px;
-    }
-
-    .layout-vertical .area-sensors .sensors {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .layout-vertical .area-sensors .sensor {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      /* Remove all the weird background/border pill styling */
-      background: none;
-      backdrop-filter: none;
-      padding: 0;
-      border-radius: 0;
-      font-size: 0.85em;
-      border: none;
-    }
-
-    .layout-vertical .area-sensors .sensor ha-icon {
-      --mdc-icon-size: 16px;
-      flex-shrink: 0;
-    }
-
-    .layout-vertical .area-sensors .sensor-value {
-      font-size: 0.85em;
-      font-weight: 500;
-      color: var(--secondary-text-color);
-      white-space: nowrap;
-    }
-
-    /* Main entity background icon - lower left like your dashboard */
-    .main-entity-background {
-      position: absolute;
-      bottom: 16px;
-      left: 16px;
-      width: 60px;
-      height: 60px;
-      z-index: 1;
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background: rgba(var(--rgb-primary-text-color), 0.08);
-      border: 2px solid rgba(var(--rgb-primary-text-color), 0.15);
-      transition: background-color 0.2s ease, border-color 0.2s ease;
-      cursor: pointer;
-    }
-
-    .main-entity-background:hover {
-      background: rgba(var(--rgb-primary-text-color), 0.12);
-      border-color: rgba(var(--rgb-primary-text-color), 0.2);
-    }
-
-    .main-entity-background ha-icon {
-      --mdc-icon-size: 32px;
-      width: 32px;
-      height: 32px;
-      opacity: 0.7;
-      transition: opacity 0.2s ease;
-    }
-
-    .main-entity-background:hover ha-icon {
-      opacity: 0.9;
-    }
-
-    .main-entity-background.active {
-      background: rgba(var(--rgb-primary-color), 0.15);
-      border-color: var(--primary-color);
-    }
-
-    .main-entity-background.active ha-icon {
-      color: var(--primary-color);
-    }
-
-    .main-entity-background.unlocked {
-      background: rgba(244, 67, 54, 0.15);
-      border-color: #f44336;
-    }
-
-    .main-entity-background.unlocked ha-icon {
-      color: #f44336;
+      
+      .control-button ha-icon {
+        --mdc-icon-size: 20px;
+      }
     }
   `;
 }
