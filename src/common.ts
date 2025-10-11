@@ -1,4 +1,5 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
+import type { HomeAssistant } from "./ha/types";
 
 export const CUSTOM_CARD_ID: string = "area-card-elite";
 
@@ -17,9 +18,6 @@ export interface AreaCardEliteConfig extends LovelaceCardConfig {
   exclude_entities?: string[];
 }
 
-export interface HomeAssistantExtended {
+export interface HomeAssistantExtended extends HomeAssistant {
   areas: Record<string, any>;
-  states: Record<string, any>;
-  formatEntityState: (state: any) => string;
-  localize: (key: string) => string;
 }

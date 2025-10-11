@@ -2,6 +2,7 @@ import { LitElement, html, css, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { AreaCardEliteConfig, HomeAssistantExtended } from "./common";
 import { fireEvent } from "custom-card-helpers";
+import type { HomeAssistant } from "./ha/types";
 import { 
   SENSOR_DOMAINS,
   ALERT_DOMAINS,

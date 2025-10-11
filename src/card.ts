@@ -4,6 +4,10 @@ import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { repeat } from "lit/directives/repeat.js";
 import { HomeAssistantExtended, AreaCardEliteConfig } from "./common";
+import { actionHandler } from "./ha/helpers/action_handler";
+import { handleAction } from "./ha/helpers/handle_action";
+import { computeDomain } from "./ha/helpers/compute_domain";
+import { UNAVAILABLE, UNKNOWN, STATES_OFF as HA_STATES_OFF } from "./ha";
 import { 
   SENSOR_DOMAINS,
   ALERT_DOMAINS,
