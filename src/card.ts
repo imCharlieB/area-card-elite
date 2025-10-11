@@ -234,49 +234,107 @@ export class AreaCardElite extends LitElement {
   }
 
   private _renderSensors() {
-    const entitiesByDomain = this._getEntitiesByDomain();
-    const sensorClasses = this._config?.sensor_classes || DEVICE_CLASSES.sensor;
-    const area = this._areas[this._config?.area || ""];
+    if (!this._config) return nothing;
+
+    const sensors = [];
     
-    if (!entitiesByDomain.sensor?.length) return nothing;
+    // Temperature sensor
+    if (this._config.temperature_entity && this.hass.states[this._config.temperature_entity]) {
+      const entity = this.hass.states[this._config.temperature_entity];
+      if (!UNAVAILABLE_STATES.includes(entity.state)) {
+        sensors.push({
+          icon: "mdi:thermometer",
+          value: this.hass.formatEntityState(entity),
+          deviceClass: "temperature"
+        });
+      }
+    }
+
+    // Humidity sensor
+    if (this._config.humidity_entity && this.hass.states[this._config.humidity_entity]) {
+      const entity = this.hass.states[this._config.humidity_entity];
+      if (!UNAVAILABLE_STATES.includes(entity.state)) {
+        sensors.push({
+          icon: "mdi:water-percent",
+          value: this.hass.formatEntityState(entity),
+          deviceClass: "humidity"
+        });
+      }
+    }
+
+    // Illuminance sensor
+    if (this._config.illuminance_entity && this.hass.states[this._config.illuminance_entity]) {
+      const entity = this.hass.states[this._config.illuminance_entity];
+      if (!UNAVAILABLE_STATES.includes(entity.state)) {
+        sensors.push({
+          icon: "mdi:brightness-6",
+          value: this.hass.formatEntityState(entity),
+          deviceClass: "illuminance"
+        });
+      }
+    }
+
+    // Power sensor
+    if (this._config.power_entity && this.hass.states[this._config.power_entity]) {
+      const entity = this.hass.states[this._config.power_entity];
+      if (!UNAVAILABLE_STATES.includes(entity.state)) {
+        sensors.push({
+          icon: "mdi:flash",
+          value: this.hass.formatEntityState(entity),
+          deviceClass: "power"
+        });
+      }
+    }
+
+    // Energy sensor
+    if (this._config.energy_entity && this.hass.states[this._config.energy_entity]) {
+      const entity = this.hass.states[this._config.energy_entity];
+      if (!UNAVAILABLE_STATES.includes(entity.state)) {
+        sensors.push({
+          icon: "mdi:lightning-bolt",
+          value: this.hass.formatEntityState(entity),
+          deviceClass: "energy"
+        });
+      }
+    }
+
+    // Battery sensor
+    if (this._config.battery_entity && this.hass.states[this._config.battery_entity]) {
+      const entity = this.hass.states[this._config.battery_entity];
+      if (!UNAVAILABLE_STATES.includes(entity.state)) {
+        const batteryLevel = Number(entity.state);
+        let icon = "mdi:battery";
+        if (!isNaN(batteryLevel)) {
+          if (batteryLevel <= 10) icon = "mdi:battery-outline";
+          else if (batteryLevel <= 20) icon = "mdi:battery-20";
+          else if (batteryLevel <= 30) icon = "mdi:battery-30";
+          else if (batteryLevel <= 40) icon = "mdi:battery-40";
+          else if (batteryLevel <= 50) icon = "mdi:battery-50";
+          else if (batteryLevel <= 60) icon = "mdi:battery-60";
+          else if (batteryLevel <= 70) icon = "mdi:battery-70";
+          else if (batteryLevel <= 80) icon = "mdi:battery-80";
+          else if (batteryLevel <= 90) icon = "mdi:battery-90";
+          else icon = "mdi:battery";
+        }
+        
+        sensors.push({
+          icon: icon,
+          value: this.hass.formatEntityState(entity),
+          deviceClass: "battery"
+        });
+      }
+    }
+
+    if (sensors.length === 0) return nothing;
 
     return html`
       <div class="sensors">
-        ${sensorClasses.map((deviceClass: string) => {
-          const sensorEntities = entitiesByDomain.sensor.filter((e: any) => 
-            e.deviceClass === deviceClass && 
-            !UNAVAILABLE_STATES.includes(e.state)
-          );
-          
-          if (sensorEntities.length === 0) return nothing;
-
-          // Check for area-specific sensor
-          let value = "";
-          if (deviceClass === "temperature" && area?.temperature_entity_id) {
-            const areaEntity = this.hass.states[area.temperature_entity_id];
-            value = areaEntity ? this.hass.formatEntityState(areaEntity) : "";
-          } else if (deviceClass === "humidity" && area?.humidity_entity_id) {
-            const areaEntity = this.hass.states[area.humidity_entity_id];
-            value = areaEntity ? this.hass.formatEntityState(areaEntity) : "";
-          } else {
-            // Calculate average
-            const validEntities = sensorEntities.filter((e: any) => !isNaN(Number(e.state)));
-            if (validEntities.length > 0) {
-              const sum = validEntities.reduce((acc: number, e: any) => acc + Number(e.state), 0);
-              const avg = sum / validEntities.length;
-              const unit = validEntities[0]?.attributes?.unit_of_measurement || "";
-              value = `${avg.toFixed(1)}${unit ? ` ${unit}` : ""}`;
-            }
-          }
-
-          if (!value) return nothing;
-
-          return html`
-            <div class="sensor">
-              <span class="sensor-value">${value}</span>
-            </div>
-          `;
-        })}
+        ${sensors.map(sensor => html`
+          <div class="sensor">
+            <ha-icon icon="${sensor.icon}"></ha-icon>
+            <span class="sensor-value">${sensor.value}</span>
+          </div>
+        `)}
       </div>
     `;
   }

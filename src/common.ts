@@ -26,4 +26,12 @@ export interface AreaCardEliteConfig extends LovelaceCardConfig {
   mirror_card_layout?: boolean;
   area_name_color?: string;
   area_icon_color?: string;
+  
+  // Specific sensor entity selectors
+  temperature_entity?: string;
+  humidity_entity?: string;
+  illuminance_entity?: string;
+  power_entity?: string;
+  energy_entity?: string;
+  battery_entity?: string;
 }
