@@ -893,15 +893,15 @@ export class AreaCardElite extends LitElement {
       transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
-    /* Position based on features position */
+    /* Position based on features position - FINE-TUNED */
     .features-right .main-entity-background {
-      bottom: 16px;
-      left: 16px;
+      bottom: 20px;
+      left: 20px;
     }
 
     .features-left .main-entity-background {
-      bottom: 16px;
-      right: 16px;
+      bottom: 20px;
+      right: 20px;
     }
 
     .features-top .main-entity-background,
