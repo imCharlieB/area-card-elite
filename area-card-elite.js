@@ -15,7 +15,7 @@ const i=globalThis,o=i.ShadowRoot&&(void 0===i.ShadyCSS||i.ShadyCSS.nativeShadow
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-const A=globalThis,k=A.trustedTypes,C=k?k.createPolicy("lit-html",{createHTML:e=>e}):void 0,E="$lit$",S=`lit$${(Math.random()+"").slice(9)}$`,z="?"+S,I=`<${z}>`,P=document,O=()=>P.createComment(""),U=e=>null===e||"object"!=typeof e&&"function"!=typeof e,j=Array.isArray,M=e=>j(e)||"function"==typeof e?.[Symbol.iterator],T="[ \t\n\f\r]",N=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,V=/-->/g,H=/>/g,R=RegExp(`>|${T}(?:([^\\s"'>=/]+)(${T}*=${T}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),L=/'/g,B=/"/g,D=/^(?:script|style|textarea|title)$/i,F=(e=>(t,...i)=>({_$litType$:e,strings:t,values:i}))(1),q=Symbol.for("lit-noChange"),W=Symbol.for("lit-nothing"),K=new WeakMap,X=P.createTreeWalker(P,129);function Y(e,t){if(!Array.isArray(e)||!e.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==C?C.createHTML(t):t}const J=(e,t)=>{const i=e.length-1,o=[];let a,s=2===t?"<svg>":"",n=N;for(let t=0;t<i;t++){const i=e[t];let r,l,c=-1,d=0;for(;d<i.length&&(n.lastIndex=d,l=n.exec(i),null!==l);)d=n.lastIndex,n===N?"!--"===l[1]?n=V:void 0!==l[1]?n=H:void 0!==l[2]?(D.test(l[2])&&(a=RegExp("</"+l[2],"g")),n=R):void 0!==l[3]&&(n=R):n===R?">"===l[0]?(n=a??N,c=-1):void 0===l[1]?c=-2:(c=n.lastIndex-l[2].length,r=l[1],n=void 0===l[3]?R:'"'===l[3]?B:L):n===B||n===L?n=R:n===V||n===H?n=N:(n=R,a=void 0);const h=n===R&&e[t+1].startsWith("/>")?" ":"";s+=n===N?i+I:c>=0?(o.push(r),i.slice(0,c)+E+i.slice(c)+S+h):i+S+(-2===c?t:h)}return[Y(e,s+(e[i]||"<?>")+(2===t?"</svg>":"")),o]};class Z{constructor({strings:e,_$litType$:t},i){let o;this.parts=[];let a=0,s=0;const n=e.length-1,r=this.parts,[l,c]=J(e,t);if(this.el=Z.createElement(l,i),X.currentNode=this.el.content,2===t){const e=this.el.content.firstChild;e.replaceWith(...e.childNodes)}for(;null!==(o=X.nextNode())&&r.length<n;){if(1===o.nodeType){if(o.hasAttributes())for(const e of o.getAttributeNames())if(e.endsWith(E)){const t=c[s++],i=o.getAttribute(e).split(S),n=/([.?@])?(.*)/.exec(t);r.push({type:1,index:a,name:n[2],strings:i,ctor:"."===n[1]?ie:"?"===n[1]?oe:"@"===n[1]?ae:te}),o.removeAttribute(e)}else e.startsWith(S)&&(r.push({type:6,index:a}),o.removeAttribute(e));if(D.test(o.tagName)){const e=o.textContent.split(S),t=e.length-1;if(t>0){o.textContent=k?k.emptyScript:"";for(let i=0;i<t;i++)o.append(e[i],O()),X.nextNode(),r.push({type:2,index:++a});o.append(e[t],O())}}}else if(8===o.nodeType)if(o.data===z)r.push({type:2,index:a});else{let e=-1;for(;-1!==(e=o.data.indexOf(S,e+1));)r.push({type:7,index:a}),e+=S.length-1}a++}}static createElement(e,t){const i=P.createElement("template");return i.innerHTML=e,i}}function G(e,t,i=e,o){if(t===q)return t;let a=void 0!==o?i._$Co?.[o]:i._$Cl;const s=U(t)?void 0:t._$litDirective$;return a?.constructor!==s&&(a?._$AO?.(!1),void 0===s?a=void 0:(a=new s(e),a._$AT(e,i,o)),void 0!==o?(i._$Co??=[])[o]=a:i._$Cl=a),void 0!==a&&(t=G(e,a._$AS(e,t.values),a,o)),t}class Q{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){const{el:{content:t},parts:i}=this._$AD,o=(e?.creationScope??P).importNode(t,!0);X.currentNode=o;let a=X.nextNode(),s=0,n=0,r=i[0];for(;void 0!==r;){if(s===r.index){let t;2===r.type?t=new ee(a,a.nextSibling,this,e):1===r.type?t=new r.ctor(a,r.name,r.strings,this,e):6===r.type&&(t=new se(a,this,e)),this._$AV.push(t),r=i[++n]}s!==r?.index&&(a=X.nextNode(),s++)}return X.currentNode=P,o}p(e){let t=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(e,i,t),t+=i.strings.length-2):i._$AI(e[t])),t++}}class ee{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(e,t,i,o){this.type=2,this._$AH=W,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=i,this.options=o,this._$Cv=o?.isConnected??!0}get parentNode(){let e=this._$AA.parentNode;const t=this._$AM;return void 0!==t&&11===e?.nodeType&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=G(this,e,t),U(e)?e===W||null==e||""===e?(this._$AH!==W&&this._$AR(),this._$AH=W):e!==this._$AH&&e!==q&&this._(e):void 0!==e._$litType$?this.g(e):void 0!==e.nodeType?this.$(e):M(e)?this.T(e):this._(e)}k(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}$(e){this._$AH!==e&&(this._$AR(),this._$AH=this.k(e))}_(e){this._$AH!==W&&U(this._$AH)?this._$AA.nextSibling.data=e:this.$(P.createTextNode(e)),this._$AH=e}g(e){const{values:t,_$litType$:i}=e,o="number"==typeof i?this._$AC(e):(void 0===i.el&&(i.el=Z.createElement(Y(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===o)this._$AH.p(t);else{const e=new Q(o,this),i=e.u(this.options);e.p(t),this.$(i),this._$AH=e}}_$AC(e){let t=K.get(e.strings);return void 0===t&&K.set(e.strings,t=new Z(e)),t}T(e){j(this._$AH)||(this._$AH=[],this._$AR());const t=this._$AH;let i,o=0;for(const a of e)o===t.length?t.push(i=new ee(this.k(O()),this.k(O()),this,this.options)):i=t[o],i._$AI(a),o++;o<t.length&&(this._$AR(i&&i._$AB.nextSibling,o),t.length=o)}_$AR(e=this._$AA.nextSibling,t){for(this._$AP?.(!1,!0,t);e&&e!==this._$AB;){const t=e.nextSibling;e.remove(),e=t}}setConnected(e){void 0===this._$AM&&(this._$Cv=e,this._$AP?.(e))}}class te{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(e,t,i,o,a){this.type=1,this._$AH=W,this._$AN=void 0,this.element=e,this.name=t,this._$AM=o,this.options=a,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=W}_$AI(e,t=this,i,o){const a=this.strings;let s=!1;if(void 0===a)e=G(this,e,t,0),s=!U(e)||e!==this._$AH&&e!==q,s&&(this._$AH=e);else{const o=e;let n,r;for(e=a[0],n=0;n<a.length-1;n++)r=G(this,o[i+n],t,n),r===q&&(r=this._$AH[n]),s||=!U(r)||r!==this._$AH[n],r===W?e=W:e!==W&&(e+=(r??"")+a[n+1]),this._$AH[n]=r}s&&!o&&this.O(e)}O(e){e===W?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}}class ie extends te{constructor(){super(...arguments),this.type=3}O(e){this.element[this.name]=e===W?void 0:e}}class oe extends te{constructor(){super(...arguments),this.type=4}O(e){this.element.toggleAttribute(this.name,!!e&&e!==W)}}class ae extends te{constructor(e,t,i,o,a){super(e,t,i,o,a),this.type=5}_$AI(e,t=this){if((e=G(this,e,t,0)??W)===q)return;const i=this._$AH,o=e===W&&i!==W||e.capture!==i.capture||e.once!==i.once||e.passive!==i.passive,a=e!==W&&(i===W||o);o&&this.element.removeEventListener(this.name,this,i),a&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,e):this._$AH.handleEvent(e)}}class se{constructor(e,t,i){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(e){G(this,e)}}const ne={j:E,P:S,A:z,C:1,M:J,L:Q,R:M,V:G,D:ee,I:te,H:oe,N:ae,U:ie,B:se},re=A.litHtmlPolyfillSupport;re?.(Z,ee),(A.litHtmlVersions??=[]).push("3.1.0");
+const A=globalThis,k=A.trustedTypes,C=k?k.createPolicy("lit-html",{createHTML:e=>e}):void 0,E="$lit$",S=`lit$${(Math.random()+"").slice(9)}$`,z="?"+S,I=`<${z}>`,P=document,O=()=>P.createComment(""),U=e=>null===e||"object"!=typeof e&&"function"!=typeof e,M=Array.isArray,j=e=>M(e)||"function"==typeof e?.[Symbol.iterator],T="[ \t\n\f\r]",V=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,N=/-->/g,R=/>/g,H=RegExp(`>|${T}(?:([^\\s"'>=/]+)(${T}*=${T}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),D=/'/g,B=/"/g,L=/^(?:script|style|textarea|title)$/i,F=(e=>(t,...i)=>({_$litType$:e,strings:t,values:i}))(1),q=Symbol.for("lit-noChange"),W=Symbol.for("lit-nothing"),K=new WeakMap,X=P.createTreeWalker(P,129);function J(e,t){if(!Array.isArray(e)||!e.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==C?C.createHTML(t):t}const Y=(e,t)=>{const i=e.length-1,o=[];let a,s=2===t?"<svg>":"",n=V;for(let t=0;t<i;t++){const i=e[t];let r,l,c=-1,d=0;for(;d<i.length&&(n.lastIndex=d,l=n.exec(i),null!==l);)d=n.lastIndex,n===V?"!--"===l[1]?n=N:void 0!==l[1]?n=R:void 0!==l[2]?(L.test(l[2])&&(a=RegExp("</"+l[2],"g")),n=H):void 0!==l[3]&&(n=H):n===H?">"===l[0]?(n=a??V,c=-1):void 0===l[1]?c=-2:(c=n.lastIndex-l[2].length,r=l[1],n=void 0===l[3]?H:'"'===l[3]?B:D):n===B||n===D?n=H:n===N||n===R?n=V:(n=H,a=void 0);const h=n===H&&e[t+1].startsWith("/>")?" ":"";s+=n===V?i+I:c>=0?(o.push(r),i.slice(0,c)+E+i.slice(c)+S+h):i+S+(-2===c?t:h)}return[J(e,s+(e[i]||"<?>")+(2===t?"</svg>":"")),o]};class Z{constructor({strings:e,_$litType$:t},i){let o;this.parts=[];let a=0,s=0;const n=e.length-1,r=this.parts,[l,c]=Y(e,t);if(this.el=Z.createElement(l,i),X.currentNode=this.el.content,2===t){const e=this.el.content.firstChild;e.replaceWith(...e.childNodes)}for(;null!==(o=X.nextNode())&&r.length<n;){if(1===o.nodeType){if(o.hasAttributes())for(const e of o.getAttributeNames())if(e.endsWith(E)){const t=c[s++],i=o.getAttribute(e).split(S),n=/([.?@])?(.*)/.exec(t);r.push({type:1,index:a,name:n[2],strings:i,ctor:"."===n[1]?ie:"?"===n[1]?oe:"@"===n[1]?ae:te}),o.removeAttribute(e)}else e.startsWith(S)&&(r.push({type:6,index:a}),o.removeAttribute(e));if(L.test(o.tagName)){const e=o.textContent.split(S),t=e.length-1;if(t>0){o.textContent=k?k.emptyScript:"";for(let i=0;i<t;i++)o.append(e[i],O()),X.nextNode(),r.push({type:2,index:++a});o.append(e[t],O())}}}else if(8===o.nodeType)if(o.data===z)r.push({type:2,index:a});else{let e=-1;for(;-1!==(e=o.data.indexOf(S,e+1));)r.push({type:7,index:a}),e+=S.length-1}a++}}static createElement(e,t){const i=P.createElement("template");return i.innerHTML=e,i}}function G(e,t,i=e,o){if(t===q)return t;let a=void 0!==o?i._$Co?.[o]:i._$Cl;const s=U(t)?void 0:t._$litDirective$;return a?.constructor!==s&&(a?._$AO?.(!1),void 0===s?a=void 0:(a=new s(e),a._$AT(e,i,o)),void 0!==o?(i._$Co??=[])[o]=a:i._$Cl=a),void 0!==a&&(t=G(e,a._$AS(e,t.values),a,o)),t}class Q{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){const{el:{content:t},parts:i}=this._$AD,o=(e?.creationScope??P).importNode(t,!0);X.currentNode=o;let a=X.nextNode(),s=0,n=0,r=i[0];for(;void 0!==r;){if(s===r.index){let t;2===r.type?t=new ee(a,a.nextSibling,this,e):1===r.type?t=new r.ctor(a,r.name,r.strings,this,e):6===r.type&&(t=new se(a,this,e)),this._$AV.push(t),r=i[++n]}s!==r?.index&&(a=X.nextNode(),s++)}return X.currentNode=P,o}p(e){let t=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(e,i,t),t+=i.strings.length-2):i._$AI(e[t])),t++}}class ee{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(e,t,i,o){this.type=2,this._$AH=W,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=i,this.options=o,this._$Cv=o?.isConnected??!0}get parentNode(){let e=this._$AA.parentNode;const t=this._$AM;return void 0!==t&&11===e?.nodeType&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=G(this,e,t),U(e)?e===W||null==e||""===e?(this._$AH!==W&&this._$AR(),this._$AH=W):e!==this._$AH&&e!==q&&this._(e):void 0!==e._$litType$?this.g(e):void 0!==e.nodeType?this.$(e):j(e)?this.T(e):this._(e)}k(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}$(e){this._$AH!==e&&(this._$AR(),this._$AH=this.k(e))}_(e){this._$AH!==W&&U(this._$AH)?this._$AA.nextSibling.data=e:this.$(P.createTextNode(e)),this._$AH=e}g(e){const{values:t,_$litType$:i}=e,o="number"==typeof i?this._$AC(e):(void 0===i.el&&(i.el=Z.createElement(J(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===o)this._$AH.p(t);else{const e=new Q(o,this),i=e.u(this.options);e.p(t),this.$(i),this._$AH=e}}_$AC(e){let t=K.get(e.strings);return void 0===t&&K.set(e.strings,t=new Z(e)),t}T(e){M(this._$AH)||(this._$AH=[],this._$AR());const t=this._$AH;let i,o=0;for(const a of e)o===t.length?t.push(i=new ee(this.k(O()),this.k(O()),this,this.options)):i=t[o],i._$AI(a),o++;o<t.length&&(this._$AR(i&&i._$AB.nextSibling,o),t.length=o)}_$AR(e=this._$AA.nextSibling,t){for(this._$AP?.(!1,!0,t);e&&e!==this._$AB;){const t=e.nextSibling;e.remove(),e=t}}setConnected(e){void 0===this._$AM&&(this._$Cv=e,this._$AP?.(e))}}class te{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(e,t,i,o,a){this.type=1,this._$AH=W,this._$AN=void 0,this.element=e,this.name=t,this._$AM=o,this.options=a,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=W}_$AI(e,t=this,i,o){const a=this.strings;let s=!1;if(void 0===a)e=G(this,e,t,0),s=!U(e)||e!==this._$AH&&e!==q,s&&(this._$AH=e);else{const o=e;let n,r;for(e=a[0],n=0;n<a.length-1;n++)r=G(this,o[i+n],t,n),r===q&&(r=this._$AH[n]),s||=!U(r)||r!==this._$AH[n],r===W?e=W:e!==W&&(e+=(r??"")+a[n+1]),this._$AH[n]=r}s&&!o&&this.O(e)}O(e){e===W?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}}class ie extends te{constructor(){super(...arguments),this.type=3}O(e){this.element[this.name]=e===W?void 0:e}}class oe extends te{constructor(){super(...arguments),this.type=4}O(e){this.element.toggleAttribute(this.name,!!e&&e!==W)}}class ae extends te{constructor(e,t,i,o,a){super(e,t,i,o,a),this.type=5}_$AI(e,t=this){if((e=G(this,e,t,0)??W)===q)return;const i=this._$AH,o=e===W&&i!==W||e.capture!==i.capture||e.once!==i.once||e.passive!==i.passive,a=e!==W&&(i===W||o);o&&this.element.removeEventListener(this.name,this,i),a&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,e):this._$AH.handleEvent(e)}}class se{constructor(e,t,i){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(e){G(this,e)}}const ne={j:E,P:S,A:z,C:1,M:Y,L:Q,R:j,V:G,D:ee,I:te,H:oe,N:ae,U:ie,B:se},re=A.litHtmlPolyfillSupport;re?.(Z,ee),(A.litHtmlVersions??=[]).push("3.1.0");
 /**
      * @license
      * Copyright 2017 Google LLC
@@ -47,12 +47,12 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
      * @license
      * Copyright 2020 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */const{D:ve}=ne,_e=()=>document.createComment(""),ye=(e,t,i)=>{const o=e._$AA.parentNode,a=void 0===t?e._$AB:t._$AA;if(void 0===i){const t=o.insertBefore(_e(),a),s=o.insertBefore(_e(),a);i=new ve(t,s,e,e.options)}else{const t=i._$AB.nextSibling,s=i._$AM,n=s!==e;if(n){let t;i._$AQ?.(e),i._$AM=e,void 0!==i._$AP&&(t=e._$AU)!==s._$AU&&i._$AP(t)}if(t!==a||n){let e=i._$AA;for(;e!==t;){const t=e.nextSibling;o.insertBefore(e,a),e=t}}}return i},be=(e,t,i=e)=>(e._$AI(t,i),e),$e={},xe=e=>{e._$AP?.(!1,!0);let t=e._$AA;const i=e._$AB.nextSibling;for(;t!==i;){const e=t.nextSibling;t.remove(),t=e}},we=(e,t,i)=>{const o=new Map;for(let a=t;a<=i;a++)o.set(e[a],a);return o},Ae=(e=>(...t)=>({_$litDirective$:e,values:t}))(class extends me{constructor(e){if(super(e),e.type!==ge)throw Error("repeat() can only be used in text expressions")}ht(e,t,i){let o;void 0===i?i=t:void 0!==t&&(o=t);const a=[],s=[];let n=0;for(const t of e)a[n]=o?o(t,n):n,s[n]=i(t,n),n++;return{values:s,keys:a}}render(e,t,i){return this.ht(e,t,i).values}update(e,[t,i,o]){const a=(e=>e._$AH)(e),{values:s,keys:n}=this.ht(t,i,o);if(!Array.isArray(a))return this.dt=n,s;const r=this.dt??=[],l=[];let c,d,h=0,u=a.length-1,p=0,f=s.length-1;for(;h<=u&&p<=f;)if(null===a[h])h++;else if(null===a[u])u--;else if(r[h]===n[p])l[p]=be(a[h],s[p]),h++,p++;else if(r[u]===n[f])l[f]=be(a[u],s[f]),u--,f--;else if(r[h]===n[f])l[f]=be(a[h],s[f]),ye(e,l[f+1],a[h]),h++,f--;else if(r[u]===n[p])l[p]=be(a[u],s[p]),ye(e,a[h],a[u]),u--,p++;else if(void 0===c&&(c=we(n,p,f),d=we(r,h,u)),c.has(r[h]))if(c.has(r[u])){const t=d.get(n[p]),i=void 0!==t?a[t]:null;if(null===i){const t=ye(e,a[h]);be(t,s[p]),l[p]=t}else l[p]=be(i,s[p]),ye(e,a[h],i),a[t]=null;p++}else xe(a[u]),u--;else xe(a[h]),h++;for(;p<=f;){const t=ye(e,l[f+1]);be(t,s[p]),l[p++]=t}for(;h<=u;){const e=a[h++];null!==e&&xe(e)}return this.dt=n,((e,t=$e)=>{e._$AH=t})(e,l),q}}),ke=["sensor"],Ce=["binary_sensor"],Ee=["cover"],Se=["climate"],ze=["camera"],Ie=["light","switch","fan","media_player","lock","vacuum","cover","script","scene"],Pe={sensor:["temperature","humidity","power","energy","battery","illuminance"],binary_sensor:["motion","window","door","moisture","smoke","gas","occupancy"],cover:["garage","door","window","blind","curtain","shutter"]},Oe={alarm_control_panel:{on:"mdi:alarm-light",off:"mdi:alarm-light-off"},siren:{on:"mdi:bell-ring",off:"mdi:bell-off"},lock:{on:"mdi:lock-open",off:"mdi:lock"},light:{on:"mdi:lightbulb",off:"mdi:lightbulb-off"},media_player:{on:"mdi:cast",off:"mdi:cast-off"},climate:{on:"mdi:thermostat",off:"mdi:thermostat-cog"},humidifier:{on:"mdi:air-humidifier",off:"mdi:air-humidifier-off"},switch:{on:"mdi:toggle-switch",off:"mdi:toggle-switch-off",switch:{on:"mdi:toggle-switch",off:"mdi:toggle-switch-off"},outlet:{on:"mdi:power-plug",off:"mdi:power-plug-off"}},vacuum:{on:"mdi:robot-vacuum",off:"mdi:robot-vacuum-off"},lawn_mower:{on:"mdi:robot-mower",off:"mdi:robot-mower"},fan:{on:"mdi:fan",off:"mdi:fan-off"},cover:{on:"mdi:garage-open",off:"mdi:garage",garage:{on:"mdi:garage-open",off:"mdi:garage"},door:{on:"mdi:door-open",off:"mdi:door-closed"},gate:{on:"mdi:gate-open",off:"mdi:gate"},blind:{on:"mdi:blinds-open",off:"mdi:blinds"},curtain:{on:"mdi:curtains",off:"mdi:curtains-closed"},damper:{on:"mdi:valve-open",off:"mdi:valve-closed"},awning:{on:"mdi:awning-outline",off:"mdi:awning-outline"},shutter:{on:"mdi:window-shutter-open",off:"mdi:window-shutter"},shade:{on:"mdi:roller-shade",off:"mdi:roller-shade-closed"},window:{on:"mdi:window-open",off:"mdi:window-closed"}},binary_sensor:{on:"mdi:power-off",off:"mdi:power-off",motion:{on:"mdi:motion-sensor",off:"mdi:motion-sensor-off"},moisture:{on:"mdi:water-alert",off:"mdi:water-off"},window:{on:"mdi:window-open",off:"mdi:window-closed"},door:{on:"mdi:door-open",off:"mdi:door-closed"},lock:{on:"mdi:lock-open",off:"mdi:lock"},presence:{on:"mdi:home-outline",off:"mdi:home-export-outline"},occupancy:{on:"mdi:seat",off:"mdi:seat-outline"},vibration:{on:"mdi:vibrate",off:"mdi:vibrate-off"},opening:{on:"mdi:shield-lock-open",off:"mdi:shield-lock"},garage_door:{on:"mdi:garage-open",off:"mdi:garage"},problem:{on:"mdi:alert-circle-outline",off:"mdi:alert-circle-check-outline"},smoke:{on:"mdi:smoke-detector-outline",off:"mdi:smoke-detector-off-outline"},running:{on:"mdi:play",off:"mdi:pause"},plug:{on:"mdi:power-plug",off:"mdi:power-plug-off"},power:{on:"mdi:power",off:"mdi:power-off"},battery:{on:"mdi:battery-alert",off:"mdi:battery"},battery_charging:{on:"mdi:battery-charging",off:"mdi:battery-check"},gas:{on:"mdi:gas-station-outline",off:"mdi:gas-station-off-outline"},carbon_monoxide:{on:"mdi:molecule-co",off:"mdi:molecule-co"},cold:{on:"mdi:snowflake",off:"mdi:snowflake-off"},heat:{on:"mdi:weather-sunny",off:"mdi:weather-sunny-off"},connectivity:{on:"mdi:connection",off:"mdi:connection"},safety:{on:"mdi:shield-alert-outline",off:"mdi:shield-check-outline"},sound:{on:"mdi:volume-high",off:"mdi:volume-off"},update:{on:"mdi:autorenew",off:"mdi:autorenew-off"},tamper:{on:"mdi:shield-home",off:"mdi:shield-home"},light:{on:"mdi:lightbulb-outline",off:"mdi:lightbulb-off-outline"},moving:{on:"mdi:car",off:"mdi:car-off"}},person:{on:"mdi:account",off:"mdi:account-off"},device_tracker:{on:"mdi:account",off:"mdi:account-off"},valve:{on:"mdi:valve",off:"mdi:valve-closed"},water_heater:{on:"mdi:water-boiler",off:"mdi:water-pump-off"},remote:{on:"mdi:remote",off:"mdi:remote-off"},update:{on:"mdi:autorenew",off:"mdi:autorenew-off"},air_quality:{on:"mdi:air-filter",off:"mdi:air-filter"},camera:{on:"mdi:camera",off:"mdi:camera-off"},calendar:{on:"mdi:calendar",off:"mdi:calendar-remove"},scene:{on:"mdi:movie",off:"mdi:movie-off"},sensor:{on:"mdi:gauge",off:"mdi:gauge"},script:{on:"mdi:script-text",off:"mdi:script-text"}},Ue=["unavailable","unknown"],je=["off","closed","idle"];
+     */const{D:ve}=ne,_e=()=>document.createComment(""),ye=(e,t,i)=>{const o=e._$AA.parentNode,a=void 0===t?e._$AB:t._$AA;if(void 0===i){const t=o.insertBefore(_e(),a),s=o.insertBefore(_e(),a);i=new ve(t,s,e,e.options)}else{const t=i._$AB.nextSibling,s=i._$AM,n=s!==e;if(n){let t;i._$AQ?.(e),i._$AM=e,void 0!==i._$AP&&(t=e._$AU)!==s._$AU&&i._$AP(t)}if(t!==a||n){let e=i._$AA;for(;e!==t;){const t=e.nextSibling;o.insertBefore(e,a),e=t}}}return i},be=(e,t,i=e)=>(e._$AI(t,i),e),$e={},xe=e=>{e._$AP?.(!1,!0);let t=e._$AA;const i=e._$AB.nextSibling;for(;t!==i;){const e=t.nextSibling;t.remove(),t=e}},we=(e,t,i)=>{const o=new Map;for(let a=t;a<=i;a++)o.set(e[a],a);return o},Ae=(e=>(...t)=>({_$litDirective$:e,values:t}))(class extends me{constructor(e){if(super(e),e.type!==ge)throw Error("repeat() can only be used in text expressions")}ht(e,t,i){let o;void 0===i?i=t:void 0!==t&&(o=t);const a=[],s=[];let n=0;for(const t of e)a[n]=o?o(t,n):n,s[n]=i(t,n),n++;return{values:s,keys:a}}render(e,t,i){return this.ht(e,t,i).values}update(e,[t,i,o]){const a=(e=>e._$AH)(e),{values:s,keys:n}=this.ht(t,i,o);if(!Array.isArray(a))return this.dt=n,s;const r=this.dt??=[],l=[];let c,d,h=0,u=a.length-1,p=0,f=s.length-1;for(;h<=u&&p<=f;)if(null===a[h])h++;else if(null===a[u])u--;else if(r[h]===n[p])l[p]=be(a[h],s[p]),h++,p++;else if(r[u]===n[f])l[f]=be(a[u],s[f]),u--,f--;else if(r[h]===n[f])l[f]=be(a[h],s[f]),ye(e,l[f+1],a[h]),h++,f--;else if(r[u]===n[p])l[p]=be(a[u],s[p]),ye(e,a[h],a[u]),u--,p++;else if(void 0===c&&(c=we(n,p,f),d=we(r,h,u)),c.has(r[h]))if(c.has(r[u])){const t=d.get(n[p]),i=void 0!==t?a[t]:null;if(null===i){const t=ye(e,a[h]);be(t,s[p]),l[p]=t}else l[p]=be(i,s[p]),ye(e,a[h],i),a[t]=null;p++}else xe(a[u]),u--;else xe(a[h]),h++;for(;p<=f;){const t=ye(e,l[f+1]);be(t,s[p]),l[p++]=t}for(;h<=u;){const e=a[h++];null!==e&&xe(e)}return this.dt=n,((e,t=$e)=>{e._$AH=t})(e,l),q}}),ke=["sensor"],Ce=["binary_sensor"],Ee=["cover"],Se=["climate"],ze=["camera"],Ie=["light","switch","fan","media_player","lock","vacuum","cover","script","scene"],Pe={sensor:["temperature","humidity","power","energy","battery","illuminance"],binary_sensor:["motion","window","door","moisture","smoke","gas","occupancy"],cover:["garage","door","window","blind","curtain","shutter"]},Oe={alarm_control_panel:{on:"mdi:alarm-light",off:"mdi:alarm-light-off"},siren:{on:"mdi:bell-ring",off:"mdi:bell-off"},lock:{on:"mdi:lock-open",off:"mdi:lock"},light:{on:"mdi:lightbulb",off:"mdi:lightbulb-off"},media_player:{on:"mdi:cast",off:"mdi:cast-off"},climate:{on:"mdi:thermostat",off:"mdi:thermostat-cog"},humidifier:{on:"mdi:air-humidifier",off:"mdi:air-humidifier-off"},switch:{on:"mdi:toggle-switch",off:"mdi:toggle-switch-off",switch:{on:"mdi:toggle-switch",off:"mdi:toggle-switch-off"},outlet:{on:"mdi:power-plug",off:"mdi:power-plug-off"}},vacuum:{on:"mdi:robot-vacuum",off:"mdi:robot-vacuum-off"},lawn_mower:{on:"mdi:robot-mower",off:"mdi:robot-mower"},fan:{on:"mdi:fan",off:"mdi:fan-off"},cover:{on:"mdi:garage-open",off:"mdi:garage",garage:{on:"mdi:garage-open",off:"mdi:garage"},door:{on:"mdi:door-open",off:"mdi:door-closed"},gate:{on:"mdi:gate-open",off:"mdi:gate"},blind:{on:"mdi:blinds-open",off:"mdi:blinds"},curtain:{on:"mdi:curtains",off:"mdi:curtains-closed"},damper:{on:"mdi:valve-open",off:"mdi:valve-closed"},awning:{on:"mdi:awning-outline",off:"mdi:awning-outline"},shutter:{on:"mdi:window-shutter-open",off:"mdi:window-shutter"},shade:{on:"mdi:roller-shade",off:"mdi:roller-shade-closed"},window:{on:"mdi:window-open",off:"mdi:window-closed"}},binary_sensor:{on:"mdi:power-off",off:"mdi:power-off",motion:{on:"mdi:motion-sensor",off:"mdi:motion-sensor-off"},moisture:{on:"mdi:water-alert",off:"mdi:water-off"},window:{on:"mdi:window-open",off:"mdi:window-closed"},door:{on:"mdi:door-open",off:"mdi:door-closed"},lock:{on:"mdi:lock-open",off:"mdi:lock"},presence:{on:"mdi:home-outline",off:"mdi:home-export-outline"},occupancy:{on:"mdi:seat",off:"mdi:seat-outline"},vibration:{on:"mdi:vibrate",off:"mdi:vibrate-off"},opening:{on:"mdi:shield-lock-open",off:"mdi:shield-lock"},garage_door:{on:"mdi:garage-open",off:"mdi:garage"},problem:{on:"mdi:alert-circle-outline",off:"mdi:alert-circle-check-outline"},smoke:{on:"mdi:smoke-detector-outline",off:"mdi:smoke-detector-off-outline"},running:{on:"mdi:play",off:"mdi:pause"},plug:{on:"mdi:power-plug",off:"mdi:power-plug-off"},power:{on:"mdi:power",off:"mdi:power-off"},battery:{on:"mdi:battery-alert",off:"mdi:battery"},battery_charging:{on:"mdi:battery-charging",off:"mdi:battery-check"},gas:{on:"mdi:gas-station-outline",off:"mdi:gas-station-off-outline"},carbon_monoxide:{on:"mdi:molecule-co",off:"mdi:molecule-co"},cold:{on:"mdi:snowflake",off:"mdi:snowflake-off"},heat:{on:"mdi:weather-sunny",off:"mdi:weather-sunny-off"},connectivity:{on:"mdi:connection",off:"mdi:connection"},safety:{on:"mdi:shield-alert-outline",off:"mdi:shield-check-outline"},sound:{on:"mdi:volume-high",off:"mdi:volume-off"},update:{on:"mdi:autorenew",off:"mdi:autorenew-off"},tamper:{on:"mdi:shield-home",off:"mdi:shield-home"},light:{on:"mdi:lightbulb-outline",off:"mdi:lightbulb-off-outline"},moving:{on:"mdi:car",off:"mdi:car-off"}},person:{on:"mdi:account",off:"mdi:account-off"},device_tracker:{on:"mdi:account",off:"mdi:account-off"},valve:{on:"mdi:valve",off:"mdi:valve-closed"},water_heater:{on:"mdi:water-boiler",off:"mdi:water-pump-off"},remote:{on:"mdi:remote",off:"mdi:remote-off"},update:{on:"mdi:autorenew",off:"mdi:autorenew-off"},air_quality:{on:"mdi:air-filter",off:"mdi:air-filter"},camera:{on:"mdi:camera",off:"mdi:camera-off"},calendar:{on:"mdi:calendar",off:"mdi:calendar-remove"},scene:{on:"mdi:movie",off:"mdi:movie-off"},sensor:{on:"mdi:gauge",off:"mdi:gauge"},script:{on:"mdi:script-text",off:"mdi:script-text"}},Ue=["unavailable","unknown"],Me=["off","closed","idle"];
 /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */let Me=class extends le{constructor(){super(...arguments),this._areas={}}async connectedCallback(){super.connectedCallback(),await this._loadAreas(),this.requestUpdate()}updated(e){super.updated(e),e.has("hass")&&this.hass&&0===Object.keys(this._areas).length&&this._loadAreas().then((()=>this.requestUpdate()))}async _loadAreas(){var e;try{if(null===(e=this.hass)||void 0===e?void 0:e.connection){const e=await this.hass.connection.sendMessagePromise({type:"config/area_registry/list"});this._areas={},e.forEach((e=>{this._areas[e.area_id]=e}))}}catch(e){console.error("Failed to load areas:",e),this._areas={}}}setConfig(e){if(!e.area)throw new Error("Please define an area");this._config=Object.assign({display_type:"compact",features_position:"bottom",features:[],alert_classes:Pe.binary_sensor,sensor_classes:Pe.sensor,exclude_entities:[]},e)}_getAreaEntities(){var e;if(!(null===(e=this._config)||void 0===e?void 0:e.area))return[];console.log(`Looking for entities in area: ${this._config.area}`);const t=Object.entries(this.hass.states||{}).filter((([e,t])=>{var i,o,a,s;if(null===(o=null===(i=this._config)||void 0===i?void 0:i.exclude_entities)||void 0===o?void 0:o.includes(e))return!1;const[n]=e.split(".");if(!(Ie.includes(n)||ke.includes(n)||Ce.includes(n)||Ee.includes(n)||Se.includes(n)||ze.includes(n)))return!1;return(null===(a=t.attributes)||void 0===a?void 0:a.area_id)===(null===(s=this._config)||void 0===s?void 0:s.area)})).map((([e,t])=>({entityId:e,state:t.state,attributes:t.attributes,domain:e.split(".")[0],name:t.attributes.friendly_name||e.split(".")[1],deviceClass:t.attributes.device_class||""})));console.log(`Found ${t.length} entities in area ${this._config.area}:`,t);const i=t.filter((e=>"binary_sensor"===e.domain)),o=t.filter((e=>"sensor"===e.domain));return console.log(`Binary sensors: ${i.length}`,i),console.log(`Sensors: ${o.length}`,o),t}_getDomainIcon(e,t,i){if(!(e in Oe))return"mdi:help-circle";const o=Oe[e];if(!o)return"mdi:help-circle";const a=!je.includes(t)&&!Ue.includes(t);if(i&&"object"==typeof o&&i in o){const e=o[i];if(e&&"object"==typeof e&&"on"in e&&"off"in e)return a?e.on:e.off}return"object"==typeof o&&"on"in o&&"off"in o?a?o.on:o.off:"mdi:help-circle"}_getEntitiesByDomain(){const e=this._getAreaEntities(),t={};return e.forEach((e=>{t[e.domain]||(t[e.domain]=[]),t[e.domain].push(e)})),t}_getActiveEntities(e,t){return(this._getEntitiesByDomain()[e]||[]).filter((e=>(!t||e.deviceClass===t)&&(!Ue.includes(e.state)&&!je.includes(e.state))))}_renderButtons(){const e=this._getEntitiesByDomain(),t=Ie.filter((t=>t in e&&e[t].length>0));return F`
+     */let je=class extends le{constructor(){super(...arguments),this._areas={}}async connectedCallback(){super.connectedCallback(),await this._loadAreas(),this.requestUpdate()}updated(e){super.updated(e),e.has("hass")&&this.hass&&0===Object.keys(this._areas).length&&this._loadAreas().then((()=>this.requestUpdate()))}async _loadAreas(){var e;try{if(null===(e=this.hass)||void 0===e?void 0:e.connection){const e=await this.hass.connection.sendMessagePromise({type:"config/area_registry/list"});this._areas={},e.forEach((e=>{this._areas[e.area_id]=e}))}}catch(e){console.error("Failed to load areas:",e),this._areas={}}}setConfig(e){if(!e.area)throw new Error("Please define an area");this._config=Object.assign({display_type:"compact",features_position:"bottom",features:[],alert_classes:Pe.binary_sensor,sensor_classes:Pe.sensor,exclude_entities:[]},e)}_getAreaEntities(){var e;if(!(null===(e=this._config)||void 0===e?void 0:e.area))return[];console.log(`Looking for entities in area: ${this._config.area}`);const t=Object.entries(this.hass.states||{}).filter((([e,t])=>{var i,o,a,s;if(null===(o=null===(i=this._config)||void 0===i?void 0:i.exclude_entities)||void 0===o?void 0:o.includes(e))return!1;const[n]=e.split(".");if(!(Ie.includes(n)||ke.includes(n)||Ce.includes(n)||Ee.includes(n)||Se.includes(n)||ze.includes(n)))return!1;return(null===(a=t.attributes)||void 0===a?void 0:a.area_id)===(null===(s=this._config)||void 0===s?void 0:s.area)})).map((([e,t])=>({entityId:e,state:t.state,attributes:t.attributes,domain:e.split(".")[0],name:t.attributes.friendly_name||e.split(".")[1],deviceClass:t.attributes.device_class||""})));console.log(`Found ${t.length} entities in area ${this._config.area}:`,t);const i=t.filter((e=>"binary_sensor"===e.domain)),o=t.filter((e=>"sensor"===e.domain));return console.log(`Binary sensors: ${i.length}`,i),console.log(`Sensors: ${o.length}`,o),t}_getDomainIcon(e,t,i){if(!(e in Oe))return"mdi:help-circle";const o=Oe[e];if(!o)return"mdi:help-circle";const a=!Me.includes(t)&&!Ue.includes(t);if(i&&"object"==typeof o&&i in o){const e=o[i];if(e&&"object"==typeof e&&"on"in e&&"off"in e)return a?e.on:e.off}return"object"==typeof o&&"on"in o&&"off"in o?a?o.on:o.off:"mdi:help-circle"}_getEntitiesByDomain(){const e=this._getAreaEntities(),t={};return e.forEach((e=>{t[e.domain]||(t[e.domain]=[]),t[e.domain].push(e)})),t}_getActiveEntities(e,t){return(this._getEntitiesByDomain()[e]||[]).filter((e=>(!t||e.deviceClass===t)&&(!Ue.includes(e.state)&&!Me.includes(e.state))))}_renderButtons(){const e=this._getEntitiesByDomain(),t=Ie.filter((t=>t in e&&e[t].length>0));return F`
       <div class="buttons">
         ${Ae(t,(e=>e),(e=>{const t=this._getActiveEntities(e).length,i=t>0;return F`
               <div class="icon-with-count">
@@ -84,7 +84,7 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
           </div>
         `))}
       </div>
-    `}_renderAreaControls(){if(!this._config)return W;const e=[];if(this._config.light_entity&&this.hass.states[this._config.light_entity]){const t=this.hass.states[this._config.light_entity],i="on"===t.state;e.push({icon:i?"mdi:lightbulb":"mdi:lightbulb-outline",name:t.attributes.friendly_name||"Light",entityId:this._config.light_entity,isOn:i,color:i?"#ffc107":"#757575"})}if(this._config.climate_entity&&this.hass.states[this._config.climate_entity]){const t=this.hass.states[this._config.climate_entity],i="off"!==t.state,o=t.state;let a="mdi:thermostat",s="#757575";"heat"===o?(a="mdi:fire",s="#f44336"):"cool"===o?(a="mdi:snowflake",s="#2196f3"):"auto"===o&&(a="mdi:thermostat-auto",s="#4caf50"),e.push({icon:a,name:t.attributes.friendly_name||"Climate",entityId:this._config.climate_entity,isOn:i,color:s})}if(this._config.switch_entity&&this.hass.states[this._config.switch_entity]){const t=this.hass.states[this._config.switch_entity],i="on"===t.state;e.push({icon:i?"mdi:toggle-switch":"mdi:toggle-switch-off",name:t.attributes.friendly_name||"Switch",entityId:this._config.switch_entity,isOn:i,color:i?"#4caf50":"#757575"})}if(this._config.fan_entity&&this.hass.states[this._config.fan_entity]){const t=this.hass.states[this._config.fan_entity],i="on"===t.state;e.push({icon:i?"mdi:fan":"mdi:fan-off",name:t.attributes.friendly_name||"Fan",entityId:this._config.fan_entity,isOn:i,color:i?"#03a9f4":"#757575"})}return this._config.additional_controls&&this._config.additional_controls.forEach((t=>{const i=this.hass.states[t];if(i){const o=t.split(".")[0],a=!je.includes(i.state)&&!Ue.includes(i.state);e.push({icon:this._getDomainIcon(o,i.state),name:i.attributes.friendly_name||t.split(".")[1],entityId:t,isOn:a,color:a?"#2196f3":"#757575"})}})),0===e.length?W:F`
+    `}_renderAreaControls(){if(!this._config)return W;const e=[];if(this._config.light_entity&&this.hass.states[this._config.light_entity]){const t=this.hass.states[this._config.light_entity],i="on"===t.state;e.push({icon:i?"mdi:lightbulb":"mdi:lightbulb-outline",name:t.attributes.friendly_name||"Light",entityId:this._config.light_entity,isOn:i,color:i?"#ffc107":"#757575"})}if(this._config.climate_entity&&this.hass.states[this._config.climate_entity]){const t=this.hass.states[this._config.climate_entity],i="off"!==t.state,o=t.state;let a="mdi:thermostat",s="#757575";"heat"===o?(a="mdi:fire",s="#f44336"):"cool"===o?(a="mdi:snowflake",s="#2196f3"):"auto"===o&&(a="mdi:thermostat-auto",s="#4caf50"),e.push({icon:a,name:t.attributes.friendly_name||"Climate",entityId:this._config.climate_entity,isOn:i,color:s})}if(this._config.switch_entity&&this.hass.states[this._config.switch_entity]){const t=this.hass.states[this._config.switch_entity],i="on"===t.state;e.push({icon:i?"mdi:toggle-switch":"mdi:toggle-switch-off",name:t.attributes.friendly_name||"Switch",entityId:this._config.switch_entity,isOn:i,color:i?"#4caf50":"#757575"})}if(this._config.fan_entity&&this.hass.states[this._config.fan_entity]){const t=this.hass.states[this._config.fan_entity],i="on"===t.state;e.push({icon:i?"mdi:fan":"mdi:fan-off",name:t.attributes.friendly_name||"Fan",entityId:this._config.fan_entity,isOn:i,color:i?"#03a9f4":"#757575"})}return this._config.additional_controls&&this._config.additional_controls.forEach((t=>{const i=this.hass.states[t];if(i){const o=t.split(".")[0],a=!Me.includes(i.state)&&!Ue.includes(i.state);e.push({icon:this._getDomainIcon(o,i.state),name:i.attributes.friendly_name||t.split(".")[1],entityId:t,isOn:a,color:a?"#2196f3":"#757575"})}})),0===e.length?W:F`
       <div class="area-controls">
         ${e.map((e=>F`
           <div class="control-button ${e.isOn?"active":""}" 
@@ -93,13 +93,13 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
           </div>
         `))}
       </div>
-    `}_handleControlClick(e){const t=e.split(".")[0];"climate"===t?this._handleEntityClick(e):this.hass.callService(t,"toggle",{},{entity_id:e})}_handleEntityClick(e){const t=new CustomEvent("hass-more-info",{detail:{entityId:e},bubbles:!0,composed:!0});this.dispatchEvent(t)}_getAreaCameras(){var e;return(null===(e=this._config)||void 0===e?void 0:e.area)?Object.entries(this.hass.states||{}).filter((([e,t])=>{var i,o;const[a]=e.split(".");return"camera"===a&&(null===(i=t.attributes)||void 0===i?void 0:i.area_id)===(null===(o=this._config)||void 0===o?void 0:o.area)})).map((([e,t])=>({entityId:e,name:t.attributes.friendly_name||e.split(".")[1]}))):[]}_getAreaName(){var e,t,i;if(null===(e=this._config)||void 0===e?void 0:e.name)return this._config.name;const o=this._areas[(null===(t=this._config)||void 0===t?void 0:t.area)||""];return(null==o?void 0:o.name)||(null===(i=this._config)||void 0===i?void 0:i.area)||"Unknown Area"}_getAreaIcon(){var e,t;if(null===(e=this._config)||void 0===e?void 0:e.icon)return this._config.icon;const i=this._areas[(null===(t=this._config)||void 0===t?void 0:t.area)||""];return(null==i?void 0:i.icon)||"mdi:home"}_getAreaFilteredEntities(e,t){var i;return(null===(i=this._config)||void 0===i?void 0:i.area)?Object.entries(this.hass.states||{}).filter((([i,o])=>{var a,s;const[n]=i.split(".");return n===e&&((!t||o.attributes.device_class===t)&&(null===(a=o.attributes)||void 0===a?void 0:a.area_id)===(null===(s=this._config)||void 0===s?void 0:s.area))})).map((([e])=>e)):[]}render(){var e;if(!this.hass||!this._config)return W;const t=this._getAreaName(),i=this._getAreaIcon(),o=this._config.area_name_color?`color: ${this._config.area_name_color};`:"",a=this._config.area_icon_color?`color: ${this._config.area_icon_color};`:"",s=this._config.layout||"compact",n=this._config.features_position||"bottom",r=null===(e=this._config.features)||void 0===e?void 0:e.includes("area-controls"),l=this._config.main_entity?this.hass.states[this._config.main_entity]:null,c=l?this._getDomainIcon(l.entity_id.split(".")[0],l.state,l.attributes.device_class):null;return l&&!Ue.includes(l.state)&&(je.includes(l.state)||l.state),F`
+    `}_handleControlClick(e){const t=e.split(".")[0];"climate"===t?this._handleEntityClick(e):this.hass.callService(t,"toggle",{},{entity_id:e})}_handleEntityClick(e){const t=new CustomEvent("hass-more-info",{detail:{entityId:e},bubbles:!0,composed:!0});this.dispatchEvent(t)}_getAreaCameras(){var e;return(null===(e=this._config)||void 0===e?void 0:e.area)?Object.entries(this.hass.states||{}).filter((([e,t])=>{var i,o;const[a]=e.split(".");return"camera"===a&&(null===(i=t.attributes)||void 0===i?void 0:i.area_id)===(null===(o=this._config)||void 0===o?void 0:o.area)})).map((([e,t])=>({entityId:e,name:t.attributes.friendly_name||e.split(".")[1]}))):[]}_getAreaName(){var e,t,i;if(null===(e=this._config)||void 0===e?void 0:e.name)return this._config.name;const o=this._areas[(null===(t=this._config)||void 0===t?void 0:t.area)||""];return(null==o?void 0:o.name)||(null===(i=this._config)||void 0===i?void 0:i.area)||"Unknown Area"}_getAreaIcon(){var e,t;if(null===(e=this._config)||void 0===e?void 0:e.icon)return this._config.icon;const i=this._areas[(null===(t=this._config)||void 0===t?void 0:t.area)||""];return(null==i?void 0:i.icon)||"mdi:home"}_getAreaFilteredEntities(e,t){var i;return(null===(i=this._config)||void 0===i?void 0:i.area)?Object.entries(this.hass.states||{}).filter((([i,o])=>{var a,s;const[n]=i.split(".");return n===e&&((!t||o.attributes.device_class===t)&&(null===(a=o.attributes)||void 0===a?void 0:a.area_id)===(null===(s=this._config)||void 0===s?void 0:s.area))})).map((([e])=>e)):[]}render(){var e;if(!this.hass||!this._config)return W;const t=this._getAreaName(),i=this._getAreaIcon(),o=this._config.area_name_color?`color: ${this._config.area_name_color};`:"",a=this._config.area_icon_color?`color: ${this._config.area_icon_color};`:"",s=this._config.layout||"compact",n=this._config.features_position||"bottom",r=null===(e=this._config.features)||void 0===e?void 0:e.includes("area-controls"),l=this._config.main_entity?this.hass.states[this._config.main_entity]:null,c=l?this._getDomainIcon(l.entity_id.split(".")[0],l.state,l.attributes.device_class):null;return l&&!Ue.includes(l.state)&&(Me.includes(l.state)||l.state),F`
       <ha-card class="${this._config.display_type||"compact"} layout-${s} features-${n}">
         <div class="content">
           <!-- Large background entity icon -->
           ${c?F`
-            <div class="main-entity-background ${!l||Ue.includes(l.state)||je.includes(l.state)||"unlocked"===l.state?"":"active"} 
-              ${l&&(je.includes(l.state)||"unlocked"===l.state)?"unlocked":""}">
+            <div class="main-entity-background ${!l||Ue.includes(l.state)||Me.includes(l.state)||"unlocked"===l.state?"":"active"} 
+              ${l&&(Me.includes(l.state)||"unlocked"===l.state)?"unlocked":""}">
               <ha-icon 
                 icon="${c}" 
                 @click=${()=>{var e;return(null===(e=this._config)||void 0===e?void 0:e.main_entity)&&this._handleEntityClick(this._config.main_entity)}}
@@ -187,7 +187,7 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
         <ha-icon icon="mdi:power"></ha-icon>
         Toggle All
       </ha-button>
-    `}_handleMoreInfo(){var e;const t=new CustomEvent("hass-more-info",{detail:{entityId:`area.${null===(e=this._config)||void 0===e?void 0:e.area}`},bubbles:!0,composed:!0});this.dispatchEvent(t)}_handleToggleAll(){const e=this._getAreaEntities().filter((e=>Ie.includes(e.domain)));e.forEach((e=>{this.hass.callService(e.domain,"toggle",{},{entity_id:e.entityId})}))}static getConfigElement(){return document.createElement("area-card-elite-editor")}static getStubConfig(){return{area:""}}};var Te,Ne;Me.styles=r`
+    `}_handleMoreInfo(){var e;const t=new CustomEvent("hass-more-info",{detail:{entityId:`area.${null===(e=this._config)||void 0===e?void 0:e.area}`},bubbles:!0,composed:!0});this.dispatchEvent(t)}_handleToggleAll(){const e=this._getAreaEntities().filter((e=>Ie.includes(e.domain)));e.forEach((e=>{this.hass.callService(e.domain,"toggle",{},{entity_id:e.entityId})}))}static getConfigElement(){return document.createElement("area-card-elite-editor")}static getStubConfig(){return{area:""}}};var Te,Ve;je.styles=r`
     ha-card {
       overflow: hidden;
       position: relative;
@@ -1000,164 +1000,6 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
       border-color: var(--primary-color);
     }
 
-    /* Make sure content appears above the background icon */
-    .area-info,
-    .sensors-section,
-    .controls-section,
-    .alerts {
-      position: relative;
-      z-index: 2;
-    }
-
-    /* Large Central Entity Icon - Like your dashboard */
-    .main-entity-background {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 160px;
-      height: 160px;
-      z-index: 1;
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .main-entity-background ha-icon {
-      --mdc-icon-size: 160px;
-      width: 160px;
-      height: 160px;
-      opacity: 0.4;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .main-entity-background ha-icon:hover {
-      opacity: 0.6;
-      transform: scale(1.02);
-    }
-
-    /* Layout exactly like your dashboard */
-    .layout-vertical .content {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      min-height: 140px;
-      padding: 16px;
-    }
-
-    /* Area name at the top - no icon, just name */
-    .layout-vertical .area-info {
-      position: absolute;
-      top: 16px;
-      left: 16px;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-    }
-
-    .layout-vertical .area-icon {
-      display: none; /* Hide area icon in vertical layout */
-    }
-
-    .layout-vertical .area-name {
-      font-size: 1.2em;
-      font-weight: 600;
-      color: var(--primary-text-color);
-      margin: 0;
-    }
-
-    /* Don't show area icon in compact vertical layout */
-    .layout-vertical .area-name ha-icon {
-      display: none;
-    }
-
-    /* Sensors in bottom-left corner exactly like your dashboard */
-    .layout-vertical .area-sensors {
-      position: absolute;
-      bottom: 16px;
-      left: 16px;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .layout-vertical .area-sensors .sensors {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .layout-vertical .area-sensors .sensor {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(var(--rgb-card-background-color), 0.9);
-      backdrop-filter: blur(6px);
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 0.85em;
-      border: 1px solid rgba(var(--rgb-primary-text-color), 0.1);
-    }
-
-    .layout-vertical .area-sensors .sensor ha-icon {
-      --mdc-icon-size: 18px;
-      flex-shrink: 0;
-    }
-
-    .layout-vertical .area-sensors .sensor-value {
-      font-size: 0.85em;
-      font-weight: 500;
-      white-space: nowrap;
-    }
-
-    /* Controls on the right side, centered vertically */
-    .layout-vertical.features-right .controls-section {
-      position: absolute;
-      right: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 2;
-    }
-
-    .layout-vertical.features-right .area-controls {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    /* Control buttons to match your dashboard style */
-    .layout-vertical .control-button {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(var(--rgb-primary-text-color), 0.08);
-      border: 1px solid rgba(var(--rgb-primary-text-color), 0.15);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      backdrop-filter: blur(4px);
-    }
-
-    .layout-vertical .control-button ha-icon {
-      --mdc-icon-size: 22px;
-    }
-
-    .layout-vertical .control-button:hover {
-      background: rgba(var(--rgb-primary-text-color), 0.15);
-      transform: scale(1.08);
-    }
-
-    .layout-vertical .control-button.active {
-      background: rgba(var(--rgb-primary-color), 0.2);
-      border-color: var(--primary-color);
-    }
-
     /* Alerts in top-right corner */
     .layout-vertical .alerts {
       position: absolute;
@@ -1174,7 +1016,7 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
       font-size: 0.8em;
       min-width: 32px;
       background: rgba(var(--error-color), 0.15);
-      border-color: rgba(var(--error-color), 0.3);
+      border-color: rgba(var (--error-color), 0.3);
       color: var(--error-color);
     }
 
@@ -1186,7 +1028,161 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
       position: relative;
       z-index: 2;
     }
-  `,t([pe({attribute:!1})],Me.prototype,"hass",void 0),t([fe()],Me.prototype,"_config",void 0),t([fe()],Me.prototype,"_areas",void 0),Me=t([de("area-card-elite")],Me),function(e){e.language="language",e.system="system",e.comma_decimal="comma_decimal",e.decimal_comma="decimal_comma",e.space_comma="space_comma",e.none="none"}(Te||(Te={})),function(e){e.language="language",e.system="system",e.am_pm="12",e.twenty_four="24"}(Ne||(Ne={}));var Ve=function(e,t,i,o){o=o||{},i=null==i?{}:i;var a=new Event(t,{bubbles:void 0===o.bubbles||o.bubbles,cancelable:Boolean(o.cancelable),composed:void 0===o.composed||o.composed});return a.detail=i,e.dispatchEvent(a),a};let He=class extends le{constructor(){super(...arguments),this._areas=[],this._localImages=[]}async connectedCallback(){super.connectedCallback(),await this._loadAreas(),await this._loadLocalImages()}async _loadAreas(){var e;try{if(null===(e=this.hass)||void 0===e?void 0:e.connection){const e=await this.hass.connection.sendMessagePromise({type:"config/area_registry/list"});this._areas=e||[]}}catch(e){console.error("Failed to load areas:",e),this._areas=[]}}async _loadLocalImages(){try{const e=await this.hass.connection.sendMessagePromise({type:"media_player/browse_media",media_content_id:"media-source://media_source/local",media_content_type:"app"});this._localImages=this._extractImagePaths(e)}catch(e){console.error("Failed to load local images:",e),this._localImages=[]}}_extractImagePaths(e){const t=[];return(null==e?void 0:e.children)&&e.children.forEach((e=>{var i,o;if(null===(i=e.media_content_type)||void 0===i?void 0:i.startsWith("image/")){const i=null===(o=e.media_content_id)||void 0===o?void 0:o.replace("media-source://media_source/local/","/local/");i&&t.push(i)}})),t}setConfig(e){this._config=Object.assign({features:[],display_type:"compact",color:"",aspect_ratio:"16:9",camera_view:"auto",navigation_path:"",alert_classes:[],sensor_classes:[],features_position:"bottom",exclude_entities:[],layout:"vertical"},e)}_valueChanged(e){var t;if(e.stopPropagation(),!this._config)return;const i=e.target;let o=null===(t=e.detail)||void 0===t?void 0:t.value,a=i.configValue;console.log("Value changed:",{type:e.type,tagName:i.tagName,configValue:a,value:o,detail:e.detail}),null==o&&("input"===e.type&&void 0!==i.value||void 0!==i.value)&&(o=i.value),"HA-AREA-PICKER"===i.tagName?a="area":"HA-ENTITY-PICKER"===i.tagName&&(a=i.configValue||"exclude_entities"),a&&void 0!==o&&(console.log("Setting config:",a,"=",o),this._config=Object.assign(Object.assign({},this._config),{[a]:o}),Ve(this,"config-changed",{config:this._config}),this.requestUpdate())}_getDeviceClasses(e){var t;if(!(null===(t=this._config)||void 0===t?void 0:t.area))return[];const i=Object.entries(this.hass.states||{}).filter((([t,i])=>{var o,a;return!!(null===(o=i.attributes)||void 0===o?void 0:o.area_id)&&(i.attributes.area_id===(null===(a=this._config)||void 0===a?void 0:a.area)&&t.split(".")[0]===e)})).map((([e,t])=>t)),o=i.map((e=>e.attributes.device_class||"")).filter((e=>e));return[...new Set(o)]}_buildSelectOptions(e){const t=this._getDeviceClasses(e);let i=[];return i="binary_sensor"===e?[...new Set([...t,...Pe.binary_sensor])]:"sensor"===e?[...new Set([...t,...Pe.sensor])]:t,i.map((t=>({value:t,label:this.hass.localize(`component.${e}.device_class.${t}`)||this.hass.localize(`ui.dialogs.entity_registry.editor.device_classes.${e}.${t}`)||t.charAt(0).toUpperCase()+t.slice(1).replace(/_/g," ")})))}render(){return this.hass&&this._config?(this._buildSelectOptions("binary_sensor"),F`
+
+    /* Large Background Entity Icon - FIXED positioning in lower left */
+    .main-entity-background {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      width: 60px;
+      height: 60px;
+      z-index: 1;
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(var(--rgb-primary-text-color), 0.08);
+      border: 2px solid rgba(var(--rgb-primary-text-color), 0.15);
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .main-entity-background:hover {
+      background: rgba(var(--rgb-primary-text-color), 0.12);
+      border-color: rgba(var(--rgb-primary-text-color), 0.2);
+      /* REMOVED transform that was causing movement */
+    }
+
+    .main-entity-background ha-icon {
+      --mdc-icon-size: 32px;
+      width: 32px;
+      height: 32px;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+      /* REMOVED transform that was causing movement */
+    }
+
+    .main-entity-background:hover ha-icon {
+      opacity: 0.9;
+      /* REMOVED scale transform */
+    }
+
+    /* Active state - when entity is on/locked */
+    .main-entity-background.active {
+      background: rgba(var(--rgb-primary-color), 0.15);
+      border-color: var(--primary-color);
+    }
+
+    .main-entity-background.active ha-icon {
+      color: var(--primary-color);
+    }
+
+    /* Unlocked/off state - red like your dashboard */
+    .main-entity-background.unlocked {
+      background: rgba(244, 67, 54, 0.15);
+      border-color: #f44336;
+    }
+
+    .main-entity-background.unlocked ha-icon {
+      color: #f44336;
+    }
+
+    /* FIXED: Sensors under the area name exactly like your dashboard */
+    .layout-vertical .area-sensors {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .layout-vertical .area-sensors .sensors {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .layout-vertical .area-sensors .sensor {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      /* Remove all the weird background/border pill styling */
+      background: none;
+      backdrop-filter: none;
+      padding: 0;
+      border-radius: 0;
+      font-size: 0.85em;
+      border: none;
+    }
+
+    .layout-vertical .area-sensors .sensor ha-icon {
+      --mdc-icon-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .layout-vertical .area-sensors .sensor-value {
+      font-size: 0.85em;
+      font-weight: 500;
+      color: var(--secondary-text-color);
+      white-space: nowrap;
+    }
+
+    /* Main entity background icon - lower left like your dashboard */
+    .main-entity-background {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      width: 60px;
+      height: 60px;
+      z-index: 1;
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(var(--rgb-primary-text-color), 0.08);
+      border: 2px solid rgba(var(--rgb-primary-text-color), 0.15);
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .main-entity-background:hover {
+      background: rgba(var(--rgb-primary-text-color), 0.12);
+      border-color: rgba(var(--rgb-primary-text-color), 0.2);
+    }
+
+    .main-entity-background ha-icon {
+      --mdc-icon-size: 32px;
+      width: 32px;
+      height: 32px;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+    }
+
+    .main-entity-background:hover ha-icon {
+      opacity: 0.9;
+    }
+
+    .main-entity-background.active {
+      background: rgba(var(--rgb-primary-color), 0.15);
+      border-color: var(--primary-color);
+    }
+
+    .main-entity-background.active ha-icon {
+      color: var(--primary-color);
+    }
+
+    .main-entity-background.unlocked {
+      background: rgba(244, 67, 54, 0.15);
+      border-color: #f44336;
+    }
+
+    .main-entity-background.unlocked ha-icon {
+      color: #f44336;
+    }
+  `,t([pe({attribute:!1})],je.prototype,"hass",void 0),t([fe()],je.prototype,"_config",void 0),t([fe()],je.prototype,"_areas",void 0),je=t([de("area-card-elite")],je),function(e){e.language="language",e.system="system",e.comma_decimal="comma_decimal",e.decimal_comma="decimal_comma",e.space_comma="space_comma",e.none="none"}(Te||(Te={})),function(e){e.language="language",e.system="system",e.am_pm="12",e.twenty_four="24"}(Ve||(Ve={}));var Ne=function(e,t,i,o){o=o||{},i=null==i?{}:i;var a=new Event(t,{bubbles:void 0===o.bubbles||o.bubbles,cancelable:Boolean(o.cancelable),composed:void 0===o.composed||o.composed});return a.detail=i,e.dispatchEvent(a),a};let Re=class extends le{constructor(){super(...arguments),this._areas=[],this._localImages=[]}async connectedCallback(){super.connectedCallback(),await this._loadAreas(),await this._loadLocalImages()}async _loadAreas(){var e;try{if(null===(e=this.hass)||void 0===e?void 0:e.connection){const e=await this.hass.connection.sendMessagePromise({type:"config/area_registry/list"});this._areas=e||[]}}catch(e){console.error("Failed to load areas:",e),this._areas=[]}}async _loadLocalImages(){try{const e=await this.hass.connection.sendMessagePromise({type:"media_player/browse_media",media_content_id:"media-source://media_source/local",media_content_type:"app"});this._localImages=this._extractImagePaths(e)}catch(e){console.error("Failed to load local images:",e),this._localImages=[]}}_extractImagePaths(e){const t=[];return(null==e?void 0:e.children)&&e.children.forEach((e=>{var i,o;if(null===(i=e.media_content_type)||void 0===i?void 0:i.startsWith("image/")){const i=null===(o=e.media_content_id)||void 0===o?void 0:o.replace("media-source://media_source/local/","/local/");i&&t.push(i)}})),t}setConfig(e){this._config=Object.assign({features:[],display_type:"compact",color:"",aspect_ratio:"16:9",camera_view:"auto",navigation_path:"",alert_classes:[],sensor_classes:[],features_position:"bottom",exclude_entities:[],layout:"vertical"},e)}_valueChanged(e){var t;if(e.stopPropagation(),!this._config)return;const i=e.target;let o=null===(t=e.detail)||void 0===t?void 0:t.value,a=i.configValue;console.log("Value changed:",{type:e.type,tagName:i.tagName,configValue:a,value:o,detail:e.detail}),null==o&&("input"===e.type&&void 0!==i.value||void 0!==i.value)&&(o=i.value),"HA-AREA-PICKER"===i.tagName?a="area":"HA-ENTITY-PICKER"===i.tagName&&(a=i.configValue||"exclude_entities"),a&&void 0!==o&&(console.log("Setting config:",a,"=",o),this._config=Object.assign(Object.assign({},this._config),{[a]:o}),Ne(this,"config-changed",{config:this._config}),this.requestUpdate())}_getDeviceClasses(e){var t;if(!(null===(t=this._config)||void 0===t?void 0:t.area))return[];const i=Object.entries(this.hass.states||{}).filter((([t,i])=>{var o,a;return!!(null===(o=i.attributes)||void 0===o?void 0:o.area_id)&&(i.attributes.area_id===(null===(a=this._config)||void 0===a?void 0:a.area)&&t.split(".")[0]===e)})).map((([e,t])=>t)),o=i.map((e=>e.attributes.device_class||"")).filter((e=>e));return[...new Set(o)]}_buildSelectOptions(e){const t=this._getDeviceClasses(e);let i=[];return i="binary_sensor"===e?[...new Set([...t,...Pe.binary_sensor])]:"sensor"===e?[...new Set([...t,...Pe.sensor])]:t,i.map((t=>({value:t,label:this.hass.localize(`component.${e}.device_class.${t}`)||this.hass.localize(`ui.dialogs.entity_registry.editor.device_classes.${e}.${t}`)||t.charAt(0).toUpperCase()+t.slice(1).replace(/_/g," ")})))}render(){return this.hass&&this._config?(this._buildSelectOptions("binary_sensor"),F`
       <div class="card-config">
         <!-- Basic Configuration -->
         <div class="option">
@@ -1594,7 +1590,7 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
           </div>
         </ha-expansion-panel>
       </div>
-    `):W}_setLayout(e){this._config&&(this._config=Object.assign(Object.assign({},this._config),{mirror_card_layout:!0,layout:e}),Ve(this,"config-changed",{config:this._config}),this.requestUpdate())}_layoutChanged(e){if(this._config&&e.detail){const t=e.detail.value;this._config=Object.assign(Object.assign({},this._config),{mirror_card_layout:!0,layout:t}),Ve(this,"config-changed",{config:this._config}),this.requestUpdate()}}_configChanged(){const e=new CustomEvent("config-changed",{detail:{config:this._config},bubbles:!0,composed:!0});this.dispatchEvent(e)}static get styles(){return r`
+    `):W}_setLayout(e){this._config&&(this._config=Object.assign(Object.assign({},this._config),{mirror_card_layout:!0,layout:e}),Ne(this,"config-changed",{config:this._config}),this.requestUpdate())}_layoutChanged(e){if(this._config&&e.detail){const t=e.detail.value;this._config=Object.assign(Object.assign({},this._config),{mirror_card_layout:!0,layout:t}),Ne(this,"config-changed",{config:this._config}),this.requestUpdate()}}_configChanged(){const e=new CustomEvent("config-changed",{detail:{config:this._config},bubbles:!0,composed:!0});this.dispatchEvent(e)}static get styles(){return r`
       :host {
         display: block;
       }
@@ -1735,4 +1731,4 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
         margin-bottom: 8px;
         font-style: italic;
       }
-    `}};t([pe({attribute:!1})],He.prototype,"hass",void 0),t([fe()],He.prototype,"_config",void 0),t([fe()],He.prototype,"_areas",void 0),t([fe()],He.prototype,"_localImages",void 0),He=t([de("area-card-elite-editor")],He),customElements.get(e)||customElements.define(e,Me),customElements.get(e+"-editor")||customElements.define(e+"-editor",He),window.customCards=window.customCards||[],window.customCards.push({type:e,name:"Area Card Elite",description:"An enhanced area card for Home Assistant"})}();
+    `}};t([pe({attribute:!1})],Re.prototype,"hass",void 0),t([fe()],Re.prototype,"_config",void 0),t([fe()],Re.prototype,"_areas",void 0),t([fe()],Re.prototype,"_localImages",void 0),Re=t([de("area-card-elite-editor")],Re),customElements.get(e)||customElements.define(e,je),customElements.get(e+"-editor")||customElements.define(e+"-editor",Re),window.customCards=window.customCards||[],window.customCards.push({type:e,name:"Area Card Elite",description:"An enhanced area card for Home Assistant"})}();
