@@ -22,10 +22,11 @@ export interface AreaCardEliteConfig extends LovelaceCardConfig {
   theme?: string;
   
   // New layout properties
-  layout?: "vertical" | "horizontal" | "v1" | "v2";
+  layout?: "vertical" | "horizontal" | "v1" | "v2" | "compact";
   mirror_card_layout?: boolean;
   area_name_color?: string;
   area_icon_color?: string;
+  controls_position?: "top" | "bottom" | "left" | "right";
   
   // Specific sensor entity selectors
   temperature_entity?: string;

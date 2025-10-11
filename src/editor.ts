@@ -260,6 +260,26 @@ export class AreaCardEliteEditor extends LitElement {
               ></ha-selector>
             </div>
 
+            <!-- Layout Options -->
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  select: {
+                    options: [
+                      { value: "horizontal", label: "Horizontal (Icon | Name | Sensors | Controls)" },
+                      { value: "vertical", label: "Vertical (Name/Icon on left, Sensors center, Controls right)" },
+                      { value: "compact", label: "Compact (Everything inline)" }
+                    ]
+                  }
+                }}
+                .value=${this._config.layout || "compact"}
+                .configValue=${"layout"}
+                .label=${"Card Layout"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
             <div class="option">
               <ha-selector
                 .hass=${this.hass}
@@ -270,6 +290,28 @@ export class AreaCardEliteEditor extends LitElement {
                 @value-changed=${this._valueChanged}
               ></ha-selector>
             </div>
+
+            ${this._config.layout !== "compact" ? html`
+              <div class="option">
+                <ha-selector
+                  .hass=${this.hass}
+                  .selector=${{
+                    select: {
+                      options: [
+                        { value: "top", label: "Top" },
+                        { value: "bottom", label: "Bottom" },
+                        { value: "left", label: "Left" },
+                        { value: "right", label: "Right" }
+                      ]
+                    }
+                  }}
+                  .value=${this._config.controls_position || "right"}
+                  .configValue=${"controls_position"}
+                  .label=${"Controls Position"}
+                  @value-changed=${this._valueChanged}
+                ></ha-selector>
+              </div>
+            ` : ''}
 
             <div class="option">
               <ha-selector
@@ -336,60 +378,6 @@ export class AreaCardEliteEditor extends LitElement {
                   .helper=${"Enter image URL or /local/image.jpg for local files"}
                   @value-changed=${this._valueChanged}
                 ></ha-selector>
-              </div>
-            ` : ''}
-
-            <!-- Mirror Card Layout -->
-            <div class="option">
-              <label class="switch-label">
-                <ha-switch
-                  .checked=${this._config.mirror_card_layout || false}
-                  .configValue=${"mirror_card_layout"}
-                  @change=${this._valueChanged}
-                ></ha-switch>
-                Mirror Card Layout
-              </label>
-            </div>
-
-            ${this._config.mirror_card_layout ? html`
-              <div class="layout-options">
-                <div class="layout-grid">
-                  <div class="layout-item ${this._config.layout === 'vertical' ? 'selected' : ''}"
-                       @click=${() => this._setLayout('vertical')}>
-                    <div class="layout-preview vertical">
-                      <div class="layout-icon"></div>
-                      <div class="layout-text"></div>
-                    </div>
-                    <div class="layout-label">Vertical</div>
-                  </div>
-                  
-                  <div class="layout-item ${this._config.layout === 'horizontal' ? 'selected' : ''}"
-                       @click=${() => this._setLayout('horizontal')}>
-                    <div class="layout-preview horizontal">
-                      <div class="layout-icon"></div>
-                      <div class="layout-text"></div>
-                    </div>
-                    <div class="layout-label">Horizontal</div>
-                  </div>
-                  
-                  <div class="layout-item ${this._config.layout === 'v1' ? 'selected' : ''}"
-                       @click=${() => this._setLayout('v1')}>
-                    <div class="layout-preview v1">
-                      <div class="layout-icon"></div>
-                      <div class="layout-text"></div>
-                    </div>
-                    <div class="layout-label">V1</div>
-                  </div>
-                  
-                  <div class="layout-item ${this._config.layout === 'v2' ? 'selected' : ''}"
-                       @click=${() => this._setLayout('v2')}>
-                    <div class="layout-preview v2">
-                      <div class="layout-icon"></div>
-                      <div class="layout-text"></div>
-                    </div>
-                    <div class="layout-label">V2</div>
-                  </div>
-                </div>
               </div>
             ` : ''}
 

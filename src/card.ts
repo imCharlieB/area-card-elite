@@ -564,6 +564,20 @@ export class AreaCardElite extends LitElement {
     return area?.icon || "mdi:home";
   }
 
+  // Add method to get area-filtered entities for selectors
+  private _getAreaFilteredEntities(domain: string, deviceClass?: string): string[] {
+    if (!this._config?.area) return [];
+
+    return Object.entries(this.hass.states || {})
+      .filter(([entityId, entity]) => {
+        const [entityDomain] = entityId.split(".");
+        if (entityDomain !== domain) return false;
+        if (deviceClass && entity.attributes.device_class !== deviceClass) return false;
+        return entity.attributes?.area_id === this._config?.area;
+      })
+      .map(([entityId]) => entityId);
+  }
+
   render() {
     if (!this.hass || !this._config) {
       return nothing;
@@ -577,14 +591,12 @@ export class AreaCardElite extends LitElement {
     const areaIconColor = this._config.area_icon_color ? `color: ${this._config.area_icon_color};` : '';
     
     // Determine layout classes
-    const layoutClass = this._config.mirror_card_layout ? 
-      `mirror-layout mirror-${this._config.layout || 'vertical'}` : 
-      '';
-
+    const layout = this._config.layout || 'compact';
+    const controlsPosition = this._config.controls_position || 'right';
     const showAreaControls = this._config.features?.includes("area-controls");
 
     return html`
-      <ha-card class="${this._config.display_type || 'compact'} ${layoutClass}">
+      <ha-card class="${this._config.display_type || 'compact'} layout-${layout} controls-${controlsPosition}">
         <div class="content">
           ${this._config.display_type === "picture" && this._config.background_image ? html`
             <div class="background-image" style="background-image: url('${this._config.background_image}')"></div>
@@ -599,8 +611,8 @@ export class AreaCardElite extends LitElement {
             ></hui-image>
           ` : ''}
 
-          <div class="area-info ${this._config.mirror_card_layout ? 'mirror-info' : ''}">
-            ${this._config.display_type !== "compact" ? html`
+          <div class="area-info">
+            ${this._config.display_type !== "compact" || layout === "vertical" ? html`
               <div class="area-icon" style="${areaIconColor}">
                 <ha-icon icon="${areaIcon}"></ha-icon>
               </div>
@@ -608,18 +620,25 @@ export class AreaCardElite extends LitElement {
             
             <div class="area-details">
               <div class="area-name" style="${areaNameColor}">
-                ${this._config.display_type === "compact" ? html`
+                ${this._config.display_type === "compact" && layout !== "vertical" ? html`
                   <ha-icon icon="${areaIcon}" style="${areaIconColor}"></ha-icon>
                 ` : ''}
                 ${areaName}
               </div>
-              
-              ${this._renderAlerts()}
-              ${this._renderSensors()}
             </div>
           </div>
 
-          ${showAreaControls ? this._renderAreaControls() : nothing}
+          <div class="sensors-section">
+            ${this._renderSensors()}
+          </div>
+
+          ${showAreaControls ? html`
+            <div class="controls-section">
+              ${this._renderAreaControls()}
+            </div>
+          ` : nothing}
+
+          ${this._renderAlerts()}
           ${this._renderFeatures()}
         </div>
       </ha-card>
@@ -1187,6 +1206,152 @@ export class AreaCardElite extends LitElement {
     ha-card {
       height: 100%;
       box-sizing: border-box;
+    }
+
+    /* New Layout System */
+    .layout-vertical .content {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 80px;
+    }
+
+    .layout-horizontal .content {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .layout-compact .content {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    /* Vertical Layout - Your Dashboard Style */
+    .layout-vertical .area-info {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      flex: 0 0 auto;
+    }
+
+    .layout-vertical .area-icon {
+      font-size: 2.5rem;
+      flex-shrink: 0;
+    }
+
+    .layout-vertical .area-name {
+      font-size: 1.3em;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .layout-vertical .sensors-section {
+      display: flex;
+      flex: 1;
+      justify-content: center;
+      margin: 0 16px;
+    }
+
+    .layout-vertical .sensors {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .layout-vertical .sensor {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .layout-vertical .sensor ha-icon {
+      --mdc-icon-size: 28px;
+      margin-bottom: 4px;
+    }
+
+    .layout-vertical .sensor-value {
+      font-size: 0.9em;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* Controls Positioning */
+    .controls-right .controls-section {
+      order: 3;
+      flex: 0 0 auto;
+    }
+
+    .controls-left .controls-section {
+      order: 1;
+      flex: 0 0 auto;
+    }
+
+    .controls-top .content {
+      flex-direction: column;
+    }
+
+    .controls-top .controls-section {
+      order: 1;
+      align-self: stretch;
+    }
+
+    .controls-bottom .content {
+      flex-direction: column;
+    }
+
+    .controls-bottom .controls-section {
+      order: 3;
+      align-self: stretch;
+    }
+
+    /* Area Controls Styling */
+    .controls-section .area-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .controls-top .area-controls,
+    .controls-bottom .area-controls {
+      justify-content: center;
+    }
+
+    .controls-left .area-controls,
+    .controls-right .area-controls {
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .layout-vertical.controls-right .area-controls {
+      flex-direction: row;
+      gap: 8px;
+    }
+
+    /* Alert positioning */
+    .layout-vertical .alerts {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .layout-vertical .alerts .icon-with-count {
+      padding: 2px 6px;
+      font-size: 0.8em;
+      min-width: 32px;
     }
   `;
 }

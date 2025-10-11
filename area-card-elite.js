@@ -15,7 +15,7 @@ const i=globalThis,o=i.ShadowRoot&&(void 0===i.ShadyCSS||i.ShadyCSS.nativeShadow
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-const A=globalThis,C=A.trustedTypes,E=C?C.createPolicy("lit-html",{createHTML:e=>e}):void 0,S="$lit$",k=`lit$${(Math.random()+"").slice(9)}$`,P="?"+k,I=`<${P}>`,O=document,U=()=>O.createComment(""),M=e=>null===e||"object"!=typeof e&&"function"!=typeof e,T=Array.isArray,z=e=>T(e)||"function"==typeof e?.[Symbol.iterator],V="[ \t\n\f\r]",N=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,H=/-->/g,j=/>/g,R=RegExp(`>|${V}(?:([^\\s"'>=/]+)(${V}*=${V}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),B=/'/g,D=/"/g,L=/^(?:script|style|textarea|title)$/i,F=(e=>(t,...i)=>({_$litType$:e,strings:t,values:i}))(1),q=Symbol.for("lit-noChange"),W=Symbol.for("lit-nothing"),K=new WeakMap,J=O.createTreeWalker(O,129);function Z(e,t){if(!Array.isArray(e)||!e.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==E?E.createHTML(t):t}const Q=(e,t)=>{const i=e.length-1,o=[];let s,a=2===t?"<svg>":"",n=N;for(let t=0;t<i;t++){const i=e[t];let r,l,c=-1,d=0;for(;d<i.length&&(n.lastIndex=d,l=n.exec(i),null!==l);)d=n.lastIndex,n===N?"!--"===l[1]?n=H:void 0!==l[1]?n=j:void 0!==l[2]?(L.test(l[2])&&(s=RegExp("</"+l[2],"g")),n=R):void 0!==l[3]&&(n=R):n===R?">"===l[0]?(n=s??N,c=-1):void 0===l[1]?c=-2:(c=n.lastIndex-l[2].length,r=l[1],n=void 0===l[3]?R:'"'===l[3]?D:B):n===D||n===B?n=R:n===H||n===j?n=N:(n=R,s=void 0);const h=n===R&&e[t+1].startsWith("/>")?" ":"";a+=n===N?i+I:c>=0?(o.push(r),i.slice(0,c)+S+i.slice(c)+k+h):i+k+(-2===c?t:h)}return[Z(e,a+(e[i]||"<?>")+(2===t?"</svg>":"")),o]};class Y{constructor({strings:e,_$litType$:t},i){let o;this.parts=[];let s=0,a=0;const n=e.length-1,r=this.parts,[l,c]=Q(e,t);if(this.el=Y.createElement(l,i),J.currentNode=this.el.content,2===t){const e=this.el.content.firstChild;e.replaceWith(...e.childNodes)}for(;null!==(o=J.nextNode())&&r.length<n;){if(1===o.nodeType){if(o.hasAttributes())for(const e of o.getAttributeNames())if(e.endsWith(S)){const t=c[a++],i=o.getAttribute(e).split(k),n=/([.?@])?(.*)/.exec(t);r.push({type:1,index:s,name:n[2],strings:i,ctor:"."===n[1]?ie:"?"===n[1]?oe:"@"===n[1]?se:te}),o.removeAttribute(e)}else e.startsWith(k)&&(r.push({type:6,index:s}),o.removeAttribute(e));if(L.test(o.tagName)){const e=o.textContent.split(k),t=e.length-1;if(t>0){o.textContent=C?C.emptyScript:"";for(let i=0;i<t;i++)o.append(e[i],U()),J.nextNode(),r.push({type:2,index:++s});o.append(e[t],U())}}}else if(8===o.nodeType)if(o.data===P)r.push({type:2,index:s});else{let e=-1;for(;-1!==(e=o.data.indexOf(k,e+1));)r.push({type:7,index:s}),e+=k.length-1}s++}}static createElement(e,t){const i=O.createElement("template");return i.innerHTML=e,i}}function G(e,t,i=e,o){if(t===q)return t;let s=void 0!==o?i._$Co?.[o]:i._$Cl;const a=M(t)?void 0:t._$litDirective$;return s?.constructor!==a&&(s?._$AO?.(!1),void 0===a?s=void 0:(s=new a(e),s._$AT(e,i,o)),void 0!==o?(i._$Co??=[])[o]=s:i._$Cl=s),void 0!==s&&(t=G(e,s._$AS(e,t.values),s,o)),t}class X{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){const{el:{content:t},parts:i}=this._$AD,o=(e?.creationScope??O).importNode(t,!0);J.currentNode=o;let s=J.nextNode(),a=0,n=0,r=i[0];for(;void 0!==r;){if(a===r.index){let t;2===r.type?t=new ee(s,s.nextSibling,this,e):1===r.type?t=new r.ctor(s,r.name,r.strings,this,e):6===r.type&&(t=new ae(s,this,e)),this._$AV.push(t),r=i[++n]}a!==r?.index&&(s=J.nextNode(),a++)}return J.currentNode=O,o}p(e){let t=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(e,i,t),t+=i.strings.length-2):i._$AI(e[t])),t++}}class ee{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(e,t,i,o){this.type=2,this._$AH=W,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=i,this.options=o,this._$Cv=o?.isConnected??!0}get parentNode(){let e=this._$AA.parentNode;const t=this._$AM;return void 0!==t&&11===e?.nodeType&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=G(this,e,t),M(e)?e===W||null==e||""===e?(this._$AH!==W&&this._$AR(),this._$AH=W):e!==this._$AH&&e!==q&&this._(e):void 0!==e._$litType$?this.g(e):void 0!==e.nodeType?this.$(e):z(e)?this.T(e):this._(e)}k(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}$(e){this._$AH!==e&&(this._$AR(),this._$AH=this.k(e))}_(e){this._$AH!==W&&M(this._$AH)?this._$AA.nextSibling.data=e:this.$(O.createTextNode(e)),this._$AH=e}g(e){const{values:t,_$litType$:i}=e,o="number"==typeof i?this._$AC(e):(void 0===i.el&&(i.el=Y.createElement(Z(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===o)this._$AH.p(t);else{const e=new X(o,this),i=e.u(this.options);e.p(t),this.$(i),this._$AH=e}}_$AC(e){let t=K.get(e.strings);return void 0===t&&K.set(e.strings,t=new Y(e)),t}T(e){T(this._$AH)||(this._$AH=[],this._$AR());const t=this._$AH;let i,o=0;for(const s of e)o===t.length?t.push(i=new ee(this.k(U()),this.k(U()),this,this.options)):i=t[o],i._$AI(s),o++;o<t.length&&(this._$AR(i&&i._$AB.nextSibling,o),t.length=o)}_$AR(e=this._$AA.nextSibling,t){for(this._$AP?.(!1,!0,t);e&&e!==this._$AB;){const t=e.nextSibling;e.remove(),e=t}}setConnected(e){void 0===this._$AM&&(this._$Cv=e,this._$AP?.(e))}}class te{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(e,t,i,o,s){this.type=1,this._$AH=W,this._$AN=void 0,this.element=e,this.name=t,this._$AM=o,this.options=s,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=W}_$AI(e,t=this,i,o){const s=this.strings;let a=!1;if(void 0===s)e=G(this,e,t,0),a=!M(e)||e!==this._$AH&&e!==q,a&&(this._$AH=e);else{const o=e;let n,r;for(e=s[0],n=0;n<s.length-1;n++)r=G(this,o[i+n],t,n),r===q&&(r=this._$AH[n]),a||=!M(r)||r!==this._$AH[n],r===W?e=W:e!==W&&(e+=(r??"")+s[n+1]),this._$AH[n]=r}a&&!o&&this.O(e)}O(e){e===W?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}}class ie extends te{constructor(){super(...arguments),this.type=3}O(e){this.element[this.name]=e===W?void 0:e}}class oe extends te{constructor(){super(...arguments),this.type=4}O(e){this.element.toggleAttribute(this.name,!!e&&e!==W)}}class se extends te{constructor(e,t,i,o,s){super(e,t,i,o,s),this.type=5}_$AI(e,t=this){if((e=G(this,e,t,0)??W)===q)return;const i=this._$AH,o=e===W&&i!==W||e.capture!==i.capture||e.once!==i.once||e.passive!==i.passive,s=e!==W&&(i===W||o);o&&this.element.removeEventListener(this.name,this,i),s&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,e):this._$AH.handleEvent(e)}}class ae{constructor(e,t,i){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(e){G(this,e)}}const ne={j:S,P:k,A:P,C:1,M:Q,L:X,R:z,V:G,D:ee,I:te,H:oe,N:se,U:ie,B:ae},re=A.litHtmlPolyfillSupport;re?.(Y,ee),(A.litHtmlVersions??=[]).push("3.1.0");
+const A=globalThis,C=A.trustedTypes,E=C?C.createPolicy("lit-html",{createHTML:e=>e}):void 0,S="$lit$",k=`lit$${(Math.random()+"").slice(9)}$`,P="?"+k,I=`<${P}>`,O=document,U=()=>O.createComment(""),z=e=>null===e||"object"!=typeof e&&"function"!=typeof e,T=Array.isArray,M=e=>T(e)||"function"==typeof e?.[Symbol.iterator],N="[ \t\n\f\r]",V=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,j=/-->/g,H=/>/g,R=RegExp(`>|${N}(?:([^\\s"'>=/]+)(${N}*=${N}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),B=/'/g,D=/"/g,L=/^(?:script|style|textarea|title)$/i,F=(e=>(t,...i)=>({_$litType$:e,strings:t,values:i}))(1),q=Symbol.for("lit-noChange"),W=Symbol.for("lit-nothing"),K=new WeakMap,J=O.createTreeWalker(O,129);function Y(e,t){if(!Array.isArray(e)||!e.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==E?E.createHTML(t):t}const Z=(e,t)=>{const i=e.length-1,o=[];let s,a=2===t?"<svg>":"",n=V;for(let t=0;t<i;t++){const i=e[t];let r,l,c=-1,d=0;for(;d<i.length&&(n.lastIndex=d,l=n.exec(i),null!==l);)d=n.lastIndex,n===V?"!--"===l[1]?n=j:void 0!==l[1]?n=H:void 0!==l[2]?(L.test(l[2])&&(s=RegExp("</"+l[2],"g")),n=R):void 0!==l[3]&&(n=R):n===R?">"===l[0]?(n=s??V,c=-1):void 0===l[1]?c=-2:(c=n.lastIndex-l[2].length,r=l[1],n=void 0===l[3]?R:'"'===l[3]?D:B):n===D||n===B?n=R:n===j||n===H?n=V:(n=R,s=void 0);const h=n===R&&e[t+1].startsWith("/>")?" ":"";a+=n===V?i+I:c>=0?(o.push(r),i.slice(0,c)+S+i.slice(c)+k+h):i+k+(-2===c?t:h)}return[Y(e,a+(e[i]||"<?>")+(2===t?"</svg>":"")),o]};class Q{constructor({strings:e,_$litType$:t},i){let o;this.parts=[];let s=0,a=0;const n=e.length-1,r=this.parts,[l,c]=Z(e,t);if(this.el=Q.createElement(l,i),J.currentNode=this.el.content,2===t){const e=this.el.content.firstChild;e.replaceWith(...e.childNodes)}for(;null!==(o=J.nextNode())&&r.length<n;){if(1===o.nodeType){if(o.hasAttributes())for(const e of o.getAttributeNames())if(e.endsWith(S)){const t=c[a++],i=o.getAttribute(e).split(k),n=/([.?@])?(.*)/.exec(t);r.push({type:1,index:s,name:n[2],strings:i,ctor:"."===n[1]?ie:"?"===n[1]?oe:"@"===n[1]?se:te}),o.removeAttribute(e)}else e.startsWith(k)&&(r.push({type:6,index:s}),o.removeAttribute(e));if(L.test(o.tagName)){const e=o.textContent.split(k),t=e.length-1;if(t>0){o.textContent=C?C.emptyScript:"";for(let i=0;i<t;i++)o.append(e[i],U()),J.nextNode(),r.push({type:2,index:++s});o.append(e[t],U())}}}else if(8===o.nodeType)if(o.data===P)r.push({type:2,index:s});else{let e=-1;for(;-1!==(e=o.data.indexOf(k,e+1));)r.push({type:7,index:s}),e+=k.length-1}s++}}static createElement(e,t){const i=O.createElement("template");return i.innerHTML=e,i}}function G(e,t,i=e,o){if(t===q)return t;let s=void 0!==o?i._$Co?.[o]:i._$Cl;const a=z(t)?void 0:t._$litDirective$;return s?.constructor!==a&&(s?._$AO?.(!1),void 0===a?s=void 0:(s=new a(e),s._$AT(e,i,o)),void 0!==o?(i._$Co??=[])[o]=s:i._$Cl=s),void 0!==s&&(t=G(e,s._$AS(e,t.values),s,o)),t}class X{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){const{el:{content:t},parts:i}=this._$AD,o=(e?.creationScope??O).importNode(t,!0);J.currentNode=o;let s=J.nextNode(),a=0,n=0,r=i[0];for(;void 0!==r;){if(a===r.index){let t;2===r.type?t=new ee(s,s.nextSibling,this,e):1===r.type?t=new r.ctor(s,r.name,r.strings,this,e):6===r.type&&(t=new ae(s,this,e)),this._$AV.push(t),r=i[++n]}a!==r?.index&&(s=J.nextNode(),a++)}return J.currentNode=O,o}p(e){let t=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(e,i,t),t+=i.strings.length-2):i._$AI(e[t])),t++}}class ee{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(e,t,i,o){this.type=2,this._$AH=W,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=i,this.options=o,this._$Cv=o?.isConnected??!0}get parentNode(){let e=this._$AA.parentNode;const t=this._$AM;return void 0!==t&&11===e?.nodeType&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=G(this,e,t),z(e)?e===W||null==e||""===e?(this._$AH!==W&&this._$AR(),this._$AH=W):e!==this._$AH&&e!==q&&this._(e):void 0!==e._$litType$?this.g(e):void 0!==e.nodeType?this.$(e):M(e)?this.T(e):this._(e)}k(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}$(e){this._$AH!==e&&(this._$AR(),this._$AH=this.k(e))}_(e){this._$AH!==W&&z(this._$AH)?this._$AA.nextSibling.data=e:this.$(O.createTextNode(e)),this._$AH=e}g(e){const{values:t,_$litType$:i}=e,o="number"==typeof i?this._$AC(e):(void 0===i.el&&(i.el=Q.createElement(Y(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===o)this._$AH.p(t);else{const e=new X(o,this),i=e.u(this.options);e.p(t),this.$(i),this._$AH=e}}_$AC(e){let t=K.get(e.strings);return void 0===t&&K.set(e.strings,t=new Q(e)),t}T(e){T(this._$AH)||(this._$AH=[],this._$AR());const t=this._$AH;let i,o=0;for(const s of e)o===t.length?t.push(i=new ee(this.k(U()),this.k(U()),this,this.options)):i=t[o],i._$AI(s),o++;o<t.length&&(this._$AR(i&&i._$AB.nextSibling,o),t.length=o)}_$AR(e=this._$AA.nextSibling,t){for(this._$AP?.(!1,!0,t);e&&e!==this._$AB;){const t=e.nextSibling;e.remove(),e=t}}setConnected(e){void 0===this._$AM&&(this._$Cv=e,this._$AP?.(e))}}class te{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(e,t,i,o,s){this.type=1,this._$AH=W,this._$AN=void 0,this.element=e,this.name=t,this._$AM=o,this.options=s,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=W}_$AI(e,t=this,i,o){const s=this.strings;let a=!1;if(void 0===s)e=G(this,e,t,0),a=!z(e)||e!==this._$AH&&e!==q,a&&(this._$AH=e);else{const o=e;let n,r;for(e=s[0],n=0;n<s.length-1;n++)r=G(this,o[i+n],t,n),r===q&&(r=this._$AH[n]),a||=!z(r)||r!==this._$AH[n],r===W?e=W:e!==W&&(e+=(r??"")+s[n+1]),this._$AH[n]=r}a&&!o&&this.O(e)}O(e){e===W?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}}class ie extends te{constructor(){super(...arguments),this.type=3}O(e){this.element[this.name]=e===W?void 0:e}}class oe extends te{constructor(){super(...arguments),this.type=4}O(e){this.element.toggleAttribute(this.name,!!e&&e!==W)}}class se extends te{constructor(e,t,i,o,s){super(e,t,i,o,s),this.type=5}_$AI(e,t=this){if((e=G(this,e,t,0)??W)===q)return;const i=this._$AH,o=e===W&&i!==W||e.capture!==i.capture||e.once!==i.once||e.passive!==i.passive,s=e!==W&&(i===W||o);o&&this.element.removeEventListener(this.name,this,i),s&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,e):this._$AH.handleEvent(e)}}class ae{constructor(e,t,i){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(e){G(this,e)}}const ne={j:S,P:k,A:P,C:1,M:Z,L:X,R:M,V:G,D:ee,I:te,H:oe,N:se,U:ie,B:ae},re=A.litHtmlPolyfillSupport;re?.(Q,ee),(A.litHtmlVersions??=[]).push("3.1.0");
 /**
      * @license
      * Copyright 2017 Google LLC
@@ -47,12 +47,12 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
      * @license
      * Copyright 2020 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */const{D:_e}=ne,ve=()=>document.createComment(""),ye=(e,t,i)=>{const o=e._$AA.parentNode,s=void 0===t?e._$AB:t._$AA;if(void 0===i){const t=o.insertBefore(ve(),s),a=o.insertBefore(ve(),s);i=new _e(t,a,e,e.options)}else{const t=i._$AB.nextSibling,a=i._$AM,n=a!==e;if(n){let t;i._$AQ?.(e),i._$AM=e,void 0!==i._$AP&&(t=e._$AU)!==a._$AU&&i._$AP(t)}if(t!==s||n){let e=i._$AA;for(;e!==t;){const t=e.nextSibling;o.insertBefore(e,s),e=t}}}return i},$e=(e,t,i=e)=>(e._$AI(t,i),e),be={},xe=e=>{e._$AP?.(!1,!0);let t=e._$AA;const i=e._$AB.nextSibling;for(;t!==i;){const e=t.nextSibling;t.remove(),t=e}},we=(e,t,i)=>{const o=new Map;for(let s=t;s<=i;s++)o.set(e[s],s);return o},Ae=(e=>(...t)=>({_$litDirective$:e,values:t}))(class extends me{constructor(e){if(super(e),e.type!==ge)throw Error("repeat() can only be used in text expressions")}ht(e,t,i){let o;void 0===i?i=t:void 0!==t&&(o=t);const s=[],a=[];let n=0;for(const t of e)s[n]=o?o(t,n):n,a[n]=i(t,n),n++;return{values:a,keys:s}}render(e,t,i){return this.ht(e,t,i).values}update(e,[t,i,o]){const s=(e=>e._$AH)(e),{values:a,keys:n}=this.ht(t,i,o);if(!Array.isArray(s))return this.dt=n,a;const r=this.dt??=[],l=[];let c,d,h=0,u=s.length-1,f=0,p=a.length-1;for(;h<=u&&f<=p;)if(null===s[h])h++;else if(null===s[u])u--;else if(r[h]===n[f])l[f]=$e(s[h],a[f]),h++,f++;else if(r[u]===n[p])l[p]=$e(s[u],a[p]),u--,p--;else if(r[h]===n[p])l[p]=$e(s[h],a[p]),ye(e,l[p+1],s[h]),h++,p--;else if(r[u]===n[f])l[f]=$e(s[u],a[f]),ye(e,s[h],s[u]),u--,f++;else if(void 0===c&&(c=we(n,f,p),d=we(r,h,u)),c.has(r[h]))if(c.has(r[u])){const t=d.get(n[f]),i=void 0!==t?s[t]:null;if(null===i){const t=ye(e,s[h]);$e(t,a[f]),l[f]=t}else l[f]=$e(i,a[f]),ye(e,s[h],i),s[t]=null;f++}else xe(s[u]),u--;else xe(s[h]),h++;for(;f<=p;){const t=ye(e,l[p+1]);$e(t,a[f]),l[f++]=t}for(;h<=u;){const e=s[h++];null!==e&&xe(e)}return this.dt=n,((e,t=be)=>{e._$AH=t})(e,l),q}}),Ce=["sensor"],Ee=["binary_sensor"],Se=["cover"],ke=["climate"],Pe=["camera"],Ie=["light","switch","fan","media_player","lock","vacuum","cover","script","scene"],Oe={sensor:["temperature","humidity","power","energy","battery","illuminance"],binary_sensor:["motion","window","door","moisture","smoke","gas","occupancy"],cover:["garage","door","window","blind","curtain","shutter"]},Ue={alarm_control_panel:{on:"mdi:alarm-light",off:"mdi:alarm-light-off"},siren:{on:"mdi:bell-ring",off:"mdi:bell-off"},lock:{on:"mdi:lock-open",off:"mdi:lock"},light:{on:"mdi:lightbulb",off:"mdi:lightbulb-off"},media_player:{on:"mdi:cast",off:"mdi:cast-off"},climate:{on:"mdi:thermostat",off:"mdi:thermostat-cog"},humidifier:{on:"mdi:air-humidifier",off:"mdi:air-humidifier-off"},switch:{on:"mdi:toggle-switch",off:"mdi:toggle-switch-off",switch:{on:"mdi:toggle-switch",off:"mdi:toggle-switch-off"},outlet:{on:"mdi:power-plug",off:"mdi:power-plug-off"}},vacuum:{on:"mdi:robot-vacuum",off:"mdi:robot-vacuum-off"},lawn_mower:{on:"mdi:robot-mower",off:"mdi:robot-mower"},fan:{on:"mdi:fan",off:"mdi:fan-off"},cover:{on:"mdi:garage-open",off:"mdi:garage",garage:{on:"mdi:garage-open",off:"mdi:garage"},door:{on:"mdi:door-open",off:"mdi:door-closed"},gate:{on:"mdi:gate-open",off:"mdi:gate"},blind:{on:"mdi:blinds-open",off:"mdi:blinds"},curtain:{on:"mdi:curtains",off:"mdi:curtains-closed"},damper:{on:"mdi:valve-open",off:"mdi:valve-closed"},awning:{on:"mdi:awning-outline",off:"mdi:awning-outline"},shutter:{on:"mdi:window-shutter-open",off:"mdi:window-shutter"},shade:{on:"mdi:roller-shade",off:"mdi:roller-shade-closed"},window:{on:"mdi:window-open",off:"mdi:window-closed"}},binary_sensor:{on:"mdi:power-off",off:"mdi:power-off",motion:{on:"mdi:motion-sensor",off:"mdi:motion-sensor-off"},moisture:{on:"mdi:water-alert",off:"mdi:water-off"},window:{on:"mdi:window-open",off:"mdi:window-closed"},door:{on:"mdi:door-open",off:"mdi:door-closed"},lock:{on:"mdi:lock-open",off:"mdi:lock"},presence:{on:"mdi:home-outline",off:"mdi:home-export-outline"},occupancy:{on:"mdi:seat",off:"mdi:seat-outline"},vibration:{on:"mdi:vibrate",off:"mdi:vibrate-off"},opening:{on:"mdi:shield-lock-open",off:"mdi:shield-lock"},garage_door:{on:"mdi:garage-open",off:"mdi:garage"},problem:{on:"mdi:alert-circle-outline",off:"mdi:alert-circle-check-outline"},smoke:{on:"mdi:smoke-detector-outline",off:"mdi:smoke-detector-off-outline"},running:{on:"mdi:play",off:"mdi:pause"},plug:{on:"mdi:power-plug",off:"mdi:power-plug-off"},power:{on:"mdi:power",off:"mdi:power-off"},battery:{on:"mdi:battery-alert",off:"mdi:battery"},battery_charging:{on:"mdi:battery-charging",off:"mdi:battery-check"},gas:{on:"mdi:gas-station-outline",off:"mdi:gas-station-off-outline"},carbon_monoxide:{on:"mdi:molecule-co",off:"mdi:molecule-co"},cold:{on:"mdi:snowflake",off:"mdi:snowflake-off"},heat:{on:"mdi:weather-sunny",off:"mdi:weather-sunny-off"},connectivity:{on:"mdi:connection",off:"mdi:connection"},safety:{on:"mdi:shield-alert-outline",off:"mdi:shield-check-outline"},sound:{on:"mdi:volume-high",off:"mdi:volume-off"},update:{on:"mdi:autorenew",off:"mdi:autorenew-off"},tamper:{on:"mdi:shield-home",off:"mdi:shield-home"},light:{on:"mdi:lightbulb-outline",off:"mdi:lightbulb-off-outline"},moving:{on:"mdi:car",off:"mdi:car-off"}},person:{on:"mdi:account",off:"mdi:account-off"},device_tracker:{on:"mdi:account",off:"mdi:account-off"},valve:{on:"mdi:valve",off:"mdi:valve-closed"},water_heater:{on:"mdi:water-boiler",off:"mdi:water-pump-off"},remote:{on:"mdi:remote",off:"mdi:remote-off"},update:{on:"mdi:autorenew",off:"mdi:autorenew-off"},air_quality:{on:"mdi:air-filter",off:"mdi:air-filter"},camera:{on:"mdi:camera",off:"mdi:camera-off"},calendar:{on:"mdi:calendar",off:"mdi:calendar-remove"},scene:{on:"mdi:movie",off:"mdi:movie-off"},sensor:{on:"mdi:gauge",off:"mdi:gauge"},script:{on:"mdi:script-text",off:"mdi:script-text"}},Me=["unavailable","unknown"],Te=["off","closed","idle"];
+     */const{D:_e}=ne,ve=()=>document.createComment(""),ye=(e,t,i)=>{const o=e._$AA.parentNode,s=void 0===t?e._$AB:t._$AA;if(void 0===i){const t=o.insertBefore(ve(),s),a=o.insertBefore(ve(),s);i=new _e(t,a,e,e.options)}else{const t=i._$AB.nextSibling,a=i._$AM,n=a!==e;if(n){let t;i._$AQ?.(e),i._$AM=e,void 0!==i._$AP&&(t=e._$AU)!==a._$AU&&i._$AP(t)}if(t!==s||n){let e=i._$AA;for(;e!==t;){const t=e.nextSibling;o.insertBefore(e,s),e=t}}}return i},$e=(e,t,i=e)=>(e._$AI(t,i),e),be={},xe=e=>{e._$AP?.(!1,!0);let t=e._$AA;const i=e._$AB.nextSibling;for(;t!==i;){const e=t.nextSibling;t.remove(),t=e}},we=(e,t,i)=>{const o=new Map;for(let s=t;s<=i;s++)o.set(e[s],s);return o},Ae=(e=>(...t)=>({_$litDirective$:e,values:t}))(class extends me{constructor(e){if(super(e),e.type!==ge)throw Error("repeat() can only be used in text expressions")}ht(e,t,i){let o;void 0===i?i=t:void 0!==t&&(o=t);const s=[],a=[];let n=0;for(const t of e)s[n]=o?o(t,n):n,a[n]=i(t,n),n++;return{values:a,keys:s}}render(e,t,i){return this.ht(e,t,i).values}update(e,[t,i,o]){const s=(e=>e._$AH)(e),{values:a,keys:n}=this.ht(t,i,o);if(!Array.isArray(s))return this.dt=n,a;const r=this.dt??=[],l=[];let c,d,h=0,u=s.length-1,f=0,p=a.length-1;for(;h<=u&&f<=p;)if(null===s[h])h++;else if(null===s[u])u--;else if(r[h]===n[f])l[f]=$e(s[h],a[f]),h++,f++;else if(r[u]===n[p])l[p]=$e(s[u],a[p]),u--,p--;else if(r[h]===n[p])l[p]=$e(s[h],a[p]),ye(e,l[p+1],s[h]),h++,p--;else if(r[u]===n[f])l[f]=$e(s[u],a[f]),ye(e,s[h],s[u]),u--,f++;else if(void 0===c&&(c=we(n,f,p),d=we(r,h,u)),c.has(r[h]))if(c.has(r[u])){const t=d.get(n[f]),i=void 0!==t?s[t]:null;if(null===i){const t=ye(e,s[h]);$e(t,a[f]),l[f]=t}else l[f]=$e(i,a[f]),ye(e,s[h],i),s[t]=null;f++}else xe(s[u]),u--;else xe(s[h]),h++;for(;f<=p;){const t=ye(e,l[p+1]);$e(t,a[f]),l[f++]=t}for(;h<=u;){const e=s[h++];null!==e&&xe(e)}return this.dt=n,((e,t=be)=>{e._$AH=t})(e,l),q}}),Ce=["sensor"],Ee=["binary_sensor"],Se=["cover"],ke=["climate"],Pe=["camera"],Ie=["light","switch","fan","media_player","lock","vacuum","cover","script","scene"],Oe={sensor:["temperature","humidity","power","energy","battery","illuminance"],binary_sensor:["motion","window","door","moisture","smoke","gas","occupancy"],cover:["garage","door","window","blind","curtain","shutter"]},Ue={alarm_control_panel:{on:"mdi:alarm-light",off:"mdi:alarm-light-off"},siren:{on:"mdi:bell-ring",off:"mdi:bell-off"},lock:{on:"mdi:lock-open",off:"mdi:lock"},light:{on:"mdi:lightbulb",off:"mdi:lightbulb-off"},media_player:{on:"mdi:cast",off:"mdi:cast-off"},climate:{on:"mdi:thermostat",off:"mdi:thermostat-cog"},humidifier:{on:"mdi:air-humidifier",off:"mdi:air-humidifier-off"},switch:{on:"mdi:toggle-switch",off:"mdi:toggle-switch-off",switch:{on:"mdi:toggle-switch",off:"mdi:toggle-switch-off"},outlet:{on:"mdi:power-plug",off:"mdi:power-plug-off"}},vacuum:{on:"mdi:robot-vacuum",off:"mdi:robot-vacuum-off"},lawn_mower:{on:"mdi:robot-mower",off:"mdi:robot-mower"},fan:{on:"mdi:fan",off:"mdi:fan-off"},cover:{on:"mdi:garage-open",off:"mdi:garage",garage:{on:"mdi:garage-open",off:"mdi:garage"},door:{on:"mdi:door-open",off:"mdi:door-closed"},gate:{on:"mdi:gate-open",off:"mdi:gate"},blind:{on:"mdi:blinds-open",off:"mdi:blinds"},curtain:{on:"mdi:curtains",off:"mdi:curtains-closed"},damper:{on:"mdi:valve-open",off:"mdi:valve-closed"},awning:{on:"mdi:awning-outline",off:"mdi:awning-outline"},shutter:{on:"mdi:window-shutter-open",off:"mdi:window-shutter"},shade:{on:"mdi:roller-shade",off:"mdi:roller-shade-closed"},window:{on:"mdi:window-open",off:"mdi:window-closed"}},binary_sensor:{on:"mdi:power-off",off:"mdi:power-off",motion:{on:"mdi:motion-sensor",off:"mdi:motion-sensor-off"},moisture:{on:"mdi:water-alert",off:"mdi:water-off"},window:{on:"mdi:window-open",off:"mdi:window-closed"},door:{on:"mdi:door-open",off:"mdi:door-closed"},lock:{on:"mdi:lock-open",off:"mdi:lock"},presence:{on:"mdi:home-outline",off:"mdi:home-export-outline"},occupancy:{on:"mdi:seat",off:"mdi:seat-outline"},vibration:{on:"mdi:vibrate",off:"mdi:vibrate-off"},opening:{on:"mdi:shield-lock-open",off:"mdi:shield-lock"},garage_door:{on:"mdi:garage-open",off:"mdi:garage"},problem:{on:"mdi:alert-circle-outline",off:"mdi:alert-circle-check-outline"},smoke:{on:"mdi:smoke-detector-outline",off:"mdi:smoke-detector-off-outline"},running:{on:"mdi:play",off:"mdi:pause"},plug:{on:"mdi:power-plug",off:"mdi:power-plug-off"},power:{on:"mdi:power",off:"mdi:power-off"},battery:{on:"mdi:battery-alert",off:"mdi:battery"},battery_charging:{on:"mdi:battery-charging",off:"mdi:battery-check"},gas:{on:"mdi:gas-station-outline",off:"mdi:gas-station-off-outline"},carbon_monoxide:{on:"mdi:molecule-co",off:"mdi:molecule-co"},cold:{on:"mdi:snowflake",off:"mdi:snowflake-off"},heat:{on:"mdi:weather-sunny",off:"mdi:weather-sunny-off"},connectivity:{on:"mdi:connection",off:"mdi:connection"},safety:{on:"mdi:shield-alert-outline",off:"mdi:shield-check-outline"},sound:{on:"mdi:volume-high",off:"mdi:volume-off"},update:{on:"mdi:autorenew",off:"mdi:autorenew-off"},tamper:{on:"mdi:shield-home",off:"mdi:shield-home"},light:{on:"mdi:lightbulb-outline",off:"mdi:lightbulb-off-outline"},moving:{on:"mdi:car",off:"mdi:car-off"}},person:{on:"mdi:account",off:"mdi:account-off"},device_tracker:{on:"mdi:account",off:"mdi:account-off"},valve:{on:"mdi:valve",off:"mdi:valve-closed"},water_heater:{on:"mdi:water-boiler",off:"mdi:water-pump-off"},remote:{on:"mdi:remote",off:"mdi:remote-off"},update:{on:"mdi:autorenew",off:"mdi:autorenew-off"},air_quality:{on:"mdi:air-filter",off:"mdi:air-filter"},camera:{on:"mdi:camera",off:"mdi:camera-off"},calendar:{on:"mdi:calendar",off:"mdi:calendar-remove"},scene:{on:"mdi:movie",off:"mdi:movie-off"},sensor:{on:"mdi:gauge",off:"mdi:gauge"},script:{on:"mdi:script-text",off:"mdi:script-text"}},ze=["unavailable","unknown"],Te=["off","closed","idle"];
 /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */let ze=class extends le{constructor(){super(...arguments),this._areas={}}async connectedCallback(){super.connectedCallback(),await this._loadAreas(),this.requestUpdate()}updated(e){super.updated(e),e.has("hass")&&this.hass&&0===Object.keys(this._areas).length&&this._loadAreas().then((()=>this.requestUpdate()))}async _loadAreas(){var e;try{if(null===(e=this.hass)||void 0===e?void 0:e.connection){const e=await this.hass.connection.sendMessagePromise({type:"config/area_registry/list"});this._areas={},e.forEach((e=>{this._areas[e.area_id]=e}))}}catch(e){console.error("Failed to load areas:",e),this._areas={}}}setConfig(e){if(!e.area)throw new Error("Please define an area");this._config=Object.assign({display_type:"compact",features_position:"bottom",features:[],alert_classes:Oe.binary_sensor,sensor_classes:Oe.sensor,exclude_entities:[]},e)}_getAreaEntities(){var e;if(!(null===(e=this._config)||void 0===e?void 0:e.area))return[];console.log(`Looking for entities in area: ${this._config.area}`);const t=Object.entries(this.hass.states||{}).filter((([e,t])=>{var i,o,s,a;if(null===(o=null===(i=this._config)||void 0===i?void 0:i.exclude_entities)||void 0===o?void 0:o.includes(e))return!1;const[n]=e.split(".");if(!(Ie.includes(n)||Ce.includes(n)||Ee.includes(n)||Se.includes(n)||ke.includes(n)||Pe.includes(n)))return!1;return(null===(s=t.attributes)||void 0===s?void 0:s.area_id)===(null===(a=this._config)||void 0===a?void 0:a.area)})).map((([e,t])=>({entityId:e,state:t.state,attributes:t.attributes,domain:e.split(".")[0],name:t.attributes.friendly_name||e.split(".")[1],deviceClass:t.attributes.device_class||""})));console.log(`Found ${t.length} entities in area ${this._config.area}:`,t);const i=t.filter((e=>"binary_sensor"===e.domain)),o=t.filter((e=>"sensor"===e.domain));return console.log(`Binary sensors: ${i.length}`,i),console.log(`Sensors: ${o.length}`,o),t}_getDomainIcon(e,t,i){if(!(e in Ue))return"mdi:help-circle";const o=Ue[e];if(!o)return"mdi:help-circle";const s=!Te.includes(t)&&!Me.includes(t);if(i&&"object"==typeof o&&i in o){const e=o[i];if(e&&"object"==typeof e&&"on"in e&&"off"in e)return s?e.on:e.off}return"object"==typeof o&&"on"in o&&"off"in o?s?o.on:o.off:"mdi:help-circle"}_getEntitiesByDomain(){const e=this._getAreaEntities(),t={};return e.forEach((e=>{t[e.domain]||(t[e.domain]=[]),t[e.domain].push(e)})),t}_getActiveEntities(e,t){return(this._getEntitiesByDomain()[e]||[]).filter((e=>(!t||e.deviceClass===t)&&(!Me.includes(e.state)&&!Te.includes(e.state))))}_renderButtons(){const e=this._getEntitiesByDomain(),t=Ie.filter((t=>t in e&&e[t].length>0));return F`
+     */let Me=class extends le{constructor(){super(...arguments),this._areas={}}async connectedCallback(){super.connectedCallback(),await this._loadAreas(),this.requestUpdate()}updated(e){super.updated(e),e.has("hass")&&this.hass&&0===Object.keys(this._areas).length&&this._loadAreas().then((()=>this.requestUpdate()))}async _loadAreas(){var e;try{if(null===(e=this.hass)||void 0===e?void 0:e.connection){const e=await this.hass.connection.sendMessagePromise({type:"config/area_registry/list"});this._areas={},e.forEach((e=>{this._areas[e.area_id]=e}))}}catch(e){console.error("Failed to load areas:",e),this._areas={}}}setConfig(e){if(!e.area)throw new Error("Please define an area");this._config=Object.assign({display_type:"compact",features_position:"bottom",features:[],alert_classes:Oe.binary_sensor,sensor_classes:Oe.sensor,exclude_entities:[]},e)}_getAreaEntities(){var e;if(!(null===(e=this._config)||void 0===e?void 0:e.area))return[];console.log(`Looking for entities in area: ${this._config.area}`);const t=Object.entries(this.hass.states||{}).filter((([e,t])=>{var i,o,s,a;if(null===(o=null===(i=this._config)||void 0===i?void 0:i.exclude_entities)||void 0===o?void 0:o.includes(e))return!1;const[n]=e.split(".");if(!(Ie.includes(n)||Ce.includes(n)||Ee.includes(n)||Se.includes(n)||ke.includes(n)||Pe.includes(n)))return!1;return(null===(s=t.attributes)||void 0===s?void 0:s.area_id)===(null===(a=this._config)||void 0===a?void 0:a.area)})).map((([e,t])=>({entityId:e,state:t.state,attributes:t.attributes,domain:e.split(".")[0],name:t.attributes.friendly_name||e.split(".")[1],deviceClass:t.attributes.device_class||""})));console.log(`Found ${t.length} entities in area ${this._config.area}:`,t);const i=t.filter((e=>"binary_sensor"===e.domain)),o=t.filter((e=>"sensor"===e.domain));return console.log(`Binary sensors: ${i.length}`,i),console.log(`Sensors: ${o.length}`,o),t}_getDomainIcon(e,t,i){if(!(e in Ue))return"mdi:help-circle";const o=Ue[e];if(!o)return"mdi:help-circle";const s=!Te.includes(t)&&!ze.includes(t);if(i&&"object"==typeof o&&i in o){const e=o[i];if(e&&"object"==typeof e&&"on"in e&&"off"in e)return s?e.on:e.off}return"object"==typeof o&&"on"in o&&"off"in o?s?o.on:o.off:"mdi:help-circle"}_getEntitiesByDomain(){const e=this._getAreaEntities(),t={};return e.forEach((e=>{t[e.domain]||(t[e.domain]=[]),t[e.domain].push(e)})),t}_getActiveEntities(e,t){return(this._getEntitiesByDomain()[e]||[]).filter((e=>(!t||e.deviceClass===t)&&(!ze.includes(e.state)&&!Te.includes(e.state))))}_renderButtons(){const e=this._getEntitiesByDomain(),t=Ie.filter((t=>t in e&&e[t].length>0));return F`
       <div class="buttons">
         ${Ae(t,(e=>e),(e=>{const t=this._getActiveEntities(e).length,i=t>0;return F`
               <div class="icon-with-count">
@@ -66,7 +66,7 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
               </div>
             `}))}
       </div>
-    `}_renderSensors(){if(!this._config)return W;const e=[];if(this._config.temperature_entity&&this.hass.states[this._config.temperature_entity]){const t=this.hass.states[this._config.temperature_entity];if(!Me.includes(t.state)){const i=parseFloat(t.state);let o="#03a9f4";isNaN(i)||(o=i>=80?"#f44336":i>=75?"#ff9800":i>=70?"#ffc107":i>=60?"#4caf50":"#03a9f4"),e.push({icon:"mdi:thermometer",value:this.hass.formatEntityState(t),deviceClass:"temperature",color:o})}}if(this._config.humidity_entity&&this.hass.states[this._config.humidity_entity]){const t=this.hass.states[this._config.humidity_entity];Me.includes(t.state)||e.push({icon:"mdi:water-percent",value:this.hass.formatEntityState(t),deviceClass:"humidity",color:"#2196f3"})}if(this._config.illuminance_entity&&this.hass.states[this._config.illuminance_entity]){const t=this.hass.states[this._config.illuminance_entity];Me.includes(t.state)||e.push({icon:"mdi:brightness-6",value:this.hass.formatEntityState(t),deviceClass:"illuminance",color:"#ffeb3b"})}if(this._config.power_entity&&this.hass.states[this._config.power_entity]){const t=this.hass.states[this._config.power_entity];Me.includes(t.state)||e.push({icon:"mdi:flash",value:this.hass.formatEntityState(t),deviceClass:"power",color:"#ff9800"})}if(this._config.energy_entity&&this.hass.states[this._config.energy_entity]){const t=this.hass.states[this._config.energy_entity];Me.includes(t.state)||e.push({icon:"mdi:lightning-bolt",value:this.hass.formatEntityState(t),deviceClass:"energy",color:"#9c27b0"})}if(this._config.battery_entity&&this.hass.states[this._config.battery_entity]){const t=this.hass.states[this._config.battery_entity];if(!Me.includes(t.state)){const i=Number(t.state);let o="mdi:battery",s="#4caf50";isNaN(i)||(i<=10?(o="mdi:battery-outline",s="#f44336"):i<=20?(o="mdi:battery-20",s="#ff5722"):i<=50?(o="mdi:battery-50",s="#ff9800"):(o="mdi:battery",s="#4caf50")),e.push({icon:o,value:this.hass.formatEntityState(t),deviceClass:"battery",color:s})}}return 0===e.length?W:F`
+    `}_renderSensors(){if(!this._config)return W;const e=[];if(this._config.temperature_entity&&this.hass.states[this._config.temperature_entity]){const t=this.hass.states[this._config.temperature_entity];if(!ze.includes(t.state)){const i=parseFloat(t.state);let o="#03a9f4";isNaN(i)||(o=i>=80?"#f44336":i>=75?"#ff9800":i>=70?"#ffc107":i>=60?"#4caf50":"#03a9f4"),e.push({icon:"mdi:thermometer",value:this.hass.formatEntityState(t),deviceClass:"temperature",color:o})}}if(this._config.humidity_entity&&this.hass.states[this._config.humidity_entity]){const t=this.hass.states[this._config.humidity_entity];ze.includes(t.state)||e.push({icon:"mdi:water-percent",value:this.hass.formatEntityState(t),deviceClass:"humidity",color:"#2196f3"})}if(this._config.illuminance_entity&&this.hass.states[this._config.illuminance_entity]){const t=this.hass.states[this._config.illuminance_entity];ze.includes(t.state)||e.push({icon:"mdi:brightness-6",value:this.hass.formatEntityState(t),deviceClass:"illuminance",color:"#ffeb3b"})}if(this._config.power_entity&&this.hass.states[this._config.power_entity]){const t=this.hass.states[this._config.power_entity];ze.includes(t.state)||e.push({icon:"mdi:flash",value:this.hass.formatEntityState(t),deviceClass:"power",color:"#ff9800"})}if(this._config.energy_entity&&this.hass.states[this._config.energy_entity]){const t=this.hass.states[this._config.energy_entity];ze.includes(t.state)||e.push({icon:"mdi:lightning-bolt",value:this.hass.formatEntityState(t),deviceClass:"energy",color:"#9c27b0"})}if(this._config.battery_entity&&this.hass.states[this._config.battery_entity]){const t=this.hass.states[this._config.battery_entity];if(!ze.includes(t.state)){const i=Number(t.state);let o="mdi:battery",s="#4caf50";isNaN(i)||(i<=10?(o="mdi:battery-outline",s="#f44336"):i<=20?(o="mdi:battery-20",s="#ff5722"):i<=50?(o="mdi:battery-50",s="#ff9800"):(o="mdi:battery",s="#4caf50")),e.push({icon:o,value:this.hass.formatEntityState(t),deviceClass:"battery",color:s})}}return 0===e.length?W:F`
       <div class="sensors">
         ${e.map((e=>F`
           <div class="sensor">
@@ -84,7 +84,7 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
           </div>
         `))}
       </div>
-    `}_renderAreaControls(){if(!this._config)return W;const e=[];if(this._config.light_entity&&this.hass.states[this._config.light_entity]){const t=this.hass.states[this._config.light_entity],i="on"===t.state;e.push({icon:i?"mdi:lightbulb":"mdi:lightbulb-outline",name:t.attributes.friendly_name||"Light",entityId:this._config.light_entity,isOn:i,color:i?"#ffc107":"#757575"})}if(this._config.climate_entity&&this.hass.states[this._config.climate_entity]){const t=this.hass.states[this._config.climate_entity],i="off"!==t.state,o=t.state;let s="mdi:thermostat",a="#757575";"heat"===o?(s="mdi:fire",a="#f44336"):"cool"===o?(s="mdi:snowflake",a="#2196f3"):"auto"===o&&(s="mdi:thermostat-auto",a="#4caf50"),e.push({icon:s,name:t.attributes.friendly_name||"Climate",entityId:this._config.climate_entity,isOn:i,color:a})}if(this._config.switch_entity&&this.hass.states[this._config.switch_entity]){const t=this.hass.states[this._config.switch_entity],i="on"===t.state;e.push({icon:i?"mdi:toggle-switch":"mdi:toggle-switch-off",name:t.attributes.friendly_name||"Switch",entityId:this._config.switch_entity,isOn:i,color:i?"#4caf50":"#757575"})}if(this._config.fan_entity&&this.hass.states[this._config.fan_entity]){const t=this.hass.states[this._config.fan_entity],i="on"===t.state;e.push({icon:i?"mdi:fan":"mdi:fan-off",name:t.attributes.friendly_name||"Fan",entityId:this._config.fan_entity,isOn:i,color:i?"#03a9f4":"#757575"})}return this._config.additional_controls&&this._config.additional_controls.forEach((t=>{const i=this.hass.states[t];if(i){const o=t.split(".")[0],s=!Te.includes(i.state)&&!Me.includes(i.state);e.push({icon:this._getDomainIcon(o,i.state),name:i.attributes.friendly_name||t.split(".")[1],entityId:t,isOn:s,color:s?"#2196f3":"#757575"})}})),0===e.length?W:F`
+    `}_renderAreaControls(){if(!this._config)return W;const e=[];if(this._config.light_entity&&this.hass.states[this._config.light_entity]){const t=this.hass.states[this._config.light_entity],i="on"===t.state;e.push({icon:i?"mdi:lightbulb":"mdi:lightbulb-outline",name:t.attributes.friendly_name||"Light",entityId:this._config.light_entity,isOn:i,color:i?"#ffc107":"#757575"})}if(this._config.climate_entity&&this.hass.states[this._config.climate_entity]){const t=this.hass.states[this._config.climate_entity],i="off"!==t.state,o=t.state;let s="mdi:thermostat",a="#757575";"heat"===o?(s="mdi:fire",a="#f44336"):"cool"===o?(s="mdi:snowflake",a="#2196f3"):"auto"===o&&(s="mdi:thermostat-auto",a="#4caf50"),e.push({icon:s,name:t.attributes.friendly_name||"Climate",entityId:this._config.climate_entity,isOn:i,color:a})}if(this._config.switch_entity&&this.hass.states[this._config.switch_entity]){const t=this.hass.states[this._config.switch_entity],i="on"===t.state;e.push({icon:i?"mdi:toggle-switch":"mdi:toggle-switch-off",name:t.attributes.friendly_name||"Switch",entityId:this._config.switch_entity,isOn:i,color:i?"#4caf50":"#757575"})}if(this._config.fan_entity&&this.hass.states[this._config.fan_entity]){const t=this.hass.states[this._config.fan_entity],i="on"===t.state;e.push({icon:i?"mdi:fan":"mdi:fan-off",name:t.attributes.friendly_name||"Fan",entityId:this._config.fan_entity,isOn:i,color:i?"#03a9f4":"#757575"})}return this._config.additional_controls&&this._config.additional_controls.forEach((t=>{const i=this.hass.states[t];if(i){const o=t.split(".")[0],s=!Te.includes(i.state)&&!ze.includes(i.state);e.push({icon:this._getDomainIcon(o,i.state),name:i.attributes.friendly_name||t.split(".")[1],entityId:t,isOn:s,color:s?"#2196f3":"#757575"})}})),0===e.length?W:F`
       <div class="area-controls">
         ${e.map((e=>F`
           <div class="control-button ${e.isOn?"active":""}" 
@@ -93,8 +93,8 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
           </div>
         `))}
       </div>
-    `}_handleControlClick(e){const t=e.split(".")[0];"climate"===t?this._handleEntityClick(e):this.hass.callService(t,"toggle",{},{entity_id:e})}_handleEntityClick(e){const t=new CustomEvent("hass-more-info",{detail:{entityId:e},bubbles:!0,composed:!0});this.dispatchEvent(t)}_getAreaCameras(){var e;return(null===(e=this._config)||void 0===e?void 0:e.area)?Object.entries(this.hass.states||{}).filter((([e,t])=>{var i,o;const[s]=e.split(".");return"camera"===s&&(null===(i=t.attributes)||void 0===i?void 0:i.area_id)===(null===(o=this._config)||void 0===o?void 0:o.area)})).map((([e,t])=>({entityId:e,name:t.attributes.friendly_name||e.split(".")[1]}))):[]}_getAreaName(){var e,t,i;if(null===(e=this._config)||void 0===e?void 0:e.name)return this._config.name;const o=this._areas[(null===(t=this._config)||void 0===t?void 0:t.area)||""];return(null==o?void 0:o.name)||(null===(i=this._config)||void 0===i?void 0:i.area)||"Unknown Area"}_getAreaIcon(){var e,t;if(null===(e=this._config)||void 0===e?void 0:e.icon)return this._config.icon;const i=this._areas[(null===(t=this._config)||void 0===t?void 0:t.area)||""];return(null==i?void 0:i.icon)||"mdi:home"}render(){var e;if(!this.hass||!this._config)return W;const t=this._getAreaName(),i=this._getAreaIcon(),o=this._config.area_name_color?`color: ${this._config.area_name_color};`:"",s=this._config.area_icon_color?`color: ${this._config.area_icon_color};`:"",a=this._config.mirror_card_layout?`mirror-layout mirror-${this._config.layout||"vertical"}`:"",n=null===(e=this._config.features)||void 0===e?void 0:e.includes("area-controls");return F`
-      <ha-card class="${this._config.display_type||"compact"} ${a}">
+    `}_handleControlClick(e){const t=e.split(".")[0];"climate"===t?this._handleEntityClick(e):this.hass.callService(t,"toggle",{},{entity_id:e})}_handleEntityClick(e){const t=new CustomEvent("hass-more-info",{detail:{entityId:e},bubbles:!0,composed:!0});this.dispatchEvent(t)}_getAreaCameras(){var e;return(null===(e=this._config)||void 0===e?void 0:e.area)?Object.entries(this.hass.states||{}).filter((([e,t])=>{var i,o;const[s]=e.split(".");return"camera"===s&&(null===(i=t.attributes)||void 0===i?void 0:i.area_id)===(null===(o=this._config)||void 0===o?void 0:o.area)})).map((([e,t])=>({entityId:e,name:t.attributes.friendly_name||e.split(".")[1]}))):[]}_getAreaName(){var e,t,i;if(null===(e=this._config)||void 0===e?void 0:e.name)return this._config.name;const o=this._areas[(null===(t=this._config)||void 0===t?void 0:t.area)||""];return(null==o?void 0:o.name)||(null===(i=this._config)||void 0===i?void 0:i.area)||"Unknown Area"}_getAreaIcon(){var e,t;if(null===(e=this._config)||void 0===e?void 0:e.icon)return this._config.icon;const i=this._areas[(null===(t=this._config)||void 0===t?void 0:t.area)||""];return(null==i?void 0:i.icon)||"mdi:home"}_getAreaFilteredEntities(e,t){var i;return(null===(i=this._config)||void 0===i?void 0:i.area)?Object.entries(this.hass.states||{}).filter((([i,o])=>{var s,a;const[n]=i.split(".");return n===e&&((!t||o.attributes.device_class===t)&&(null===(s=o.attributes)||void 0===s?void 0:s.area_id)===(null===(a=this._config)||void 0===a?void 0:a.area))})).map((([e])=>e)):[]}render(){var e;if(!this.hass||!this._config)return W;const t=this._getAreaName(),i=this._getAreaIcon(),o=this._config.area_name_color?`color: ${this._config.area_name_color};`:"",s=this._config.area_icon_color?`color: ${this._config.area_icon_color};`:"",a=this._config.layout||"compact",n=this._config.controls_position||"right",r=null===(e=this._config.features)||void 0===e?void 0:e.includes("area-controls");return F`
+      <ha-card class="${this._config.display_type||"compact"} layout-${a} controls-${n}">
         <div class="content">
           ${"picture"===this._config.display_type&&this._config.background_image?F`
             <div class="background-image" style="background-image: url('${this._config.background_image}')"></div>
@@ -109,8 +109,8 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
             ></hui-image>
           `:""}
 
-          <div class="area-info ${this._config.mirror_card_layout?"mirror-info":""}">
-            ${"compact"!==this._config.display_type?F`
+          <div class="area-info">
+            ${"compact"!==this._config.display_type||"vertical"===a?F`
               <div class="area-icon" style="${s}">
                 <ha-icon icon="${i}"></ha-icon>
               </div>
@@ -118,18 +118,25 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
             
             <div class="area-details">
               <div class="area-name" style="${o}">
-                ${"compact"===this._config.display_type?F`
+                ${"compact"===this._config.display_type&&"vertical"!==a?F`
                   <ha-icon icon="${i}" style="${s}"></ha-icon>
                 `:""}
                 ${t}
               </div>
-              
-              ${this._renderAlerts()}
-              ${this._renderSensors()}
             </div>
           </div>
 
-          ${n?this._renderAreaControls():W}
+          <div class="sensors-section">
+            ${this._renderSensors()}
+          </div>
+
+          ${r?F`
+            <div class="controls-section">
+              ${this._renderAreaControls()}
+            </div>
+          `:W}
+
+          ${this._renderAlerts()}
           ${this._renderFeatures()}
         </div>
       </ha-card>
@@ -159,7 +166,7 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
         <ha-icon icon="mdi:power"></ha-icon>
         Toggle All
       </ha-button>
-    `}_handleMoreInfo(){var e;const t=new CustomEvent("hass-more-info",{detail:{entityId:`area.${null===(e=this._config)||void 0===e?void 0:e.area}`},bubbles:!0,composed:!0});this.dispatchEvent(t)}_handleToggleAll(){const e=this._getAreaEntities().filter((e=>Ie.includes(e.domain)));e.forEach((e=>{this.hass.callService(e.domain,"toggle",{},{entity_id:e.entityId})}))}static getConfigElement(){return document.createElement("area-card-elite-editor")}static getStubConfig(){return{area:""}}};var Ve,Ne;ze.styles=r`
+    `}_handleMoreInfo(){var e;const t=new CustomEvent("hass-more-info",{detail:{entityId:`area.${null===(e=this._config)||void 0===e?void 0:e.area}`},bubbles:!0,composed:!0});this.dispatchEvent(t)}_handleToggleAll(){const e=this._getAreaEntities().filter((e=>Ie.includes(e.domain)));e.forEach((e=>{this.hass.callService(e.domain,"toggle",{},{entity_id:e.entityId})}))}static getConfigElement(){return document.createElement("area-card-elite-editor")}static getStubConfig(){return{area:""}}};var Ne,Ve;Me.styles=r`
     ha-card {
       overflow: hidden;
       position: relative;
@@ -593,7 +600,153 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
       height: 100%;
       box-sizing: border-box;
     }
-  `,t([fe({attribute:!1})],ze.prototype,"hass",void 0),t([pe()],ze.prototype,"_config",void 0),t([pe()],ze.prototype,"_areas",void 0),ze=t([de("area-card-elite")],ze),function(e){e.language="language",e.system="system",e.comma_decimal="comma_decimal",e.decimal_comma="decimal_comma",e.space_comma="space_comma",e.none="none"}(Ve||(Ve={})),function(e){e.language="language",e.system="system",e.am_pm="12",e.twenty_four="24"}(Ne||(Ne={}));var He=function(e,t,i,o){o=o||{},i=null==i?{}:i;var s=new Event(t,{bubbles:void 0===o.bubbles||o.bubbles,cancelable:Boolean(o.cancelable),composed:void 0===o.composed||o.composed});return s.detail=i,e.dispatchEvent(s),s};let je=class extends le{constructor(){super(...arguments),this._areas=[],this._localImages=[]}async connectedCallback(){super.connectedCallback(),await this._loadAreas(),await this._loadLocalImages()}async _loadAreas(){var e;try{if(null===(e=this.hass)||void 0===e?void 0:e.connection){const e=await this.hass.connection.sendMessagePromise({type:"config/area_registry/list"});this._areas=e||[]}}catch(e){console.error("Failed to load areas:",e),this._areas=[]}}async _loadLocalImages(){try{const e=await this.hass.connection.sendMessagePromise({type:"media_player/browse_media",media_content_id:"media-source://media_source/local",media_content_type:"app"});this._localImages=this._extractImagePaths(e)}catch(e){console.error("Failed to load local images:",e),this._localImages=[]}}_extractImagePaths(e){const t=[];return(null==e?void 0:e.children)&&e.children.forEach((e=>{var i,o;if(null===(i=e.media_content_type)||void 0===i?void 0:i.startsWith("image/")){const i=null===(o=e.media_content_id)||void 0===o?void 0:o.replace("media-source://media_source/local/","/local/");i&&t.push(i)}})),t}setConfig(e){this._config=Object.assign({features:[],display_type:"compact",color:"",aspect_ratio:"16:9",camera_view:"auto",navigation_path:"",alert_classes:[],sensor_classes:[],features_position:"bottom",exclude_entities:[],layout:"vertical"},e)}_valueChanged(e){var t;if(e.stopPropagation(),!this._config)return;const i=e.target;let o=null===(t=e.detail)||void 0===t?void 0:t.value,s=i.configValue;console.log("Value changed:",{type:e.type,tagName:i.tagName,configValue:s,value:o,detail:e.detail}),null==o&&("input"===e.type&&void 0!==i.value||void 0!==i.value)&&(o=i.value),"HA-AREA-PICKER"===i.tagName?s="area":"HA-ENTITY-PICKER"===i.tagName&&(s=i.configValue||"exclude_entities"),s&&void 0!==o&&(console.log("Setting config:",s,"=",o),this._config=Object.assign(Object.assign({},this._config),{[s]:o}),He(this,"config-changed",{config:this._config}),this.requestUpdate())}_getDeviceClasses(e){var t;if(!(null===(t=this._config)||void 0===t?void 0:t.area))return[];const i=Object.entries(this.hass.states||{}).filter((([t,i])=>{var o,s;return!!(null===(o=i.attributes)||void 0===o?void 0:o.area_id)&&(i.attributes.area_id===(null===(s=this._config)||void 0===s?void 0:s.area)&&t.split(".")[0]===e)})).map((([e,t])=>t)),o=i.map((e=>e.attributes.device_class||"")).filter((e=>e));return[...new Set(o)]}_buildSelectOptions(e){const t=this._getDeviceClasses(e);let i=[];return i="binary_sensor"===e?[...new Set([...t,...Oe.binary_sensor])]:"sensor"===e?[...new Set([...t,...Oe.sensor])]:t,i.map((t=>({value:t,label:this.hass.localize(`component.${e}.device_class.${t}`)||this.hass.localize(`ui.dialogs.entity_registry.editor.device_classes.${e}.${t}`)||t.charAt(0).toUpperCase()+t.slice(1).replace(/_/g," ")})))}render(){return this.hass&&this._config?(this._buildSelectOptions("binary_sensor"),F`
+
+    /* New Layout System */
+    .layout-vertical .content {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 80px;
+    }
+
+    .layout-horizontal .content {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .layout-compact .content {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    /* Vertical Layout - Your Dashboard Style */
+    .layout-vertical .area-info {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      flex: 0 0 auto;
+    }
+
+    .layout-vertical .area-icon {
+      font-size: 2.5rem;
+      flex-shrink: 0;
+    }
+
+    .layout-vertical .area-name {
+      font-size: 1.3em;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .layout-vertical .sensors-section {
+      display: flex;
+      flex: 1;
+      justify-content: center;
+      margin: 0 16px;
+    }
+
+    .layout-vertical .sensors {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .layout-vertical .sensor {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .layout-vertical .sensor ha-icon {
+      --mdc-icon-size: 28px;
+      margin-bottom: 4px;
+    }
+
+    .layout-vertical .sensor-value {
+      font-size: 0.9em;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* Controls Positioning */
+    .controls-right .controls-section {
+      order: 3;
+      flex: 0 0 auto;
+    }
+
+    .controls-left .controls-section {
+      order: 1;
+      flex: 0 0 auto;
+    }
+
+    .controls-top .content {
+      flex-direction: column;
+    }
+
+    .controls-top .controls-section {
+      order: 1;
+      align-self: stretch;
+    }
+
+    .controls-bottom .content {
+      flex-direction: column;
+    }
+
+    .controls-bottom .controls-section {
+      order: 3;
+      align-self: stretch;
+    }
+
+    /* Area Controls Styling */
+    .controls-section .area-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .controls-top .area-controls,
+    .controls-bottom .area-controls {
+      justify-content: center;
+    }
+
+    .controls-left .area-controls,
+    .controls-right .area-controls {
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .layout-vertical.controls-right .area-controls {
+      flex-direction: row;
+      gap: 8px;
+    }
+
+    /* Alert positioning */
+    .layout-vertical .alerts {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .layout-vertical .alerts .icon-with-count {
+      padding: 2px 6px;
+      font-size: 0.8em;
+      min-width: 32px;
+    }
+  `,t([fe({attribute:!1})],Me.prototype,"hass",void 0),t([pe()],Me.prototype,"_config",void 0),t([pe()],Me.prototype,"_areas",void 0),Me=t([de("area-card-elite")],Me),function(e){e.language="language",e.system="system",e.comma_decimal="comma_decimal",e.decimal_comma="decimal_comma",e.space_comma="space_comma",e.none="none"}(Ne||(Ne={})),function(e){e.language="language",e.system="system",e.am_pm="12",e.twenty_four="24"}(Ve||(Ve={}));var je=function(e,t,i,o){o=o||{},i=null==i?{}:i;var s=new Event(t,{bubbles:void 0===o.bubbles||o.bubbles,cancelable:Boolean(o.cancelable),composed:void 0===o.composed||o.composed});return s.detail=i,e.dispatchEvent(s),s};let He=class extends le{constructor(){super(...arguments),this._areas=[],this._localImages=[]}async connectedCallback(){super.connectedCallback(),await this._loadAreas(),await this._loadLocalImages()}async _loadAreas(){var e;try{if(null===(e=this.hass)||void 0===e?void 0:e.connection){const e=await this.hass.connection.sendMessagePromise({type:"config/area_registry/list"});this._areas=e||[]}}catch(e){console.error("Failed to load areas:",e),this._areas=[]}}async _loadLocalImages(){try{const e=await this.hass.connection.sendMessagePromise({type:"media_player/browse_media",media_content_id:"media-source://media_source/local",media_content_type:"app"});this._localImages=this._extractImagePaths(e)}catch(e){console.error("Failed to load local images:",e),this._localImages=[]}}_extractImagePaths(e){const t=[];return(null==e?void 0:e.children)&&e.children.forEach((e=>{var i,o;if(null===(i=e.media_content_type)||void 0===i?void 0:i.startsWith("image/")){const i=null===(o=e.media_content_id)||void 0===o?void 0:o.replace("media-source://media_source/local/","/local/");i&&t.push(i)}})),t}setConfig(e){this._config=Object.assign({features:[],display_type:"compact",color:"",aspect_ratio:"16:9",camera_view:"auto",navigation_path:"",alert_classes:[],sensor_classes:[],features_position:"bottom",exclude_entities:[],layout:"vertical"},e)}_valueChanged(e){var t;if(e.stopPropagation(),!this._config)return;const i=e.target;let o=null===(t=e.detail)||void 0===t?void 0:t.value,s=i.configValue;console.log("Value changed:",{type:e.type,tagName:i.tagName,configValue:s,value:o,detail:e.detail}),null==o&&("input"===e.type&&void 0!==i.value||void 0!==i.value)&&(o=i.value),"HA-AREA-PICKER"===i.tagName?s="area":"HA-ENTITY-PICKER"===i.tagName&&(s=i.configValue||"exclude_entities"),s&&void 0!==o&&(console.log("Setting config:",s,"=",o),this._config=Object.assign(Object.assign({},this._config),{[s]:o}),je(this,"config-changed",{config:this._config}),this.requestUpdate())}_getDeviceClasses(e){var t;if(!(null===(t=this._config)||void 0===t?void 0:t.area))return[];const i=Object.entries(this.hass.states||{}).filter((([t,i])=>{var o,s;return!!(null===(o=i.attributes)||void 0===o?void 0:o.area_id)&&(i.attributes.area_id===(null===(s=this._config)||void 0===s?void 0:s.area)&&t.split(".")[0]===e)})).map((([e,t])=>t)),o=i.map((e=>e.attributes.device_class||"")).filter((e=>e));return[...new Set(o)]}_buildSelectOptions(e){const t=this._getDeviceClasses(e);let i=[];return i="binary_sensor"===e?[...new Set([...t,...Oe.binary_sensor])]:"sensor"===e?[...new Set([...t,...Oe.sensor])]:t,i.map((t=>({value:t,label:this.hass.localize(`component.${e}.device_class.${t}`)||this.hass.localize(`ui.dialogs.entity_registry.editor.device_classes.${e}.${t}`)||t.charAt(0).toUpperCase()+t.slice(1).replace(/_/g," ")})))}render(){return this.hass&&this._config?(this._buildSelectOptions("binary_sensor"),F`
       <div class="card-config">
         <!-- Basic Configuration -->
         <div class="option">
@@ -654,6 +807,18 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
               ></ha-selector>
             </div>
 
+            <!-- Layout Options -->
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{select:{options:[{value:"horizontal",label:"Horizontal (Icon | Name | Sensors | Controls)"},{value:"vertical",label:"Vertical (Name/Icon on left, Sensors center, Controls right)"},{value:"compact",label:"Compact (Everything inline)"}]}}}
+                .value=${this._config.layout||"compact"}
+                .configValue=${"layout"}
+                .label=${"Card Layout"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
             <div class="option">
               <ha-selector
                 .hass=${this.hass}
@@ -664,6 +829,19 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
                 @value-changed=${this._valueChanged}
               ></ha-selector>
             </div>
+
+            ${"compact"!==this._config.layout?F`
+              <div class="option">
+                <ha-selector
+                  .hass=${this.hass}
+                  .selector=${{select:{options:[{value:"top",label:"Top"},{value:"bottom",label:"Bottom"},{value:"left",label:"Left"},{value:"right",label:"Right"}]}}}
+                  .value=${this._config.controls_position||"right"}
+                  .configValue=${"controls_position"}
+                  .label=${"Controls Position"}
+                  @value-changed=${this._valueChanged}
+                ></ha-selector>
+              </div>
+            `:""}
 
             <div class="option">
               <ha-selector
@@ -710,60 +888,6 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
                   .helper=${"Enter image URL or /local/image.jpg for local files"}
                   @value-changed=${this._valueChanged}
                 ></ha-selector>
-              </div>
-            `:""}
-
-            <!-- Mirror Card Layout -->
-            <div class="option">
-              <label class="switch-label">
-                <ha-switch
-                  .checked=${this._config.mirror_card_layout||!1}
-                  .configValue=${"mirror_card_layout"}
-                  @change=${this._valueChanged}
-                ></ha-switch>
-                Mirror Card Layout
-              </label>
-            </div>
-
-            ${this._config.mirror_card_layout?F`
-              <div class="layout-options">
-                <div class="layout-grid">
-                  <div class="layout-item ${"vertical"===this._config.layout?"selected":""}"
-                       @click=${()=>this._setLayout("vertical")}>
-                    <div class="layout-preview vertical">
-                      <div class="layout-icon"></div>
-                      <div class="layout-text"></div>
-                    </div>
-                    <div class="layout-label">Vertical</div>
-                  </div>
-                  
-                  <div class="layout-item ${"horizontal"===this._config.layout?"selected":""}"
-                       @click=${()=>this._setLayout("horizontal")}>
-                    <div class="layout-preview horizontal">
-                      <div class="layout-icon"></div>
-                      <div class="layout-text"></div>
-                    </div>
-                    <div class="layout-label">Horizontal</div>
-                  </div>
-                  
-                  <div class="layout-item ${"v1"===this._config.layout?"selected":""}"
-                       @click=${()=>this._setLayout("v1")}>
-                    <div class="layout-preview v1">
-                      <div class="layout-icon"></div>
-                      <div class="layout-text"></div>
-                    </div>
-                    <div class="layout-label">V1</div>
-                  </div>
-                  
-                  <div class="layout-item ${"v2"===this._config.layout?"selected":""}"
-                       @click=${()=>this._setLayout("v2")}>
-                    <div class="layout-preview v2">
-                      <div class="layout-icon"></div>
-                      <div class="layout-text"></div>
-                    </div>
-                    <div class="layout-label">V2</div>
-                  </div>
-                </div>
               </div>
             `:""}
 
@@ -1031,7 +1155,7 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
           </div>
         </ha-expansion-panel>
       </div>
-    `):W}_setLayout(e){this._config&&(this._config=Object.assign(Object.assign({},this._config),{mirror_card_layout:!0,layout:e}),He(this,"config-changed",{config:this._config}),this.requestUpdate())}_layoutChanged(e){if(this._config&&e.detail){const t=e.detail.value;this._config=Object.assign(Object.assign({},this._config),{mirror_card_layout:!0,layout:t}),He(this,"config-changed",{config:this._config}),this.requestUpdate()}}_configChanged(){const e=new CustomEvent("config-changed",{detail:{config:this._config},bubbles:!0,composed:!0});this.dispatchEvent(e)}static get styles(){return r`
+    `):W}_setLayout(e){this._config&&(this._config=Object.assign(Object.assign({},this._config),{mirror_card_layout:!0,layout:e}),je(this,"config-changed",{config:this._config}),this.requestUpdate())}_layoutChanged(e){if(this._config&&e.detail){const t=e.detail.value;this._config=Object.assign(Object.assign({},this._config),{mirror_card_layout:!0,layout:t}),je(this,"config-changed",{config:this._config}),this.requestUpdate()}}_configChanged(){const e=new CustomEvent("config-changed",{detail:{config:this._config},bubbles:!0,composed:!0});this.dispatchEvent(e)}static get styles(){return r`
       :host {
         display: block;
       }
@@ -1172,4 +1296,4 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
         margin-bottom: 8px;
         font-style: italic;
       }
-    `}};t([fe({attribute:!1})],je.prototype,"hass",void 0),t([pe()],je.prototype,"_config",void 0),t([pe()],je.prototype,"_areas",void 0),t([pe()],je.prototype,"_localImages",void 0),je=t([de("area-card-elite-editor")],je),customElements.get(e)||customElements.define(e,ze),customElements.get(e+"-editor")||customElements.define(e+"-editor",je),window.customCards=window.customCards||[],window.customCards.push({type:e,name:"Area Card Elite",description:"An enhanced area card for Home Assistant"})}();
+    `}};t([fe({attribute:!1})],He.prototype,"hass",void 0),t([pe()],He.prototype,"_config",void 0),t([pe()],He.prototype,"_areas",void 0),t([pe()],He.prototype,"_localImages",void 0),He=t([de("area-card-elite-editor")],He),customElements.get(e)||customElements.define(e,Me),customElements.get(e+"-editor")||customElements.define(e+"-editor",He),window.customCards=window.customCards||[],window.customCards.push({type:e,name:"Area Card Elite",description:"An enhanced area card for Home Assistant"})}();
