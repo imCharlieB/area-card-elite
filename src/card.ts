@@ -814,7 +814,7 @@ export class AreaCardElite extends LitElement {
 
   static styles = css`
     ha-card {
-      overflow: hidden;
+      overflow: visible;  /* Changed from hidden to visible to allow corner icon */
       position: relative;
       height: 100%;
       padding: 16px;
@@ -893,15 +893,15 @@ export class AreaCardElite extends LitElement {
       transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
-    /* Position based on features position - FINE-TUNED */
+    /* Position based on features position - ACTUALLY VISIBLE NOW */
     .features-right .main-entity-background {
-      bottom: -60px;  /* Half of 120px to center on bottom edge */
-      left: -60px;    /* Half of 120px to center on left edge */
+      bottom: -40px;  /* Adjusted so more of circle shows */
+      left: -40px;    /* Adjusted so more of circle shows */
     }
 
     .features-left .main-entity-background {
-      bottom: -60px;  /* Half of 120px to center on bottom edge */
-      right: -60px;   /* Half of 120px to center on right edge */
+      bottom: -40px;  /* Adjusted so more of circle shows */
+      right: -40px;   /* Adjusted so more of circle shows */
     }
 
     .features-top .main-entity-background,
