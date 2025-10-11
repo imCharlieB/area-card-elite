@@ -8,8 +8,14 @@ import { CUSTOM_CARD_ID } from "./common";
 import { AreaCardElite } from "./card";
 import { AreaCardEliteEditor } from "./editor";
 
-customElements.define(CUSTOM_CARD_ID, AreaCardElite);
-customElements.define(CUSTOM_CARD_ID + "-editor", AreaCardEliteEditor);
+// Only register if not already defined
+if (!customElements.get(CUSTOM_CARD_ID)) {
+  customElements.define(CUSTOM_CARD_ID, AreaCardElite);
+}
+
+if (!customElements.get(CUSTOM_CARD_ID + "-editor")) {
+  customElements.define(CUSTOM_CARD_ID + "-editor", AreaCardEliteEditor);
+}
 
 window.customCards = window.customCards || [];
 window.customCards.push({

@@ -25,7 +25,7 @@ export default {
       file: output_file,
       format: "iife",
       name: "AreaCardElite",
-      sourcemap: true,
+      sourcemap: !production, // Only generate source maps in development
     },
   ],
   plugins: [

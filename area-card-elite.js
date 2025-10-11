@@ -423,5 +423,4 @@ const dt=t=>(e,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(t,e)
       ha-select, ha-textfield, ha-entity-picker {
         width: 100%;
       }
-    `}};e([ft({attribute:!1})],Bt.prototype,"hass",void 0),e([pt()],Bt.prototype,"_config",void 0),Bt=e([dt("area-card-elite-editor")],Bt),customElements.define(t,Ht),customElements.define(t+"-editor",Bt),window.customCards=window.customCards||[],window.customCards.push({type:t,name:"Area Card Elite",description:"An enhanced area card for Home Assistant"})}();
-//# sourceMappingURL=area-card-elite.js.map
+    `}};e([ft({attribute:!1})],Bt.prototype,"hass",void 0),e([pt()],Bt.prototype,"_config",void 0),Bt=e([dt("area-card-elite-editor")],Bt),customElements.get(t)||customElements.define(t,Ht),customElements.get(t+"-editor")||customElements.define(t+"-editor",Bt),window.customCards=window.customCards||[],window.customCards.push({type:t,name:"Area Card Elite",description:"An enhanced area card for Home Assistant"})}();
