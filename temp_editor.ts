@@ -162,23 +162,19 @@ export class AreaCardEliteEditor extends LitElement {
   private _buildSelectOptions(domain: string): Array<{value: string, label: string}> {
     const classes = this._getDeviceClasses(domain);
     
-    // Always show common device classes even if none found in area yet
-    let allClasses: string[] = [];
-    
-    if (domain === 'binary_sensor') {
-      // Combine found classes with common ones, removing duplicates
-      allClasses = [...new Set([...classes, ...DEVICE_CLASSES.binary_sensor])];
-    } else if (domain === 'sensor') {
-      allClasses = [...new Set([...classes, ...DEVICE_CLASSES.sensor])];
-    } else {
-      allClasses = classes;
+    // If no classes found for the domain, return default options
+    if (classes.length === 0) {
+      if (domain === 'binary_sensor') {
+        return DEVICE_CLASSES.binary_sensor.map((cls: string) => ({
+          value: cls,
+          label: this.hass.localize(`ui.dialogs.entity_registry.editor.device_classes.binary_sensor.${cls}`) || cls
+        }));
+      }
     }
     
-    return allClasses.map((cls: string) => ({
+    return classes.map((cls: string) => ({
       value: cls,
-      label: this.hass.localize(`component.${domain}.device_class.${cls}`) || 
-             this.hass.localize(`ui.dialogs.entity_registry.editor.device_classes.${domain}.${cls}`) || 
-             cls.charAt(0).toUpperCase() + cls.slice(1).replace(/_/g, ' ')
+      label: this.hass.localize(`ui.dialogs.entity_registry.editor.device_classes.${domain}.${cls}`) || cls
     }));
   }
 
