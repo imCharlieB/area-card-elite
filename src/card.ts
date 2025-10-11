@@ -616,8 +616,8 @@ export class AreaCardElite extends LitElement {
     return html`
       <ha-card class="${this._config.display_type || 'compact'} layout-${layout} features-${featuresPosition}">
         <div class="content">
-          <!-- Large background entity icon -->
-          ${mainEntityIcon ? html`
+          <!-- Large background entity icon - ONLY for icon display type -->
+          ${this._config.display_type === "icon" && mainEntityIcon ? html`
             <div class="main-entity-background ${mainEntity && !UNAVAILABLE_STATES.includes(mainEntity.state) && 
               !STATES_OFF.includes(mainEntity.state) && mainEntity.state !== 'unlocked' ? 'active' : ''} 
               ${mainEntity && (STATES_OFF.includes(mainEntity.state) || mainEntity.state === 'unlocked') ? 'unlocked' : ''}">
