@@ -879,8 +879,8 @@ export class AreaCardElite extends LitElement {
     /* Large background entity icon - positioned based on features position */
     .main-entity-background {
       position: absolute;
-      width: 120px;
-      height: 120px;
+      width: 160px;  /* Larger circle */
+      height: 160px; /* Larger circle */
       z-index: 1;
       display: flex;
       align-items: center;
@@ -889,19 +889,19 @@ export class AreaCardElite extends LitElement {
       /* Add circular border like your dashboard */
       border-radius: 50%;
       background: rgba(var(--rgb-primary-text-color), 0.08);
-      border: 2px solid rgba(var(--rgb-primary-text-color), 0.15);
+      border: 3px solid rgba(var(--rgb-primary-text-color), 0.15);
       transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
-    /* Position based on features position - MORE CORNER OVERLAP */
+    /* Position based on features position - LARGER CIRCLE */
     .features-right .main-entity-background {
-      bottom: -50px;  /* More overlap into corner */
-      left: -50px;    /* More overlap into corner */
+      bottom: -80px;  /* Adjusted for larger circle */
+      left: -80px;    /* Adjusted for larger circle */
     }
 
     .features-left .main-entity-background {
-      bottom: -50px;  /* More overlap into corner */
-      right: -50px;   /* More overlap into corner */
+      bottom: -80px;  /* Adjusted for larger circle */
+      right: -80px;   /* Adjusted for larger circle */
     }
 
     .features-top .main-entity-background,
@@ -912,9 +912,18 @@ export class AreaCardElite extends LitElement {
     }
 
     .main-entity-background ha-icon {
-      --mdc-icon-size: 60px;
-      opacity: 0.8;
+      --mdc-icon-size: 70px;  /* Larger icon, properly centered */
+      opacity: 0.9;
       transition: opacity 0.2s ease;
+    }
+
+    .main-entity-background:hover {
+      background: rgba(var(--rgb-primary-text-color), 0.12);
+      border-color: rgba(var(--rgb-primary-text-color), 0.2);
+    }
+
+    .main-entity-background:hover ha-icon {
+      opacity: 1;
     }
 
     /* FIXED STATE COLORS - Green when locked/on, red when unlocked/off */
@@ -934,6 +943,40 @@ export class AreaCardElite extends LitElement {
 
     .main-entity-background.unlocked ha-icon {
       color: #f44336;
+    }
+
+    /* Hide unnecessary elements in icon mode */
+    .icon .area-icon {
+      display: none;
+    }
+
+    .icon .area-name ha-icon {
+      display: none;
+    }
+
+    /* In icon mode, simplify the layout */
+    .icon .content {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      position: relative;
+    }
+
+    /* Minimize area info in icon mode */
+    .icon .area-info {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 2;
+    }
+
+    .icon .area-name {
+      font-size: 1.1em;
+      margin-bottom: 4px;
+    }
+
+    .icon .area-sensors {
+      margin-top: 4px;
     }
 
     /* LAYOUT SUPPORT - Different layouts from editor */
