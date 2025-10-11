@@ -246,7 +246,7 @@ export class AreaCardEliteEditor extends LitElement {
             <div class="option">
               <ha-selector
                 .hass=${this.hass}
-                .selector=${{ color_rgb: {} }}
+                .selector=${{ ui_color: { mode: "hex" } }}
                 .value=${this._config.area_name_color || ""}
                 .configValue=${"area_name_color"}
                 .label=${"Area Name Color"}
@@ -257,7 +257,7 @@ export class AreaCardEliteEditor extends LitElement {
             <div class="option">
               <ha-selector
                 .hass=${this.hass}
-                .selector=${{ color_rgb: {} }}
+                .selector=${{ ui_color: { mode: "hex" } }}
                 .value=${this._config.area_icon_color || ""}
                 .configValue=${"area_icon_color"}
                 .label=${"Area Icon Color"}
@@ -270,6 +270,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .hass=${this.hass}
                 .selector=${{
                   select: {
+                    mode: "dropdown",
                     options: [
                       { value: "compact", label: "Compact" },
                       { value: "icon", label: "Icon" },
@@ -288,10 +289,10 @@ export class AreaCardEliteEditor extends LitElement {
             <div class="option">
               <ha-selector
                 .hass=${this.hass}
-                .selector=${{ color_rgb: {} }}
+                .selector=${{ ui_color: { mode: "hex" } }}
                 .value=${this._config.color || ""}
                 .configValue=${"color"}
-                .label=${"Color"}
+                .label=${"Card Background Color"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
             </div>

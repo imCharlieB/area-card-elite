@@ -80,17 +80,26 @@ export class AreaCardElite extends LitElement {
   private _getAreaEntities() {
     if (!this._config?.area) return [];
 
-    return Object.entries(this.hass.states || {})
+    console.log(`Looking for entities in area: ${this._config.area}`);
+
+    const entities = Object.entries(this.hass.states || {})
       .filter(([entityId, entity]) => {
-        if (!entity.attributes?.area_id || this._config?.exclude_entities?.includes(entityId)) return false;
+        if (this._config?.exclude_entities?.includes(entityId)) return false;
+        
         const [domain] = entityId.split(".");
-        return entity.attributes.area_id === this._config?.area && 
-               (TOGGLE_DOMAINS.includes(domain) || 
-                SENSOR_DOMAINS.includes(domain) || 
-                ALERT_DOMAINS.includes(domain) ||
-                COVER_DOMAINS.includes(domain) ||
-                CLIMATE_DOMAINS.includes(domain) ||
-                OTHER_DOMAINS.includes(domain));
+        const isRelevantDomain = TOGGLE_DOMAINS.includes(domain) || 
+                                SENSOR_DOMAINS.includes(domain) || 
+                                ALERT_DOMAINS.includes(domain) ||
+                                COVER_DOMAINS.includes(domain) ||
+                                CLIMATE_DOMAINS.includes(domain) ||
+                                OTHER_DOMAINS.includes(domain);
+        
+        if (!isRelevantDomain) return false;
+
+        // Check if entity belongs to the area
+        const belongsToArea = entity.attributes?.area_id === this._config?.area;
+        
+        return belongsToArea;
       })
       .map(([entityId, entity]) => ({
         entityId,
@@ -100,6 +109,16 @@ export class AreaCardElite extends LitElement {
         name: entity.attributes.friendly_name || entityId.split(".")[1],
         deviceClass: entity.attributes.device_class || ""
       }));
+
+    console.log(`Found ${entities.length} entities in area ${this._config.area}:`, entities);
+    
+    // Log specifically binary_sensor and sensor entities
+    const binarySensors = entities.filter(e => e.domain === 'binary_sensor');
+    const sensors = entities.filter(e => e.domain === 'sensor');
+    console.log(`Binary sensors: ${binarySensors.length}`, binarySensors);
+    console.log(`Sensors: ${sensors.length}`, sensors);
+
+    return entities;
   }
 
   private _getDomainIcon(domain: string, state: string, deviceClass?: string): string {
