@@ -590,13 +590,13 @@ export class AreaCardElite extends LitElement {
     const areaNameColor = this._config.area_name_color ? `color: ${this._config.area_name_color};` : '';
     const areaIconColor = this._config.area_icon_color ? `color: ${this._config.area_icon_color};` : '';
     
-    // Determine layout classes
+    // Determine layout classes - FIX THE LOGIC
     const layout = this._config.layout || 'compact';
-    const controlsPosition = this._config.controls_position || 'right';
+    const featuresPosition = this._config.features_position || 'bottom';
     const showAreaControls = this._config.features?.includes("area-controls");
 
     return html`
-      <ha-card class="${this._config.display_type || 'compact'} layout-${layout} controls-${controlsPosition}">
+      <ha-card class="${this._config.display_type || 'compact'} layout-${layout} features-${featuresPosition}">
         <div class="content">
           ${this._config.display_type === "picture" && this._config.background_image ? html`
             <div class="background-image" style="background-image: url('${this._config.background_image}')"></div>
@@ -612,7 +612,7 @@ export class AreaCardElite extends LitElement {
           ` : ''}
 
           <div class="area-info">
-            ${this._config.display_type !== "compact" || layout === "vertical" ? html`
+            ${layout === "vertical" || this._config.display_type !== "compact" ? html`
               <div class="area-icon" style="${areaIconColor}">
                 <ha-icon icon="${areaIcon}"></ha-icon>
               </div>
@@ -620,17 +620,27 @@ export class AreaCardElite extends LitElement {
             
             <div class="area-details">
               <div class="area-name" style="${areaNameColor}">
-                ${this._config.display_type === "compact" && layout !== "vertical" ? html`
+                ${layout !== "vertical" && this._config.display_type === "compact" ? html`
                   <ha-icon icon="${areaIcon}" style="${areaIconColor}"></ha-icon>
                 ` : ''}
                 ${areaName}
               </div>
+              
+              <!-- For vertical layout, show sensors under the name -->
+              ${layout === "vertical" ? html`
+                <div class="area-sensors">
+                  ${this._renderSensors()}
+                </div>
+              ` : ''}
             </div>
           </div>
 
-          <div class="sensors-section">
-            ${this._renderSensors()}
-          </div>
+          <!-- For non-vertical layouts, show sensors in separate section -->
+          ${layout !== "vertical" ? html`
+            <div class="sensors-section">
+              ${this._renderSensors()}
+            </div>
+          ` : nothing}
 
           ${showAreaControls ? html`
             <div class="controls-section">
@@ -1227,116 +1237,120 @@ export class AreaCardElite extends LitElement {
     .layout-vertical .content {
       display: flex;
       flex-direction: row;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 16px;
       min-height: 80px;
     }
 
-    /* Vertical Layout - Your Dashboard Style */
+    /* Vertical Layout - Area info with sensors under name */
     .layout-vertical .area-info {
       display: flex;
       flex-direction: row;
-      align-items: center;
+      align-items: flex-start;
       gap: 12px;
-      flex: 0 0 auto;
+      flex: 1;
     }
 
     .layout-vertical .area-icon {
       font-size: 2.5rem;
       flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .layout-vertical .area-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
     }
 
     .layout-vertical .area-name {
       font-size: 1.3em;
       font-weight: bold;
-      white-space: nowrap;
+      margin-bottom: 8px;
     }
 
-    .layout-vertical .sensors-section {
-      display: flex;
-      flex: 1;
-      justify-content: center;
-      margin: 0 16px;
-    }
-
-    .layout-vertical .sensors {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .layout-vertical .sensor {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      text-align: center;
-    }
-
-    .layout-vertical .sensor ha-icon {
-      --mdc-icon-size: 28px;
-      margin-bottom: 4px;
-    }
-
-    .layout-vertical .sensor-value {
-      font-size: 0.9em;
-      font-weight: 500;
-      white-space: nowrap;
-    }
-
-    /* Horizontal Layout */
-    .layout-horizontal .area-info {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 12px;
-      flex: 0 0 auto;
-    }
-
-    .layout-horizontal .sensors-section {
-      display: flex;
-      flex: 1;
-      justify-content: center;
-    }
-
-    .layout-horizontal .sensors {
+    /* Sensors under the name in vertical layout */
+    .layout-vertical .area-sensors {
       display: flex;
       gap: 16px;
-      align-items: center;
-    }
-
-    .layout-horizontal .sensor {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* Compact Layout */
-    .layout-compact .area-info {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      flex: 1;
-    }
-
-    .layout-compact .sensors-section {
-      display: flex;
-      justify-content: center;
-    }
-
-    .layout-compact .sensors {
-      display: flex;
-      gap: 8px;
       flex-wrap: wrap;
     }
 
-    .layout-compact .sensor {
+    .layout-vertical .area-sensors .sensors {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .layout-vertical .area-sensors .sensor {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
+      background: rgba(var(--rgb-primary-text-color), 0.05);
+      padding: 4px 8px;
+      border-radius: 12px;
+    }
+
+    .layout-vertical .area-sensors .sensor ha-icon {
+      --mdc-icon-size: 20px;
+    }
+
+    .layout-vertical .area-sensors .sensor-value {
+      font-size: 0.9em;
+      font-weight: 500;
+    }
+
+    /* Controls positioning for features_position */
+    .features-right .controls-section {
+      order: 3;
+      flex: 0 0 auto;
+    }
+
+    .features-left .controls-section {
+      order: 1;
+      flex: 0 0 auto;
+    }
+
+    .features-top .content {
+      flex-direction: column;
+    }
+
+    .features-top .controls-section {
+      order: 1;
+      align-self: stretch;
+    }
+
+    .features-bottom .content {
+      flex-direction: column;
+    }
+
+    .features-bottom .controls-section {
+      order: 3;
+      align-self: stretch;
+    }
+
+    .features-inline .controls-section {
+      display: inline-flex;
+      margin-left: auto;
+    }
+
+    /* Controls styling based on position */
+    .features-top .area-controls,
+    .features-bottom .area-controls {
+      justify-content: center;
+    }
+
+    .features-left .area-controls {
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .features-right .area-controls,
+    .layout-vertical .area-controls {
+      flex-direction: row;
+      gap: 8px;
     }
   `;
 }
