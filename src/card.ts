@@ -3,7 +3,8 @@ import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { repeat } from "lit/directives/repeat.js";
-import { HomeAssistantExtended, AreaCardEliteConfig } from "./common";
+import { AreaCardEliteConfig } from "./common";
+import type { HomeAssistant } from "./ha/types";
 import { actionHandler } from "./ha/helpers/action_handler";
 import { handleAction } from "./ha/helpers/handle_action";
 import { computeDomain } from "./ha/helpers/compute_domain";
@@ -24,8 +25,31 @@ const STATES_OFF = ["off", "closed", "idle"];
 
 @customElement("area-card-elite")
 export class AreaCardElite extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistantExtended;
+  @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private _config?: AreaCardEliteConfig;
+  @state() private _areas: Record<string, any> = {};
+
+  async connectedCallback() {
+    super.connectedCallback();
+    await this._loadAreas();
+  }
+
+  private async _loadAreas() {
+    try {
+      if (this.hass?.connection) {
+        const areas = await this.hass.connection.sendMessagePromise({
+          type: "config/area_registry/list",
+        });
+        this._areas = {};
+        areas.forEach((area: any) => {
+          this._areas[area.area_id] = area;
+        });
+      }
+    } catch (error) {
+      console.error("Failed to load areas:", error);
+      this._areas = {};
+    }
+  }
 
   setConfig(config: AreaCardEliteConfig): void {
     if (!config.area) {
@@ -43,7 +67,7 @@ export class AreaCardElite extends LitElement {
   }
 
   private _getAreaEntities() {
-    if (!this._config?.area || !this.hass?.areas?.[this._config.area]) return [];
+    if (!this._config?.area) return [];
 
     return Object.entries(this.hass.states || {})
       .filter(([entityId, entity]) => {
@@ -182,7 +206,7 @@ export class AreaCardElite extends LitElement {
   private _renderSensors() {
     const entitiesByDomain = this._getEntitiesByDomain();
     const sensorClasses = this._config?.sensor_classes || DEVICE_CLASSES.sensor;
-    const area = this.hass?.areas?.[this._config?.area || ""];
+    const area = this._areas[this._config?.area || ""];
     
     if (!entitiesByDomain.sensor?.length) return nothing;
 
@@ -228,11 +252,11 @@ export class AreaCardElite extends LitElement {
   }
 
   render() {
-    if (!this.hass || !this._config?.area || !this.hass.areas) {
+    if (!this.hass || !this._config?.area) {
       return html`<ha-card>Loading...</ha-card>`;
     }
 
-    const area = this.hass.areas[this._config.area];
+    const area = this._areas[this._config.area];
     if (!area) {
       return html`<ha-card>Area not found</ha-card>`;
     }

@@ -1,6 +1,6 @@
 import { LitElement, html, css, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { AreaCardEliteConfig, HomeAssistantExtended } from "./common";
+import { AreaCardEliteConfig } from "./common";
 import { fireEvent } from "custom-card-helpers";
 import type { HomeAssistant } from "./ha/types";
 import { 
@@ -17,8 +17,28 @@ export type DisplayType = "compact" | "icon" | "picture" | "camera";
 
 @customElement("area-card-elite-editor")
 export class AreaCardEliteEditor extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistantExtended;
+  @property({ attribute: false }) public hass!: HomeAssistant;
   @state() protected _config?: AreaCardEliteConfig;
+  @state() private _areas: Array<{area_id: string, name: string}> = [];
+
+  async connectedCallback() {
+    super.connectedCallback();
+    await this._loadAreas();
+  }
+
+  private async _loadAreas() {
+    try {
+      if (this.hass?.connection) {
+        const areas = await this.hass.connection.sendMessagePromise({
+          type: "config/area_registry/list",
+        });
+        this._areas = areas || [];
+      }
+    } catch (error) {
+      console.error("Failed to load areas:", error);
+      this._areas = [];
+    }
+  }
 
   setConfig(config: AreaCardEliteConfig): void {
     this._config = {
@@ -48,12 +68,9 @@ export class AreaCardEliteEditor extends LitElement {
     
     // Handle different event types and components
     if (value === undefined || value === null) {
-      // For input events, get value from target
       if (ev.type === 'input' && target.value !== undefined) {
         value = target.value;
-      }
-      // For select events, try to get from target.value
-      else if (target.value !== undefined) {
+      } else if (target.value !== undefined) {
         value = target.value;
       }
     }
@@ -73,33 +90,18 @@ export class AreaCardEliteEditor extends LitElement {
     }
   }
 
-  private _getAreaEntities() {
-    if (!this._config?.area || !this.hass?.areas[this._config.area]) return [];
-
-    return Object.entries(this.hass.states)
-      .filter(([entityId, entity]) => {
-        if (!entity.attributes?.area_id) return false;
-        const [domain] = entityId.split(".");
-        return entity.attributes.area_id === this._config?.area && 
-               (TOGGLE_DOMAINS.includes(domain) || 
-                SENSOR_DOMAINS.includes(domain) || 
-                ALERT_DOMAINS.includes(domain) ||
-                COVER_DOMAINS.includes(domain) ||
-                CLIMATE_DOMAINS.includes(domain));
-      })
-      .map(([entityId, entity]) => ({
-        entityId,
-        state: entity.state,
-        attributes: entity.attributes,
-        domain: entityId.split(".")[0],
-        name: entity.attributes.friendly_name || entityId.split(".")[1]
-      }));
-  }
-
   private _getDeviceClasses(domain: string): string[] {
     if (!this._config?.area) return [];
     
-    const entities = this._getAreaEntities().filter(e => e.domain === domain);
+    // Get entities from the selected area using entity registry
+    const entities = Object.entries(this.hass.states || {})
+      .filter(([entityId, entity]) => {
+        if (!entity.attributes?.area_id) return false;
+        return entity.attributes.area_id === this._config?.area && 
+               entityId.split(".")[0] === domain;
+      })
+      .map(([entityId, entity]) => entity);
+
     const classes = entities
       .map(e => e.attributes.device_class || "")
       .filter(c => c);
