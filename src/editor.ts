@@ -20,10 +20,12 @@ export class AreaCardEliteEditor extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() protected _config?: AreaCardEliteConfig;
   @state() private _areas: Array<{area_id: string, name: string}> = [];
+  @state() private _localImages: string[] = [];
 
   async connectedCallback() {
     super.connectedCallback();
     await this._loadAreas();
+    await this._loadLocalImages();
   }
 
   private async _loadAreas() {
@@ -38,6 +40,40 @@ export class AreaCardEliteEditor extends LitElement {
       console.error("Failed to load areas:", error);
       this._areas = [];
     }
+  }
+
+  private async _loadLocalImages() {
+    try {
+      // Get list of local images from Home Assistant
+      const images = await this.hass.connection.sendMessagePromise({
+        type: "media_player/browse_media",
+        media_content_id: "media-source://media_source/local",
+        media_content_type: "app"
+      });
+      
+      this._localImages = this._extractImagePaths(images);
+    } catch (error) {
+      console.error("Failed to load local images:", error);
+      this._localImages = [];
+    }
+  }
+
+  private _extractImagePaths(mediaData: any): string[] {
+    const images: string[] = [];
+    
+    if (mediaData?.children) {
+      mediaData.children.forEach((item: any) => {
+        if (item.media_content_type?.startsWith('image/')) {
+          // Convert media source URL to local path
+          const path = item.media_content_id?.replace('media-source://media_source/local/', '/local/');
+          if (path) {
+            images.push(path);
+          }
+        }
+      });
+    }
+    
+    return images;
   }
 
   setConfig(config: AreaCardEliteConfig): void {
@@ -66,7 +102,6 @@ export class AreaCardEliteEditor extends LitElement {
     let value = ev.detail?.value;
     let configValue = target.configValue;
     
-    // Debug logging to see what's happening
     console.log('Value changed:', {
       type: ev.type,
       tagName: target.tagName,
@@ -77,16 +112,9 @@ export class AreaCardEliteEditor extends LitElement {
     
     // Handle different event types and components
     if (value === undefined || value === null) {
-      // For input events (textfields)
       if (ev.type === 'input' && target.value !== undefined) {
         value = target.value;
-      }
-      // For select events
-      else if (ev.type === 'selected' && target.value !== undefined) {
-        value = target.value;
-      }
-      // For other cases, try target.value
-      else if (target.value !== undefined) {
+      } else if (target.value !== undefined) {
         value = target.value;
       }
     }
@@ -98,14 +126,6 @@ export class AreaCardEliteEditor extends LitElement {
       configValue = target.configValue || 'exclude_entities';
     }
     
-    // Handle multiple selections (arrays)
-    if (target.multiple && Array.isArray(value)) {
-      // For multiple selects, value should already be an array
-    } else if (target.multiple && typeof value === 'string') {
-      // Sometimes single values come as strings for multi-select
-      value = [value];
-    }
-    
     if (configValue && value !== undefined) {
       console.log('Setting config:', configValue, '=', value);
       
@@ -115,8 +135,6 @@ export class AreaCardEliteEditor extends LitElement {
       };
       
       fireEvent(this, "config-changed", { config: this._config });
-      
-      // Force re-render to update UI
       this.requestUpdate();
     }
   }
@@ -154,7 +172,6 @@ export class AreaCardEliteEditor extends LitElement {
     }
 
     const alertOptions = this._buildSelectOptions('binary_sensor');
-    const coverOptions = this._buildSelectOptions('cover');
     const sensorOptions = DEVICE_CLASSES.sensor.map((cls: string) => ({
       value: cls,
       label: this.hass.localize(`ui.dialogs.entity_registry.editor.device_classes.sensor.${cls}`) || cls
@@ -164,101 +181,126 @@ export class AreaCardEliteEditor extends LitElement {
       <div class="card-config">
         <!-- Basic Configuration -->
         <div class="option">
-          <ha-area-picker
+          <ha-selector
             .hass=${this.hass}
+            .selector=${{ area: {} }}
             .value=${this._config.area}
             .configValue=${"area"}
-            label="Area"
+            .label=${"Area"}
             @value-changed=${this._valueChanged}
-            allow-custom-entity
-          ></ha-area-picker>
+          ></ha-selector>
         </div>
 
         <div class="option">
-          <ha-textfield
-            label="Name"
-            .configValue=${"name"}
+          <ha-selector
+            .hass=${this.hass}
+            .selector=${{ text: {} }}
             .value=${this._config.name || ""}
-            @input=${this._valueChanged}
-          ></ha-textfield>
+            .configValue=${"name"}
+            .label=${"Name"}
+            @value-changed=${this._valueChanged}
+          ></ha-selector>
         </div>
 
         <!-- Display Options -->
         <ha-expansion-panel header="Appearance" outlined>
           <div class="content">
             <div class="option">
-              <ha-select
-                naturalMenuWidth
-                fixedMenuPosition
-                label="Display Type"
-                .configValue=${"display_type"}
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  select: {
+                    options: [
+                      { value: "compact", label: "Compact" },
+                      { value: "icon", label: "Icon" },
+                      { value: "picture", label: "Picture" },
+                      { value: "camera", label: "Camera" }
+                    ]
+                  }
+                }}
                 .value=${this._config.display_type || "compact"}
-                @selected=${this._valueChanged}
-                @closed=${(ev: Event) => ev.stopPropagation()}
-              >
-                <mwc-list-item value="compact">Compact</mwc-list-item>
-                <mwc-list-item value="icon">Icon</mwc-list-item>
-                <mwc-list-item value="picture">Picture</mwc-list-item>
-                <mwc-list-item value="camera">Camera</mwc-list-item>
-              </ha-select>
+                .configValue=${"display_type"}
+                .label=${"Display Type"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
             </div>
 
             <div class="option">
-              <ha-textfield
-                label="Color"
-                type="color"
-                .configValue=${"color"}
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{ color_rgb: {} }}
                 .value=${this._config.color || ""}
-                @input=${this._valueChanged}
-              ></ha-textfield>
+                .configValue=${"color"}
+                .label=${"Color"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
             </div>
 
             <div class="option">
-              <ha-textfield
-                label="Aspect Ratio"
-                .configValue=${"aspect_ratio"}
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  select: {
+                    options: [
+                      { value: "16:9", label: "16:9 (Widescreen)" },
+                      { value: "4:3", label: "4:3 (Standard)" },
+                      { value: "1:1", label: "1:1 (Square)" },
+                      { value: "3:2", label: "3:2 (Photo)" }
+                    ]
+                  }
+                }}
                 .value=${this._config.aspect_ratio || "16:9"}
-                @input=${this._valueChanged}
-              ></ha-textfield>
+                .configValue=${"aspect_ratio"}
+                .label=${"Aspect Ratio"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
             </div>
 
             ${this._config.display_type === "camera" ? html`
               <div class="option">
-                <ha-entity-picker
+                <ha-selector
                   .hass=${this.hass}
-                  .value=${this._config.camera_entity}
+                  .selector=${{
+                    entity: {
+                      domain: "camera"
+                    }
+                  }}
+                  .value=${this._config.camera_entity || ""}
                   .configValue=${"camera_entity"}
-                  .includeDomains=${["camera"]}
-                  .entityFilter=${(entity: any) => entity.attributes?.area_id === this._config?.area}
-                  label="Camera Entity"
+                  .label=${"Camera Entity"}
                   @value-changed=${this._valueChanged}
-                ></ha-entity-picker>
+                ></ha-selector>
               </div>
               <div class="option">
-                <ha-select
-                  naturalMenuWidth
-                  fixedMenuPosition
-                  label="Camera View"
-                  .configValue=${"camera_view"}
+                <ha-selector
+                  .hass=${this.hass}
+                  .selector=${{
+                    select: {
+                      options: [
+                        { value: "auto", label: "Auto" },
+                        { value: "live", label: "Live" }
+                      ]
+                    }
+                  }}
                   .value=${this._config.camera_view || "auto"}
-                  @selected=${this._valueChanged}
-                  @closed=${(ev: Event) => ev.stopPropagation()}
-                >
-                  <mwc-list-item value="auto">Auto</mwc-list-item>
-                  <mwc-list-item value="live">Live</mwc-list-item>
-                </ha-select>
+                  .configValue=${"camera_view"}
+                  .label=${"Camera View"}
+                  @value-changed=${this._valueChanged}
+                ></ha-selector>
               </div>
             ` : ''}
             
             ${this._config.display_type === "picture" ? html`
               <div class="option">
-                <ha-textfield
-                  label="Background Image URL"
-                  .configValue=${"background_image"}
+                <ha-selector
+                  .hass=${this.hass}
+                  .selector=${{ text: {} }}
                   .value=${this._config.background_image || ""}
-                  @input=${this._valueChanged}
-                  helper="Enter image URL or /local/image.jpg for local files"
-                ></ha-textfield>
+                  .configValue=${"background_image"}
+                  .label=${"Background Image URL"}
+                  .helper=${"Enter image URL or /local/image.jpg for local files"}
+                  @value-changed=${this._valueChanged}
+                ></ha-selector>
               </div>
             ` : ''}
           </div>
@@ -268,20 +310,22 @@ export class AreaCardEliteEditor extends LitElement {
         <ha-expansion-panel header="Alert Classes" outlined>
           <div class="content">
             <div class="option">
-              <ha-select
-                multiple
-                naturalMenuWidth
-                fixedMenuPosition
-                label="Alert Classes"
-                .configValue=${"alert_classes"}
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  select: {
+                    multiple: true,
+                    options: alertOptions.map((opt: any) => ({
+                      value: opt.value,
+                      label: opt.label
+                    }))
+                  }
+                }}
                 .value=${this._config.alert_classes || []}
-                @selected=${this._valueChanged}
-                @closed=${(ev: Event) => ev.stopPropagation()}
-              >
-                ${alertOptions.map((option: {value: string, label: string}) => html`
-                  <mwc-list-item .value=${option.value}>${option.label}</mwc-list-item>
-                `)}
-              </ha-select>
+                .configValue=${"alert_classes"}
+                .label=${"Alert Classes"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
             </div>
           </div>
         </ha-expansion-panel>
@@ -290,20 +334,22 @@ export class AreaCardEliteEditor extends LitElement {
         <ha-expansion-panel header="Sensor Classes" outlined>
           <div class="content">
             <div class="option">
-              <ha-select
-                multiple
-                naturalMenuWidth
-                fixedMenuPosition
-                label="Sensor Classes"
-                .configValue=${"sensor_classes"}
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  select: {
+                    multiple: true,
+                    options: sensorOptions.map((opt: any) => ({
+                      value: opt.value,
+                      label: opt.label
+                    }))
+                  }
+                }}
                 .value=${this._config.sensor_classes || []}
-                @selected=${this._valueChanged}
-                @closed=${(ev: Event) => ev.stopPropagation()}
-              >
-                ${sensorOptions.map((option: {value: string, label: string}) => html`
-                  <mwc-list-item .value=${option.value}>${option.label}</mwc-list-item>
-                `)}
-              </ha-select>
+                .configValue=${"sensor_classes"}
+                .label=${"Sensor Classes"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
             </div>
           </div>
         </ha-expansion-panel>
@@ -312,35 +358,41 @@ export class AreaCardEliteEditor extends LitElement {
         <ha-expansion-panel header="Features" outlined>
           <div class="content">
             <div class="option">
-              <ha-select
-                multiple
-                naturalMenuWidth
-                fixedMenuPosition
-                label="Features"
-                .configValue=${"features"}
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  select: {
+                    multiple: true,
+                    options: [
+                      { value: "area-controls", label: "Area Controls" },
+                      { value: "more-info", label: "More Info" }, 
+                      { value: "toggle-all", label: "Toggle All" }
+                    ]
+                  }
+                }}
                 .value=${this._config.features || []}
-                @selected=${this._valueChanged}
-                @closed=${(ev: Event) => ev.stopPropagation()}
-              >
-                <mwc-list-item value="area-controls">Area Controls</mwc-list-item>
-                <mwc-list-item value="more-info">More Info</mwc-list-item>
-                <mwc-list-item value="toggle-all">Toggle All</mwc-list-item>
-              </ha-select>
+                .configValue=${"features"}
+                .label=${"Features"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
             </div>
 
             <div class="option">
-              <ha-select
-                naturalMenuWidth
-                fixedMenuPosition
-                label="Features Position"
-                .configValue=${"features_position"}
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  select: {
+                    options: [
+                      { value: "bottom", label: "Bottom" },
+                      { value: "inline", label: "Inline" }
+                    ]
+                  }
+                }}
                 .value=${this._config.features_position || "bottom"}
-                @selected=${this._valueChanged}
-                @closed=${(ev: Event) => ev.stopPropagation()}
-              >
-                <mwc-list-item value="bottom">Bottom</mwc-list-item>
-                <mwc-list-item value="inline">Inline</mwc-list-item>
-              </ha-select>
+                .configValue=${"features_position"}
+                .label=${"Features Position"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
             </div>
           </div>
         </ha-expansion-panel>
@@ -349,23 +401,30 @@ export class AreaCardEliteEditor extends LitElement {
         <ha-expansion-panel header="Advanced" outlined>
           <div class="content">
             <div class="option">
-              <ha-textfield
-                label="Navigation Path"
-                .configValue=${"navigation_path"}
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{ text: {} }}
                 .value=${this._config.navigation_path || ""}
-                @input=${this._valueChanged}
-              ></ha-textfield>
+                .configValue=${"navigation_path"}
+                .label=${"Navigation Path"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
             </div>
 
             <div class="option">
-              <ha-entity-picker
+              <ha-selector
                 .hass=${this.hass}
-                .configValue=${"exclude_entities"}
+                .selector=${{
+                  entity: {
+                    multiple: true,
+                    domain: ["light", "switch", "sensor", "binary_sensor"]
+                  }
+                }}
                 .value=${this._config.exclude_entities || []}
-                .includeDomains=${["light", "switch", "sensor", "binary_sensor"]}
-                multiple
+                .configValue=${"exclude_entities"}
+                .label=${"Exclude Entities"}
                 @value-changed=${this._valueChanged}
-              ></ha-entity-picker>
+              ></ha-selector>
             </div>
           </div>
         </ha-expansion-panel>
@@ -400,7 +459,7 @@ export class AreaCardEliteEditor extends LitElement {
         border-radius: 6px;
         margin-top: 8px;
       }
-      ha-select, ha-textfield, ha-entity-picker {
+      ha-selector {
         width: 100%;
       }
     `;

@@ -32,6 +32,17 @@ export class AreaCardElite extends LitElement {
   async connectedCallback() {
     super.connectedCallback();
     await this._loadAreas();
+    // Force re-render after areas are loaded
+    this.requestUpdate();
+  }
+
+  protected updated(changedProperties: PropertyValues) {
+    super.updated(changedProperties);
+    
+    // If hass changed and we don't have areas yet, load them
+    if (changedProperties.has('hass') && this.hass && Object.keys(this._areas).length === 0) {
+      this._loadAreas().then(() => this.requestUpdate());
+    }
   }
 
   private async _loadAreas() {
