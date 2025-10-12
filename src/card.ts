@@ -126,12 +126,22 @@ export class AreaCardElite extends LitElement {
     if (!(domain in DOMAIN_ICONS)) {
       return "mdi:help-circle";
     }
-    
+
     const icons = DOMAIN_ICONS[domain as keyof typeof DOMAIN_ICONS];
     if (!icons) return "mdi:help-circle";
 
+    // Special handling for locks - check for "locked"/"unlocked" states first
+    if (domain === 'lock' && typeof icons === 'object') {
+      if (state === 'locked' && 'locked' in icons) {
+        return (icons as any).locked;
+      }
+      if (state === 'unlocked' && 'unlocked' in icons) {
+        return (icons as any).unlocked;
+      }
+    }
+
     const isOn = !STATES_OFF.includes(state) && !UNAVAILABLE_STATES.includes(state);
-    
+
     // Handle device class specific icons
     if (deviceClass && typeof icons === 'object' && deviceClass in icons) {
       const deviceIcons = (icons as any)[deviceClass];
@@ -139,7 +149,7 @@ export class AreaCardElite extends LitElement {
         return isOn ? deviceIcons.on : deviceIcons.off;
       }
     }
-    
+
     // Fallback to default on/off icons
     if (typeof icons === 'object' && 'on' in icons && 'off' in icons) {
       return isOn ? (icons as any).on : (icons as any).off;
@@ -883,29 +893,33 @@ export class AreaCardElite extends LitElement {
       font-size: 1.2em;
       font-weight: bold;
       color: var(--primary-text-color);
+      line-height: 1.2;
+      margin-bottom: 0px;
     }
 
     /* Sensors directly under area name - SIMPLE */
     .area-sensors {
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      margin-top: 0px;
+      gap: 0px;
+      margin-top: 2px;
     }
 
     .sensors {
       display: flex;
       flex-direction: row;
-      gap: 16px;
+      gap: 12px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     .sensor {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.9em;
+      gap: 4px;
+      font-size: 0.85em;
       color: var(--secondary-text-color);
+      line-height: 1;
     }
 
     .sensor ha-icon {
@@ -1028,7 +1042,8 @@ export class AreaCardElite extends LitElement {
     .icon .area-name {
       font-size: 1.2em;
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
+      line-height: 1.2;
       color: var(--primary-text-color);
     }
 
@@ -1048,7 +1063,7 @@ export class AreaCardElite extends LitElement {
     .icon .area-details {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 0px;
     }
 
     /* LAYOUT SUPPORT - Different layouts from editor */
@@ -1105,7 +1120,7 @@ export class AreaCardElite extends LitElement {
     .layout-vertical .area-details {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 0px;
     }
 
     .layout-vertical .sensors-section {
