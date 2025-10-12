@@ -674,12 +674,11 @@ export class AreaCardElite extends LitElement {
           ` : ''}
 
           ${this._config.display_type === "camera" && this._config.camera_entity ? html`
-            <hui-image 
-              .hass=${this.hass}
-              .entity=${this._config.camera_entity}
-              .cameraImage=${this._config.camera_view}
+            <img
               class="camera-view"
-            ></hui-image>
+              src="/api/camera_proxy/${this._config.camera_entity}"
+              @error=${() => console.error(`Failed to load camera: ${this._config?.camera_entity}`)}
+            />
           ` : ''}
 
           <div class="area-info">
@@ -1284,7 +1283,11 @@ export class AreaCardElite extends LitElement {
       left: -16px;
       right: -16px;
       bottom: -16px;
+      width: calc(100% + 32px);
+      height: calc(100% + 32px);
+      object-fit: cover;
       z-index: 0;
+      border-radius: inherit;
     }
 
     .camera .area-info,
