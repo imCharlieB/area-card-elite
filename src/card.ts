@@ -539,12 +539,13 @@ export class AreaCardElite extends LitElement {
       });
     }
 
-    if (controls.length === 0) return nothing;
-
     // Check if there are any lights in the area for the lights-off button
     const entities = this._getAreaEntities();
     const hasLights = entities.some(e => e.domain === "light");
     const showLightsOffButton = this._config.show_lights_off_button !== false && hasLights;
+
+    // Don't render if no controls AND no lights-off button
+    if (controls.length === 0 && !showLightsOffButton) return nothing;
 
     return html`
       <div class="area-controls">

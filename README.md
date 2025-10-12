@@ -6,12 +6,15 @@ An enhanced area card for Home Assistant that displays comprehensive information
 
 - 🎨 **Multiple Display Types**: Compact, Icon, Picture, and Camera modes
 - 📐 **Flexible Layouts**: Vertical, Horizontal, and Compact layouts
-- 🌡️ **Smart Sensor Display**: Temperature, humidity, illuminance, power, energy, and battery
-- 🎮 **Quick Controls**: Lights, climate, switches, fans, and more
-- 🚨 **Alert Monitoring**: Motion, occupancy, door, and window sensors
+- 🌡️ **Smart Sensor Display**: Temperature, humidity, illuminance, power, energy, and battery with color-coded icons
+- 🎮 **Quick Controls**: Lights, climate, switches, fans, media players, and more
+- 💡 **Turn Off All Lights**: Automatic button to turn off all lights in the area
+- 🚨 **Alert Monitoring**: Motion, occupancy, door, window, and moisture sensors with pulsing glow effects
 - 🔄 **State-based Styling**: Customizable colors for active/inactive states
 - 🎯 **Large Background Icons**: Eye-catching entity status display
+- 📱 **Responsive Controls**: Buttons automatically scale down for smaller card sizes
 - 🎨 **Full Customization**: Colors, icons, and positioning
+- 🎛️ **Smart Positioning**: Area info automatically repositions to prevent overlap with controls
 
 ## Installation
 
@@ -72,6 +75,13 @@ features:
   - area-controls
 light_entity: light.master_bedroom
 climate_entity: climate.master_bedroom
+media_player_entity: media_player.master_bedroom
+show_lights_off_button: true  # Shows button to turn off all lights
+
+# Alert Sensors
+motion_sensor: binary_sensor.master_bedroom_motion
+occupancy_sensor: binary_sensor.master_bedroom_occupancy
+moisture_sensor: binary_sensor.master_bedroom_moisture
 
 # Styling
 area_name_color: '#ffffff'
@@ -125,19 +135,22 @@ color: 'rgba(0, 0, 0, 0.3)'
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `light_entity` | string | - | Main light entity |
-| `climate_entity` | string | - | Climate control entity |
+| `climate_entity` | string | - | Climate control entity (opens more-info on click) |
 | `switch_entity` | string | - | Main switch entity |
 | `fan_entity` | string | - | Fan entity |
+| `media_player_entity` | string | - | Media player entity (opens more-info on click) |
 | `additional_controls` | list | - | Additional control entities |
+| `show_lights_off_button` | boolean | `true` | Show button to turn off all lights in the area |
 
 ### Alerts
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `motion_sensor` | string | - | Motion sensor |
-| `occupancy_sensor` | string | - | Occupancy sensor |
-| `door_sensor` | string | - | Door sensor |
-| `window_sensor` | string | - | Window sensor |
+| `motion_sensor` | string | - | Motion sensor (pulsing glow when triggered) |
+| `occupancy_sensor` | string | - | Occupancy sensor (pulsing glow when triggered) |
+| `door_sensor` | string | - | Door sensor (pulsing glow when open) |
+| `window_sensor` | string | - | Window sensor (pulsing glow when open) |
+| `moisture_sensor` | string | - | Moisture sensor (pulsing glow when detected) |
 | `additional_alerts` | list | - | Additional alert sensors |
 
 ### Features
