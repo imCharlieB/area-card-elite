@@ -1217,20 +1217,29 @@ export class AreaCardElite extends LitElement {
       z-index: 3;
     }
 
-    /* When controls on left, move area info to right to prevent overlap */
-    .features-left .icon .area-info {
-      left: auto;
+    /* When controls on left, move area info to right to prevent overlap - applies to ALL display types */
+    .features-left .area-info {
+      left: auto !important;
       right: 8px;
       text-align: right;
     }
 
-    .features-left .icon .sensors-section {
-      left: auto;
-      right: 0px;
+    .features-left .sensors-section {
+      left: auto !important;
+      right: 8px;
+      text-align: right;
     }
 
-    .features-left .icon .sensors {
+    .features-left .sensors {
       justify-content: flex-end;
+    }
+
+    .features-left .alerts {
+      justify-content: flex-end;
+    }
+
+    .features-left .area-details {
+      align-items: flex-end;
     }
 
     /* For vertical layout specifically - controls at bottom right */

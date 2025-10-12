@@ -644,6 +644,22 @@ export class AreaCardEliteEditor extends LitElement {
                 .hass=${this.hass}
                 .selector=${{
                   entity: {
+                    domain: "media_player"
+                  }
+                }}
+                .value=${this._config.media_player_entity || ""}
+                .configValue=${"media_player_entity"}
+                .label=${"Media Player"}
+                .helper=${"Click opens media player controls"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  entity: {
                     multiple: true,
                     domain: ["light", "switch", "fan", "climate", "cover", "media_player"]
                   }
