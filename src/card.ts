@@ -665,19 +665,30 @@ export class AreaCardElite extends LitElement {
 
           ${this._config.display_type === "camera" && this._config.camera_entity ? (() => {
             const cameraEntity = this.hass.states[this._config.camera_entity];
-            // Use entity_picture directly as it already includes the token
-            const cameraUrl = cameraEntity?.attributes?.entity_picture || `/api/camera_proxy/${this._config.camera_entity}`;
+            const cameraView = this._config.camera_view || "live";
 
-            console.log(`Using camera URL: ${cameraUrl}`);
-
-            return html`
-              <img
-                class="camera-view"
-                src="${cameraUrl}"
-                @load=${() => console.log(`✓ Camera loaded: ${this._config?.camera_entity}`)}
-                @error=${() => console.error(`✗ Failed to load camera: ${this._config?.camera_entity}`)}
-              />
-            `;
+            // For live view, use hui-image which handles streaming
+            // For auto/snapshot, use img with entity_picture
+            if (cameraView === "live") {
+              return html`
+                <hui-image
+                  class="camera-view"
+                  .hass=${this.hass}
+                  .entity=${this._config.camera_entity}
+                  .cameraImage=${"live"}
+                  .cameraView=${"live"}
+                ></hui-image>
+              `;
+            } else {
+              const cameraUrl = cameraEntity?.attributes?.entity_picture || `/api/camera_proxy/${this._config.camera_entity}`;
+              return html`
+                <img
+                  class="camera-view"
+                  src="${cameraUrl}"
+                  @error=${() => console.error(`Failed to load camera: ${this._config?.camera_entity}`)}
+                />
+              `;
+            }
           })() : ''}
 
           <div class="area-info">
