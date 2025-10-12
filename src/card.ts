@@ -882,23 +882,21 @@ export class AreaCardElite extends LitElement {
       width: 320px;
       height: 320px;
       z-index: 1;
-      display: flex;
-      align-items: flex-start;  /* Move to top instead of center */
-      justify-content: flex-end;  /* Move to right instead of center */
       cursor: pointer;
       border-radius: 50%;
       background: rgba(var(--rgb-primary-text-color), 0.08);
       border: 3px solid rgba(var(--rgb-primary-text-color), 0.15);
       transition: background-color 0.2s ease, border-color 0.2s ease;
-      padding: 40px;  /* Add padding to move icon away from edges */
     }
 
     .main-entity-background ha-icon {
       --mdc-icon-size: 80px;
       opacity: 1;
       transition: opacity 0.2s ease;
-      /* Remove margins - use flexbox positioning instead */
       color: inherit;
+      position: absolute;
+      top: 80px;    /* Position from top of circle */
+      right: 80px;  /* Position from right of circle */
     }
 
     .main-entity-background:hover {
