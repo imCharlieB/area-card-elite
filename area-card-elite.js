@@ -295,9 +295,11 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
       opacity: 1;
       transition: opacity 0.2s ease, color 0.2s ease;
       /* Remove any default styling that creates squares */
-      background: none;
-      border: none;
-      border-radius: 0;
+      background: none !important;
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      outline: none !important;
     }
 
     /* Remove old conflicting styles - icon should have NO background or border */
