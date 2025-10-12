@@ -17,7 +17,8 @@ import {
   TOGGLE_DOMAINS,
   OTHER_DOMAINS,
   DOMAIN_ICONS,
-  DEVICE_CLASSES
+  DEVICE_CLASSES,
+  getStateColors
 } from "./helpers";
 
 const UNAVAILABLE_STATES = ["unavailable", "unknown"];
@@ -590,6 +591,15 @@ export class AreaCardElite extends LitElement {
     const areaNameColor = this._config.area_name_color ? `color: ${this._config.area_name_color};` : '';
     const areaIconColor = this._config.area_icon_color ? `color: ${this._config.area_icon_color};` : '';
     
+    // Set CSS custom properties for state colors
+    const stateColors = getStateColors(this._config);
+    const cardStyle = styleMap({
+      '--state-active-color': stateColors.active.color,
+      '--state-active-rgb': stateColors.active.rgb,
+      '--state-inactive-color': stateColors.inactive.color,
+      '--state-inactive-rgb': stateColors.inactive.rgb
+    });
+    
     // Determine layout classes - FIX THE LOGIC
     const layout = this._config.layout || 'compact';
     const featuresPosition = this._config.features_position || 'bottom';
@@ -614,19 +624,19 @@ export class AreaCardElite extends LitElement {
     }
 
     return html`
-      <ha-card class="${this._config.display_type || 'compact'} layout-${layout} features-${featuresPosition}">
+      <ha-card class="${this._config.display_type || 'compact'} layout-${layout} features-${featuresPosition}" style=${cardStyle}>
         <div class="content">
           <!-- Large background entity icon - ONLY for icon display type -->
-          ${this._config.display_type === "icon" && mainEntityIcon ? html`
+          ${this._config.display_type === "icon" && mainEntity ? html`
             <!-- Separate circle background -->
-            <div class="main-entity-circle ${mainEntity && (mainEntity.state === 'locked' || !STATES_OFF.includes(mainEntity.state)) ? 'active' : ''} 
-              ${mainEntity && (mainEntity.state === 'unlocked' || STATES_OFF.includes(mainEntity.state)) ? 'unlocked' : ''}">
+            <div class="main-entity-circle ${!STATES_OFF.includes(mainEntity.state) && !UNAVAILABLE_STATES.includes(mainEntity.state) ? 'active' : ''} 
+              ${STATES_OFF.includes(mainEntity.state) ? 'inactive' : ''}">
             </div>
-            <!-- Separate lock icon -->
+            <!-- Separate entity icon - uses proper domain icon -->
             <div class="main-entity-icon" 
                  @click=${() => this._config?.main_entity && this._handleEntityClick(this._config.main_entity)}>
               <ha-icon 
-                icon="${mainEntity?.state === 'locked' ? 'mdi:lock' : mainEntity?.state === 'unlocked' ? 'mdi:lock-open' : mainEntityIcon}">
+                icon="${this._getDomainIcon(mainEntity.entity_id.split('.')[0], mainEntity.state, mainEntity.attributes.device_class)}">
               </ha-icon>
             </div>
           ` : nothing}
@@ -808,6 +818,14 @@ export class AreaCardElite extends LitElement {
     });
   }
 
+  // Helper method to convert hex to RGB values
+  private _hexToRgb(hex: string): string {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result 
+      ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+      : '76, 175, 80'; // Default green fallback
+  }
+
   static getConfigElement() {
     return document.createElement("area-card-elite-editor");
   }
@@ -960,7 +978,7 @@ export class AreaCardElite extends LitElement {
       color: #4caf50;
     }
 
-    .main-entity-circle.unlocked + .main-entity-icon ha-icon {
+    .main-entity-circle.inactive + .main-entity-icon ha-icon {
       color: #f44336;
     }
 
@@ -984,20 +1002,20 @@ export class AreaCardElite extends LitElement {
     /* Minimize area info in icon mode - FIXED POSITIONING */
     .icon .area-info {
       position: absolute;
-      top: 16px;
-      left: 16px;
+      top: 8px;    /* Moved from 16px to 8px - closer to top */
+      left: 8px;   /* Moved from 16px to 8px - closer to edge */
       z-index: 3;  /* Above everything else */
     }
 
     .icon .area-name {
-      font-size: 1.2em;  /* Larger font */
+      font-size: 1.3em;  /* Slightly larger */
       font-weight: bold;
-      margin-bottom: 8px;
+      margin-bottom: 4px;  /* Reduced margin */
       color: var(--primary-text-color);
     }
 
     .icon .area-sensors {
-      margin-top: 4px;
+      margin-top: 2px;  /* Reduced from 4px */
     }
 
     /* Make sure area info stays at top in all icon modes */
@@ -1315,24 +1333,43 @@ export class AreaCardElite extends LitElement {
       transform: translate(-50%, -50%);
     }
 
-    /* Circle state colors - use HA's native state colors */
+    /* Circle state colors - use CSS custom properties */
     .main-entity-circle.active {
-      background: rgba(var(--rgb-state-active-color, 76, 175, 80), 0.15);
+      background: rgba(var(--state-active-rgb, 76, 175, 80), 0.15);
       border-color: var(--state-active-color, #4caf50);
     }
 
-    .main-entity-circle.unlocked {
-      background: rgba(var(--rgb-state-inactive-color, 244, 67, 54), 0.15);
+    .main-entity-circle.inactive {
+      background: rgba(var(--state-inactive-rgb, 244, 67, 54), 0.15);
       border-color: var(--state-inactive-color, #f44336);
     }
 
-    /* Icon state colors - use HA's native state colors */
+    /* Icon state colors - use CSS custom properties */
     .main-entity-circle.active + .main-entity-icon ha-icon {
       color: var(--state-active-color, #4caf50);
     }
 
-    .main-entity-circle.unlocked + .main-entity-icon ha-icon {
+    .main-entity-circle.inactive + .main-entity-icon ha-icon {
       color: var(--state-inactive-color, #f44336);
+    }
+
+    /* Fix area name/temp positioning - closer to top */
+    .icon .area-info {
+      position: absolute;
+      top: 8px;    /* Moved from 16px to 8px - closer to top */
+      left: 8px;   /* Moved from 16px to 8px - closer to edge */
+      z-index: 3;
+    }
+
+    .icon .area-name {
+      font-size: 1.3em;  /* Slightly larger */
+      font-weight: bold;
+      margin-bottom: 4px;  /* Reduced margin */
+      color: var(--primary-text-color);
+    }
+
+    .icon .area-sensors {
+      margin-top: 2px;  /* Reduced from 4px */
     }
   `;
 }

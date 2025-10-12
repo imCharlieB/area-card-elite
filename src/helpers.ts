@@ -103,3 +103,26 @@ export const DOMAIN_ICONS = {
   sensor: { on: "mdi:gauge", off: "mdi:gauge" },
   script: { on: "mdi:script-text", off: "mdi:script-text" },
 };
+
+/**
+ * Color utility functions
+ */
+export function hexToRgb(hex: string): string {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result 
+    ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+    : '76, 175, 80'; // Default green fallback
+}
+
+export function getStateColors(config: any) {
+  return {
+    active: {
+      color: config?.state_active_color || '#4caf50',
+      rgb: hexToRgb(config?.state_active_color || '#4caf50')
+    },
+    inactive: {
+      color: config?.state_inactive_color || '#f44336', 
+      rgb: hexToRgb(config?.state_inactive_color || '#f44336')
+    }
+  };
+}
