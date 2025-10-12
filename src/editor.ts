@@ -183,15 +183,26 @@ export class AreaCardEliteEditor extends LitElement {
   }
 
   private _getAreaCameras(): string[] {
-    if (!this._config?.area) return [];
+    if (!this._config?.area) {
+      console.log('No area selected for camera filtering');
+      return [];
+    }
 
-    return Object.entries(this.hass.states || {})
+    const cameras = Object.entries(this.hass.states || {})
       .filter(([entityId, entity]) => {
         const [domain] = entityId.split(".");
-        return domain === "camera" &&
-               entity.attributes?.area_id === this._config?.area;
+        if (domain !== "camera") return false;
+
+        // Check if entity has area_id in attributes
+        const hasAreaId = entity.attributes?.area_id === this._config?.area;
+        console.log(`Camera ${entityId}: area_id=${entity.attributes?.area_id}, matches=${hasAreaId}`);
+
+        return hasAreaId;
       })
       .map(([entityId]) => entityId);
+
+    console.log(`Found ${cameras.length} cameras in area ${this._config.area}:`, cameras);
+    return cameras;
   }
 
   protected render() {
@@ -339,26 +350,6 @@ export class AreaCardEliteEditor extends LitElement {
               ></ha-selector>
             </div>
 
-            <div class="option">
-              <ha-selector
-                .hass=${this.hass}
-                .selector=${{
-                  select: {
-                    options: [
-                      { value: "16:9", label: "16:9 (Widescreen)" },
-                      { value: "4:3", label: "4:3 (Standard)" },
-                      { value: "1:1", label: "1:1 (Square)" },
-                      { value: "3:2", label: "3:2 (Photo)" }
-                    ]
-                  }
-                }}
-                .value=${this._config.aspect_ratio || "16:9"}
-                .configValue=${"aspect_ratio"}
-                .label=${"Aspect Ratio"}
-                @value-changed=${this._valueChanged}
-              ></ha-selector>
-            </div>
-
             ${this._config.display_type === "camera" ? html`
               <div class="option">
                 ${this._config.area && this._getAreaCameras().length > 0 ? html`
@@ -398,38 +389,41 @@ export class AreaCardEliteEditor extends LitElement {
                   @value-changed=${this._valueChanged}
                 ></ha-selector>
               </div>
+              <div class="option">
+                <ha-selector
+                  .hass=${this.hass}
+                  .selector=${{
+                    select: {
+                      options: [
+                        { value: "16:9", label: "16:9 (Widescreen)" },
+                        { value: "4:3", label: "4:3 (Standard)" },
+                        { value: "1:1", label: "1:1 (Square)" },
+                        { value: "3:2", label: "3:2 (Photo)" }
+                      ]
+                    }
+                  }}
+                  .value=${this._config.aspect_ratio || "16:9"}
+                  .configValue=${"aspect_ratio"}
+                  .label=${"Aspect Ratio"}
+                  .helper=${"Sets the height/width ratio of the camera view"}
+                  @value-changed=${this._valueChanged}
+                ></ha-selector>
+              </div>
             ` : ''}
             
             ${this._config.display_type === "picture" ? html`
               <div class="option">
                 <ha-selector
                   .hass=${this.hass}
-                  .selector=${{
-                    media: {
-                      filter: {
-                        supported_formats: ["image"]
-                      }
-                    }
-                  }}
+                  .selector=${{ image: {} }}
                   .value=${this._config.background_image || ""}
                   .configValue=${"background_image"}
                   .label=${"Background Image"}
-                  .helper=${"Select an image from your media folder"}
+                  .helper=${"Select an image from your media folder or upload new"}
                   @value-changed=${this._valueChanged}
                 ></ha-selector>
               </div>
             ` : ''}
-
-            <div class="option">
-              <ha-selector
-                .hass=${this.hass}
-                .selector=${{ text: {} }}
-                .value=${this._config.theme || ""}
-                .configValue=${"theme"}
-                .label=${"Theme (optional)"}
-                @value-changed=${this._valueChanged}
-              ></ha-selector>
-            </div>
           </div>
         </ha-expansion-panel>
 
