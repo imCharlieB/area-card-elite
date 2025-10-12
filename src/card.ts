@@ -556,10 +556,10 @@ export class AreaCardElite extends LitElement {
           </div>
         `)}
         ${showLightsOffButton ? html`
-          <div class="control-button lights-off"
+          <div class="control-button"
                title="Turn off all lights"
                @click=${() => this._handleTurnOffAllLights()}>
-            <ha-icon icon="mdi:lightbulb-off" style="color: #ff9800"></ha-icon>
+            <ha-icon icon="mdi:lightbulb-off-outline" style="color: #ff9800"></ha-icon>
           </div>
         ` : nothing}
       </div>
@@ -1005,8 +1005,8 @@ export class AreaCardElite extends LitElement {
     /* Large background circle - separate from icon */
     .main-entity-circle {
       position: absolute;
-      width: 400px;  /* Made bigger as requested */
-      height: 400px; /* Made bigger as requested */
+      width: 320px;  /* Reduced from 400px */
+      height: 320px; /* Reduced from 400px */
       z-index: 1;
       border-radius: 50%;
       background: rgba(var(--rgb-primary-text-color), 0.08);
@@ -1060,15 +1060,15 @@ export class AreaCardElite extends LitElement {
       transform: translate(-50%, -50%);
     }
 
-    /* Position the separate icon element - moved away from corner */
+    /* Position the separate icon element - closer to corner */
     .features-right .main-entity-icon {
-      bottom: 20px;   /* 20px from bottom edge */
-      left: 20px;     /* 20px from left edge */
+      bottom: 10px;   /* 10px from bottom edge - half of previous */
+      left: 10px;     /* 10px from left edge - half of previous */
     }
 
     .features-left .main-entity-icon {
-      bottom: 20px;   /* 20px from bottom edge */
-      right: 20px;    /* 20px from right edge */
+      bottom: 10px;   /* 10px from bottom edge - half of previous */
+      right: 10px;    /* 10px from right edge - half of previous */
     }
 
     .features-top .main-entity-icon,
@@ -1327,8 +1327,8 @@ export class AreaCardElite extends LitElement {
     }
 
     .control-button {
-      width: 48px;
-      height: 48px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -1349,7 +1349,22 @@ export class AreaCardElite extends LitElement {
     }
 
     .control-button ha-icon {
-      --mdc-icon-size: 24px;
+      --mdc-icon-size: 20px;
+    }
+
+    /* Animated icons */
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Spinning fan icon when active */
+    .control-button.active ha-icon[icon*="fan"]:not([icon*="off"]) {
+      animation: spin 2s linear infinite;
     }
 
     /* DISPLAY TYPE SUPPORT - All display types from editor */
@@ -1569,13 +1584,13 @@ export class AreaCardElite extends LitElement {
 
     /* Position based on features position - circle positioning */
     .features-right .main-entity-circle {
-      bottom: -240px;  /* Adjusted for bigger 400px circle */
-      left: -240px;    /* Adjusted for bigger 400px circle */
+      bottom: -190px;  /* Adjusted for 320px circle */
+      left: -190px;    /* Adjusted for 320px circle */
     }
 
     .features-left .main-entity-circle {
-      bottom: -240px;  /* Adjusted for bigger 400px circle */
-      right: -240px;   /* Adjusted for bigger 400px circle */
+      bottom: -190px;  /* Adjusted for 320px circle */
+      right: -190px;   /* Adjusted for 320px circle */
     }
 
     .features-top .main-entity-circle,
