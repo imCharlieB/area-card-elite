@@ -81,25 +81,23 @@ export class AreaCardElite extends LitElement {
   private _getAreaEntities() {
     if (!this._config?.area) return [];
 
-    console.log(`Looking for entities in area: ${this._config.area}`);
-
     const entities = Object.entries(this.hass.states || {})
       .filter(([entityId, entity]) => {
         if (this._config?.exclude_entities?.includes(entityId)) return false;
-        
+
         const [domain] = entityId.split(".");
-        const isRelevantDomain = TOGGLE_DOMAINS.includes(domain) || 
-                                SENSOR_DOMAINS.includes(domain) || 
+        const isRelevantDomain = TOGGLE_DOMAINS.includes(domain) ||
+                                SENSOR_DOMAINS.includes(domain) ||
                                 ALERT_DOMAINS.includes(domain) ||
                                 COVER_DOMAINS.includes(domain) ||
                                 CLIMATE_DOMAINS.includes(domain) ||
                                 OTHER_DOMAINS.includes(domain);
-        
+
         if (!isRelevantDomain) return false;
 
         // Check if entity belongs to the area
         const belongsToArea = entity.attributes?.area_id === this._config?.area;
-        
+
         return belongsToArea;
       })
       .map(([entityId, entity]) => ({
@@ -110,14 +108,6 @@ export class AreaCardElite extends LitElement {
         name: entity.attributes.friendly_name || entityId.split(".")[1],
         deviceClass: entity.attributes.device_class || ""
       }));
-
-    console.log(`Found ${entities.length} entities in area ${this._config.area}:`, entities);
-    
-    // Log specifically binary_sensor and sensor entities
-    const binarySensors = entities.filter(e => e.domain === 'binary_sensor');
-    const sensors = entities.filter(e => e.domain === 'sensor');
-    console.log(`Binary sensors: ${binarySensors.length}`, binarySensors);
-    console.log(`Sensors: ${sensors.length}`, sensors);
 
     return entities;
   }
@@ -673,13 +663,26 @@ export class AreaCardElite extends LitElement {
             <div class="background-image" style="background-image: url('${this._config.background_image}')"></div>
           ` : ''}
 
-          ${this._config.display_type === "camera" && this._config.camera_entity ? html`
-            <img
-              class="camera-view"
-              src="/api/camera_proxy/${this._config.camera_entity}"
-              @error=${() => console.error(`Failed to load camera: ${this._config?.camera_entity}`)}
-            />
-          ` : ''}
+          ${this._config.display_type === "camera" && this._config.camera_entity ? (() => {
+            const cameraEntity = this.hass.states[this._config.camera_entity];
+            console.log(`Camera entity ${this._config.camera_entity}:`, cameraEntity);
+            console.log(`Camera state:`, cameraEntity?.state);
+            console.log(`Camera attributes:`, cameraEntity?.attributes);
+
+            return html`
+              <img
+                class="camera-view"
+                src="/api/camera_proxy/${this._config.camera_entity}?t=${Date.now()}"
+                @load=${() => console.log(`✓ Camera loaded successfully: ${this._config?.camera_entity}`)}
+                @error=${(e: Event) => {
+                  console.error(`✗ Failed to load camera: ${this._config?.camera_entity}`);
+                  console.error('Error event:', e);
+                  console.error('Image src:', (e.target as HTMLImageElement)?.src);
+                  console.error('Camera entity exists:', !!cameraEntity);
+                }}
+              />
+            `;
+          })() : ''}
 
           <div class="area-info">
             ${layout === "vertical" || this._config.display_type !== "compact" ? html`
