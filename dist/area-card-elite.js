@@ -93,18 +93,19 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
           </div>
         `))}
       </div>
-    `}_handleControlClick(e){const t=e.split(".")[0];"climate"===t?this._handleEntityClick(e):this.hass.callService(t,"toggle",{},{entity_id:e})}_handleEntityClick(e){const t=new CustomEvent("hass-more-info",{detail:{entityId:e},bubbles:!0,composed:!0});this.dispatchEvent(t)}_getAreaCameras(){var e;return(null===(e=this._config)||void 0===e?void 0:e.area)?Object.entries(this.hass.states||{}).filter((([e,t])=>{var i,o;const[s]=e.split(".");return"camera"===s&&(null===(i=t.attributes)||void 0===i?void 0:i.area_id)===(null===(o=this._config)||void 0===o?void 0:o.area)})).map((([e,t])=>({entityId:e,name:t.attributes.friendly_name||e.split(".")[1]}))):[]}_getAreaName(){var e,t,i;if(null===(e=this._config)||void 0===e?void 0:e.name)return this._config.name;const o=this._areas[(null===(t=this._config)||void 0===t?void 0:t.area)||""];return(null==o?void 0:o.name)||(null===(i=this._config)||void 0===i?void 0:i.area)||"Unknown Area"}_getAreaIcon(){var e,t;if(null===(e=this._config)||void 0===e?void 0:e.icon)return this._config.icon;const i=this._areas[(null===(t=this._config)||void 0===t?void 0:t.area)||""];return(null==i?void 0:i.icon)||"mdi:home"}_getAreaFilteredEntities(e,t){var i;return(null===(i=this._config)||void 0===i?void 0:i.area)?Object.entries(this.hass.states||{}).filter((([i,o])=>{var s,n;const[a]=i.split(".");return a===e&&((!t||o.attributes.device_class===t)&&(null===(s=o.attributes)||void 0===s?void 0:s.area_id)===(null===(n=this._config)||void 0===n?void 0:n.area))})).map((([e])=>e)):[]}_isEntityActive(e){var t;if(!e)return!1;const i=e.entity_id.split(".")[0];if(He.includes(e.state))return!1;if("lock"===i)return"locked"===e.state;if("binary_sensor"===i){const i=null===(t=e.attributes)||void 0===t?void 0:t.device_class;if("door"===i||"window"===i||"opening"===i)return"off"===e.state||"closed"===e.state}return"cover"===i?"closed"===e.state:!je.includes(e.state)}render(){var e;if(!this.hass||!this._config)return W;const t=this._getAreaName(),i=this._getAreaIcon(),o=this._config.area_name_color?`color: ${this._config.area_name_color};`:"",s=this._config.area_icon_color?`color: ${this._config.area_icon_color};`:"",n={active:{color:(null==(a=this._config)?void 0:a.state_active_color)||"#4caf50",rgb:Ve((null==a?void 0:a.state_active_color)||"#4caf50")},inactive:{color:(null==a?void 0:a.state_inactive_color)||"#f44336",rgb:Ve((null==a?void 0:a.state_inactive_color)||"#f44336")}};var a;const r=be(Object.assign({"--state-active-color":n.active.color,"--state-active-rgb":n.active.rgb,"--state-inactive-color":n.inactive.color,"--state-inactive-rgb":n.inactive.rgb},this._config.color&&{backgroundColor:this._config.color})),l=this._config.layout||"compact",c=this._config.features_position||"bottom",d=null===(e=this._config.features)||void 0===e?void 0:e.includes("area-controls"),h=this._config.main_entity?this.hass.states[this._config.main_entity]:null;return F`
+    `}_handleControlClick(e){const t=e.split(".")[0];"climate"===t?this._handleEntityClick(e):this.hass.callService(t,"toggle",{},{entity_id:e})}_handleEntityClick(e){const t=new CustomEvent("hass-more-info",{detail:{entityId:e},bubbles:!0,composed:!0});this.dispatchEvent(t)}_getAreaCameras(){var e;return(null===(e=this._config)||void 0===e?void 0:e.area)?Object.entries(this.hass.states||{}).filter((([e,t])=>{var i,o;const[s]=e.split(".");return"camera"===s&&(null===(i=t.attributes)||void 0===i?void 0:i.area_id)===(null===(o=this._config)||void 0===o?void 0:o.area)})).map((([e,t])=>({entityId:e,name:t.attributes.friendly_name||e.split(".")[1]}))):[]}_getAreaName(){var e,t,i;if(null===(e=this._config)||void 0===e?void 0:e.name)return this._config.name;const o=this._areas[(null===(t=this._config)||void 0===t?void 0:t.area)||""];return(null==o?void 0:o.name)||(null===(i=this._config)||void 0===i?void 0:i.area)||"Unknown Area"}_getAreaIcon(){var e,t;if(null===(e=this._config)||void 0===e?void 0:e.icon)return this._config.icon;const i=this._areas[(null===(t=this._config)||void 0===t?void 0:t.area)||""];return(null==i?void 0:i.icon)||"mdi:home"}_getAreaFilteredEntities(e,t){var i;return(null===(i=this._config)||void 0===i?void 0:i.area)?Object.entries(this.hass.states||{}).filter((([i,o])=>{var s,n;const[a]=i.split(".");return a===e&&((!t||o.attributes.device_class===t)&&(null===(s=o.attributes)||void 0===s?void 0:s.area_id)===(null===(n=this._config)||void 0===n?void 0:n.area))})).map((([e])=>e)):[]}render(){var e;if(!this.hass||!this._config)return W;const t=this._getAreaName(),i=this._getAreaIcon(),o=this._config.area_name_color?`color: ${this._config.area_name_color};`:"",s=this._config.area_icon_color?`color: ${this._config.area_icon_color};`:"",n={active:{color:(null==(a=this._config)?void 0:a.state_active_color)||"#4caf50",rgb:Ve((null==a?void 0:a.state_active_color)||"#4caf50")},inactive:{color:(null==a?void 0:a.state_inactive_color)||"#f44336",rgb:Ve((null==a?void 0:a.state_inactive_color)||"#f44336")}};var a;const r=be(Object.assign({"--state-active-color":n.active.color,"--state-active-rgb":n.active.rgb,"--state-inactive-color":n.inactive.color,"--state-inactive-rgb":n.inactive.rgb},this._config.color&&{backgroundColor:this._config.color})),l=this._config.layout||"compact",c=this._config.features_position||"bottom",d=null===(e=this._config.features)||void 0===e?void 0:e.includes("area-controls"),h=this._config.main_entity?this.hass.states[this._config.main_entity]:null;return F`
       <ha-card class="${this._config.display_type||"compact"} layout-${l} features-${c}" style=${r}>
         <div class="content">
           <!-- Large background entity icon - ONLY for icon display type -->
           ${"icon"===this._config.display_type&&h?F`
             <!-- Separate circle background -->
-            <div class="main-entity-circle ${this._isEntityActive(h)?"active":"inactive"}">
+            <div class="main-entity-circle ${je.includes(h.state)||He.includes(h.state)?"":"active"} 
+              ${je.includes(h.state)?"inactive":""}">
             </div>
             <!-- Separate entity icon - uses proper domain icon -->
-            <div class="main-entity-icon"
+            <div class="main-entity-icon" 
                  @click=${()=>{var e;return(null===(e=this._config)||void 0===e?void 0:e.main_entity)&&this._handleEntityClick(this._config.main_entity)}}>
-              <ha-icon
+              <ha-icon 
                 icon="${this._getDomainIcon(h.entity_id.split(".")[0],h.state,h.attributes.device_class)}">
               </ha-icon>
             </div>
@@ -227,8 +228,8 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
     .area-sensors {
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      margin-top: 0px;
+      gap: 4px;
+      margin-top: 4px;
     }
 
     .sensors {
@@ -287,10 +288,14 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
       border-radius: 0;
     }
 
-    /* Remove old conflicting styles - icon should have NO background or border */
-    .main-entity-icon {
-      background: none !important;
-      border: none !important;
+    /* Icon color and background based on state */
+    .main-entity-circle.active + .main-entity-icon {
+      background: rgba(76, 175, 80, 0.15);
+      border-color: #4caf50;
+    }
+
+    .main-entity-circle.active + .main-entity-icon ha-icon {
+      color: #4caf50;
     }
     /* Position based on features position - ADJUSTED FOR LARGER CIRCLE */
     .features-right .main-entity-circle {
@@ -366,12 +371,12 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
     .icon .area-name {
       font-size: 1.2em;
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
       color: var(--primary-text-color);
     }
 
     .icon .area-sensors {
-      margin-top: 0px;
+      margin-top: 4px;
     }
 
     /* In icon mode, sensors should stack vertically under area name */

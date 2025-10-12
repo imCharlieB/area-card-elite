@@ -579,6 +579,38 @@ export class AreaCardElite extends LitElement {
       .map(([entityId]) => entityId);
   }
 
+  private _isEntityActive(entity: any): boolean {
+    if (!entity) return false;
+
+    const domain = entity.entity_id.split('.')[0];
+
+    // Unavailable entities are never active
+    if (UNAVAILABLE_STATES.includes(entity.state)) {
+      return false;
+    }
+
+    // For locks: "locked" = active (green), "unlocked" = inactive (red)
+    if (domain === 'lock') {
+      return entity.state === 'locked';
+    }
+
+    // For binary sensors with door/window class: "off" or "closed" = active (good), "on" or "open" = inactive (bad)
+    if (domain === 'binary_sensor') {
+      const deviceClass = entity.attributes?.device_class;
+      if (deviceClass === 'door' || deviceClass === 'window' || deviceClass === 'opening') {
+        return entity.state === 'off' || entity.state === 'closed';
+      }
+    }
+
+    // For covers: "closed" = active, "open" = inactive
+    if (domain === 'cover') {
+      return entity.state === 'closed';
+    }
+
+    // For everything else: use standard logic (on/open = active, off/closed = inactive)
+    return !STATES_OFF.includes(entity.state);
+  }
+
   render() {
     if (!this.hass || !this._config) {
       return nothing;
@@ -616,13 +648,12 @@ export class AreaCardElite extends LitElement {
           <!-- Large background entity icon - ONLY for icon display type -->
           ${this._config.display_type === "icon" && mainEntity ? html`
             <!-- Separate circle background -->
-            <div class="main-entity-circle ${!STATES_OFF.includes(mainEntity.state) && !UNAVAILABLE_STATES.includes(mainEntity.state) ? 'active' : ''} 
-              ${STATES_OFF.includes(mainEntity.state) ? 'inactive' : ''}">
+            <div class="main-entity-circle ${this._isEntityActive(mainEntity) ? 'active' : 'inactive'}">
             </div>
             <!-- Separate entity icon - uses proper domain icon -->
-            <div class="main-entity-icon" 
+            <div class="main-entity-icon"
                  @click=${() => this._config?.main_entity && this._handleEntityClick(this._config.main_entity)}>
-              <ha-icon 
+              <ha-icon
                 icon="${this._getDomainIcon(mainEntity.entity_id.split('.')[0], mainEntity.state, mainEntity.attributes.device_class)}">
               </ha-icon>
             </div>
@@ -858,8 +889,8 @@ export class AreaCardElite extends LitElement {
     .area-sensors {
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      margin-top: 4px;
+      gap: 2px;
+      margin-top: 0px;
     }
 
     .sensors {
@@ -918,14 +949,10 @@ export class AreaCardElite extends LitElement {
       border-radius: 0;
     }
 
-    /* Icon color and background based on state */
-    .main-entity-circle.active + .main-entity-icon {
-      background: rgba(76, 175, 80, 0.15);
-      border-color: #4caf50;
-    }
-
-    .main-entity-circle.active + .main-entity-icon ha-icon {
-      color: #4caf50;
+    /* Remove old conflicting styles - icon should have NO background or border */
+    .main-entity-icon {
+      background: none !important;
+      border: none !important;
     }
     /* Position based on features position - ADJUSTED FOR LARGER CIRCLE */
     .features-right .main-entity-circle {
@@ -1001,12 +1028,12 @@ export class AreaCardElite extends LitElement {
     .icon .area-name {
       font-size: 1.2em;
       font-weight: 600;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
       color: var(--primary-text-color);
     }
 
     .icon .area-sensors {
-      margin-top: 4px;
+      margin-top: 0px;
     }
 
     /* In icon mode, sensors should stack vertically under area name */
