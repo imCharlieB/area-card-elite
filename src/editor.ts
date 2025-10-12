@@ -22,10 +22,15 @@ export class AreaCardEliteEditor extends LitElement {
   @state() private _areas: Array<{area_id: string, name: string}> = [];
   @state() private _localImages: string[] = [];
 
+  @state() private _entities: any[] = [];
+  @state() private _devices: any[] = [];
+
   async connectedCallback() {
     super.connectedCallback();
     await this._loadAreas();
     await this._loadLocalImages();
+    await this._loadEntityRegistry();
+    await this._loadDeviceRegistry();
   }
 
   private async _loadAreas() {
@@ -39,6 +44,32 @@ export class AreaCardEliteEditor extends LitElement {
     } catch (error) {
       console.error("Failed to load areas:", error);
       this._areas = [];
+    }
+  }
+
+  private async _loadEntityRegistry() {
+    try {
+      if (this.hass?.connection) {
+        this._entities = await this.hass.connection.sendMessagePromise({
+          type: "config/entity_registry/list",
+        });
+      }
+    } catch (error) {
+      console.error("Failed to load entity registry:", error);
+      this._entities = [];
+    }
+  }
+
+  private async _loadDeviceRegistry() {
+    try {
+      if (this.hass?.connection) {
+        this._devices = await this.hass.connection.sendMessagePromise({
+          type: "config/device_registry/list",
+        });
+      }
+    } catch (error) {
+      console.error("Failed to load device registry:", error);
+      this._devices = [];
     }
   }
 
@@ -188,18 +219,36 @@ export class AreaCardEliteEditor extends LitElement {
       return [];
     }
 
-    const cameras = Object.entries(this.hass.states || {})
-      .filter(([entityId, entity]) => {
+    const cameras = Object.keys(this.hass.states || {})
+      .filter((entityId) => {
         const [domain] = entityId.split(".");
         if (domain !== "camera") return false;
 
-        // Check if entity has area_id in attributes
-        const hasAreaId = entity.attributes?.area_id === this._config?.area;
-        console.log(`Camera ${entityId}: area_id=${entity.attributes?.area_id}, matches=${hasAreaId}`);
+        // First check entity attributes (some entities have area_id directly)
+        const entity = this.hass.states[entityId];
+        if (entity.attributes?.area_id === this._config?.area) {
+          console.log(`Camera ${entityId}: has area_id in attributes`);
+          return true;
+        }
 
-        return hasAreaId;
-      })
-      .map(([entityId]) => entityId);
+        // Check entity registry for area assignment
+        const entityEntry = this._entities.find((e: any) => e.entity_id === entityId);
+        if (entityEntry?.area_id === this._config?.area) {
+          console.log(`Camera ${entityId}: assigned to area via entity registry`);
+          return true;
+        }
+
+        // Check device registry (most common for cameras)
+        if (entityEntry?.device_id) {
+          const device = this._devices.find((d: any) => d.id === entityEntry.device_id);
+          if (device?.area_id === this._config?.area) {
+            console.log(`Camera ${entityId}: assigned to area via device registry (device: ${device.name_by_user || device.name})`);
+            return true;
+          }
+        }
+
+        return false;
+      });
 
     console.log(`Found ${cameras.length} cameras in area ${this._config.area}:`, cameras);
     return cameras;
