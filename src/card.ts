@@ -597,7 +597,9 @@ export class AreaCardElite extends LitElement {
       '--state-active-color': stateColors.active.color,
       '--state-active-rgb': stateColors.active.rgb,
       '--state-inactive-color': stateColors.inactive.color,
-      '--state-inactive-rgb': stateColors.inactive.rgb
+      '--state-inactive-rgb': stateColors.inactive.rgb,
+      // Apply card background color if set
+      ...(this._config.color && { backgroundColor: this._config.color })
     });
     
     // Determine layout classes - FIX THE LOGIC
@@ -910,22 +912,25 @@ export class AreaCardElite extends LitElement {
       transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
-    /* Separate icon element - no changes */
+    /* Separate icon element - REMOVE SQUARE STYLING */
     .main-entity-icon {
       position: absolute;
       z-index: 2;
       cursor: pointer;
-      width: 80px;
-      height: 80px;
       display: flex;
       align-items: center;
       justify-content: center;
+      /* Removed width, height, background, border - no more square! */
     }
 
     .main-entity-icon ha-icon {
       --mdc-icon-size: 80px;
       opacity: 1;
-      transition: opacity 0.2s ease;
+      transition: opacity 0.2s ease, color 0.2s ease;
+      /* Remove any default styling that creates squares */
+      background: none;
+      border: none;
+      border-radius: 0;
     }
 
     /* Icon color and background based on state */
