@@ -1257,9 +1257,11 @@ export class AreaCardElite extends LitElement {
 
     .features-top .controls-section {
       order: 1;
-      align-self: center;
-      margin-bottom: 16px;
-      position: relative;
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
     }
 
     /* Controls at the bottom */
@@ -1269,9 +1271,11 @@ export class AreaCardElite extends LitElement {
 
     .features-bottom .controls-section {
       order: 3;
-      align-self: center;
-      margin-top: auto;
-      position: relative;
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
     }
 
     /* Inline controls */
