@@ -161,10 +161,10 @@ export class AreaCardEliteEditor extends LitElement {
 
   private _buildSelectOptions(domain: string): Array<{value: string, label: string}> {
     const classes = this._getDeviceClasses(domain);
-    
+
     // Always show common device classes even if none found in area yet
     let allClasses: string[] = [];
-    
+
     if (domain === 'binary_sensor') {
       // Combine found classes with common ones, removing duplicates
       allClasses = [...new Set([...classes, ...DEVICE_CLASSES.binary_sensor])];
@@ -173,13 +173,25 @@ export class AreaCardEliteEditor extends LitElement {
     } else {
       allClasses = classes;
     }
-    
+
     return allClasses.map((cls: string) => ({
       value: cls,
-      label: this.hass.localize(`component.${domain}.device_class.${cls}`) || 
-             this.hass.localize(`ui.dialogs.entity_registry.editor.device_classes.${domain}.${cls}`) || 
+      label: this.hass.localize(`component.${domain}.device_class.${cls}`) ||
+             this.hass.localize(`ui.dialogs.entity_registry.editor.device_classes.${domain}.${cls}`) ||
              cls.charAt(0).toUpperCase() + cls.slice(1).replace(/_/g, ' ')
     }));
+  }
+
+  private _getAreaCameras(): string[] {
+    if (!this._config?.area) return [];
+
+    return Object.entries(this.hass.states || {})
+      .filter(([entityId, entity]) => {
+        const [domain] = entityId.split(".");
+        return domain === "camera" &&
+               entity.attributes?.area_id === this._config?.area;
+      })
+      .map(([entityId]) => entityId);
   }
 
   protected render() {
@@ -349,16 +361,23 @@ export class AreaCardEliteEditor extends LitElement {
 
             ${this._config.display_type === "camera" ? html`
               <div class="option">
+                ${this._config.area && this._getAreaCameras().length > 0 ? html`
+                  <div class="helper-text">Cameras in ${this._config.area}: ${this._getAreaCameras().length} found</div>
+                ` : this._config.area ? html`
+                  <div class="helper-text" style="color: var(--warning-color);">No cameras found in this area</div>
+                ` : ''}
                 <ha-selector
                   .hass=${this.hass}
                   .selector=${{
                     entity: {
-                      domain: "camera"
+                      domain: "camera",
+                      include_entities: this._config.area ? this._getAreaCameras() : undefined
                     }
                   }}
                   .value=${this._config.camera_entity || ""}
                   .configValue=${"camera_entity"}
                   .label=${"Camera Entity"}
+                  .helper=${this._config.area ? "Filtered to cameras in selected area" : "Select an area first to filter cameras"}
                   @value-changed=${this._valueChanged}
                 ></ha-selector>
               </div>
@@ -385,11 +404,17 @@ export class AreaCardEliteEditor extends LitElement {
               <div class="option">
                 <ha-selector
                   .hass=${this.hass}
-                  .selector=${{ text: {} }}
+                  .selector=${{
+                    media: {
+                      filter: {
+                        supported_formats: ["image"]
+                      }
+                    }
+                  }}
                   .value=${this._config.background_image || ""}
                   .configValue=${"background_image"}
-                  .label=${"Background Image URL"}
-                  .helper=${"Enter image URL or /local/image.jpg for local files"}
+                  .label=${"Background Image"}
+                  .helper=${"Select an image from your media folder"}
                   @value-changed=${this._valueChanged}
                 ></ha-selector>
               </div>
