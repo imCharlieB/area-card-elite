@@ -883,8 +883,8 @@ export class AreaCardElite extends LitElement {
     /* Large background circle - separate from icon */
     .main-entity-circle {
       position: absolute;
-      width: 320px;
-      height: 320px;
+      width: 400px;  /* Made bigger as requested */
+      height: 400px; /* Made bigger as requested */
       z-index: 1;
       border-radius: 50%;
       background: rgba(var(--rgb-primary-text-color), 0.08);
@@ -1295,6 +1295,44 @@ export class AreaCardElite extends LitElement {
       .control-button ha-icon {
         --mdc-icon-size: 20px;
       }
+    }
+
+    /* Position based on features position - circle positioning */
+    .features-right .main-entity-circle {
+      bottom: -240px;  /* Adjusted for bigger 400px circle */
+      left: -240px;    /* Adjusted for bigger 400px circle */
+    }
+
+    .features-left .main-entity-circle {
+      bottom: -240px;  /* Adjusted for bigger 400px circle */
+      right: -240px;   /* Adjusted for bigger 400px circle */
+    }
+
+    .features-top .main-entity-circle,
+    .features-bottom .main-entity-circle {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Circle state colors - use HA's native state colors */
+    .main-entity-circle.active {
+      background: rgba(var(--rgb-state-active-color, 76, 175, 80), 0.15);
+      border-color: var(--state-active-color, #4caf50);
+    }
+
+    .main-entity-circle.unlocked {
+      background: rgba(var(--rgb-state-inactive-color, 244, 67, 54), 0.15);
+      border-color: var(--state-inactive-color, #f44336);
+    }
+
+    /* Icon state colors - use HA's native state colors */
+    .main-entity-circle.active + .main-entity-icon ha-icon {
+      color: var(--state-active-color, #4caf50);
+    }
+
+    .main-entity-circle.unlocked + .main-entity-icon ha-icon {
+      color: var(--state-inactive-color, #f44336);
     }
   `;
 }
