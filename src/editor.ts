@@ -219,38 +219,56 @@ export class AreaCardEliteEditor extends LitElement {
       return [];
     }
 
+    console.log(`DEBUG: Searching for cameras in area "${this._config.area}"`);
+    console.log(`DEBUG: Entity registry loaded: ${this._entities.length} entities`);
+    console.log(`DEBUG: Device registry loaded: ${this._devices.length} devices`);
+
     const cameras = Object.keys(this.hass.states || {})
       .filter((entityId) => {
         const [domain] = entityId.split(".");
         if (domain !== "camera") return false;
 
+        console.log(`\nChecking camera: ${entityId}`);
+
         // First check entity attributes (some entities have area_id directly)
         const entity = this.hass.states[entityId];
+        console.log(`  - Entity attributes area_id: ${entity.attributes?.area_id}`);
         if (entity.attributes?.area_id === this._config?.area) {
-          console.log(`Camera ${entityId}: has area_id in attributes`);
+          console.log(`  ✓ MATCH via entity attributes!`);
           return true;
         }
 
         // Check entity registry for area assignment
         const entityEntry = this._entities.find((e: any) => e.entity_id === entityId);
+        console.log(`  - Entity registry entry: ${entityEntry ? 'found' : 'NOT FOUND'}`);
+        if (entityEntry) {
+          console.log(`    - area_id: ${entityEntry.area_id}`);
+          console.log(`    - device_id: ${entityEntry.device_id}`);
+        }
         if (entityEntry?.area_id === this._config?.area) {
-          console.log(`Camera ${entityId}: assigned to area via entity registry`);
+          console.log(`  ✓ MATCH via entity registry!`);
           return true;
         }
 
         // Check device registry (most common for cameras)
         if (entityEntry?.device_id) {
           const device = this._devices.find((d: any) => d.id === entityEntry.device_id);
+          console.log(`  - Device registry entry: ${device ? 'found' : 'NOT FOUND'}`);
+          if (device) {
+            console.log(`    - device area_id: ${device.area_id}`);
+            console.log(`    - device name: ${device.name_by_user || device.name}`);
+          }
           if (device?.area_id === this._config?.area) {
-            console.log(`Camera ${entityId}: assigned to area via device registry (device: ${device.name_by_user || device.name})`);
+            console.log(`  ✓ MATCH via device registry!`);
             return true;
           }
         }
 
+        console.log(`  ✗ No match`);
         return false;
       });
 
-    console.log(`Found ${cameras.length} cameras in area ${this._config.area}:`, cameras);
+    console.log(`\nFOUND ${cameras.length} cameras in area ${this._config.area}:`, cameras);
     return cameras;
   }
 
