@@ -880,7 +880,7 @@ export class AreaCardElite extends LitElement {
       font-weight: 500;
     }
 
-    /* Large background entity icon - positioned based on features position */
+    /* Large background circle - separate from icon */
     .main-entity-circle {
       position: absolute;
       width: 320px;
@@ -888,31 +888,24 @@ export class AreaCardElite extends LitElement {
       z-index: 1;
       border-radius: 50%;
       background: rgba(var(--rgb-primary-text-color), 0.08);
-    }
-
-    .main-entity-icon {
-      position: absolute;
-      z-index: 2;
-      cursor: pointer;
-      width: 100px;  /* Bigger icon container */
-      height: 100px; /* Bigger icon container */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      /* Add circular border back */
-      border-radius: 50%;
-      background: rgba(var(--rgb-primary-text-color), 0.08);
       border: 3px solid rgba(var(--rgb-primary-text-color), 0.15);
       transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
-    .main-entity-icon:hover {
-      background: rgba(var(--rgb-primary-text-color), 0.12);
-      border-color: rgba(var(--rgb-primary-text-color), 0.2);
+    /* Separate icon element - no changes */
+    .main-entity-icon {
+      position: absolute;
+      z-index: 2;
+      cursor: pointer;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .main-entity-icon ha-icon {
-      --mdc-icon-size: 50px;  /* Bigger icon */
+      --mdc-icon-size: 80px;
       opacity: 1;
       transition: opacity 0.2s ease;
     }
