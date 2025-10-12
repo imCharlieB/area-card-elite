@@ -944,15 +944,15 @@ export class AreaCardElite extends LitElement {
       transform: translate(-50%, -50%);
     }
 
-    /* Position the separate icon element - can be moved independently */
+    /* Position the separate icon element - moved away from corner */
     .features-right .main-entity-icon {
-      bottom: 60px;   /* Position icon separately from circle */
-      left: 60px;     /* Position icon separately from circle */
+      bottom: 20px;   /* 20px from bottom edge */
+      left: 20px;     /* 20px from left edge */
     }
 
     .features-left .main-entity-icon {
-      bottom: 60px;   /* Position icon separately from circle */
-      right: 60px;    /* Position icon separately from circle */
+      bottom: 20px;   /* 20px from bottom edge */
+      right: 20px;    /* 20px from right edge */
     }
 
     .features-top .main-entity-icon,
@@ -988,21 +988,30 @@ export class AreaCardElite extends LitElement {
       position: relative;
     }
 
-    /* Minimize area info in icon mode */
+    /* Minimize area info in icon mode - FIXED POSITIONING */
     .icon .area-info {
       position: absolute;
       top: 16px;
       left: 16px;
-      z-index: 2;
+      z-index: 3;  /* Above everything else */
     }
 
     .icon .area-name {
-      font-size: 1.1em;
-      margin-bottom: 4px;
+      font-size: 1.2em;  /* Larger font */
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: var(--primary-text-color);
     }
 
     .icon .area-sensors {
       margin-top: 4px;
+    }
+
+    /* Make sure area info stays at top in all icon modes */
+    .icon .area-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     /* LAYOUT SUPPORT - Different layouts from editor */
