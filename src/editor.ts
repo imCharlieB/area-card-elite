@@ -257,8 +257,8 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{ ui_color: { mode: "hex" } }}
                 .value=${this._config.state_active_color || ""}
                 .configValue=${"state_active_color"}
-                .label=${"Active State Color (On/Locked)"}
-                .helper=${"Color for circle and icon when entity is active/on/locked"}
+                .label=${"Active State Color"}
+                .helper=${"Color for circle and icon when entity is active/on"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
             </div>
@@ -269,8 +269,8 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{ ui_color: { mode: "hex" } }}
                 .value=${this._config.state_inactive_color || ""}
                 .configValue=${"state_inactive_color"}
-                .label=${"Inactive State Color (Off/Unlocked)"}
-                .helper=${"Color for circle and icon when entity is inactive/off/unlocked"}
+                .label=${"Inactive State Color"}
+                .helper=${"Color for circle and icon when entity is inactive/off"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
             </div>

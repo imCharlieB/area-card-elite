@@ -1333,7 +1333,7 @@ export class AreaCardElite extends LitElement {
       transform: translate(-50%, -50%);
     }
 
-    /* Circle state colors - use CSS custom properties */
+    /* Circle state colors - both background AND border change with state */
     .main-entity-circle.active {
       background: rgba(var(--state-active-rgb, 76, 175, 80), 0.15);
       border-color: var(--state-active-color, #4caf50);
@@ -1344,7 +1344,7 @@ export class AreaCardElite extends LitElement {
       border-color: var(--state-inactive-color, #f44336);
     }
 
-    /* Icon state colors - use CSS custom properties */
+    /* Icon state colors - icon color also changes with state */
     .main-entity-circle.active + .main-entity-icon ha-icon {
       color: var(--state-active-color, #4caf50);
     }
