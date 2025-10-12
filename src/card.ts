@@ -383,6 +383,18 @@ export class AreaCardElite extends LitElement {
       }
     }
 
+    // Moisture sensor
+    if (this._config.moisture_sensor && this.hass.states[this._config.moisture_sensor]) {
+      const entity = this.hass.states[this._config.moisture_sensor];
+      if (entity.state === "on") {
+        alerts.push({
+          icon: "mdi:water-alert",
+          name: "Moisture",
+          entityId: this._config.moisture_sensor
+        });
+      }
+    }
+
     // Additional alert sensors
     if (this._config.additional_alerts) {
       this._config.additional_alerts.forEach(entityId => {
@@ -532,6 +544,7 @@ export class AreaCardElite extends LitElement {
     // Check if there are any lights in the area for the lights-off button
     const entities = this._getAreaEntities();
     const hasLights = entities.some(e => e.domain === "light");
+    const showLightsOffButton = this._config.show_lights_off_button !== false && hasLights;
 
     return html`
       <div class="area-controls">
@@ -541,7 +554,7 @@ export class AreaCardElite extends LitElement {
             <ha-icon icon="${control.icon}" style="color: ${control.color}"></ha-icon>
           </div>
         `)}
-        ${hasLights ? html`
+        ${showLightsOffButton ? html`
           <div class="control-button lights-off"
                title="Turn off all lights"
                @click=${() => this._handleTurnOffAllLights()}>
@@ -926,6 +939,7 @@ export class AreaCardElite extends LitElement {
       padding: 16px;
       transition: all 0.3s ease;
       background: var(--ha-card-background, var(--card-background-color));
+      container-type: inline-size;
     }
 
     /* Main content layout */
@@ -1264,6 +1278,17 @@ export class AreaCardElite extends LitElement {
       z-index: 3;
     }
 
+    /* When controls at top, move area info to bottom */
+    .features-top .area-info {
+      top: auto !important;
+      bottom: 8px;
+    }
+
+    .features-top .sensors-section {
+      top: auto !important;
+      bottom: 40px;
+    }
+
     /* Controls at the bottom */
     .features-bottom .content {
       flex-direction: column;
@@ -1495,14 +1520,49 @@ export class AreaCardElite extends LitElement {
       .area-name {
         font-size: 1em;
       }
-      
+
       .control-button {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
       }
-      
+
       .control-button ha-icon {
-        --mdc-icon-size: 20px;
+        --mdc-icon-size: 18px;
+      }
+
+      .area-controls {
+        gap: 8px;
+      }
+    }
+
+    /* Make controls scale down for smaller cards */
+    @container (max-width: 250px) {
+      .control-button {
+        width: 36px;
+        height: 36px;
+      }
+
+      .control-button ha-icon {
+        --mdc-icon-size: 18px;
+      }
+
+      .area-controls {
+        gap: 8px;
+      }
+    }
+
+    @container (max-width: 200px) {
+      .control-button {
+        width: 32px;
+        height: 32px;
+      }
+
+      .control-button ha-icon {
+        --mdc-icon-size: 16px;
+      }
+
+      .area-controls {
+        gap: 6px;
       }
     }
 

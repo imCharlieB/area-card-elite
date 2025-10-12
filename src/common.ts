@@ -51,7 +51,11 @@ export interface AreaCardEliteConfig extends LovelaceCardConfig {
   occupancy_sensor?: string;
   door_sensor?: string;
   window_sensor?: string;
+  moisture_sensor?: string;
   additional_alerts?: string[];
+
+  // Feature toggles
+  show_lights_off_button?: boolean;
 
   // State colors
   state_active_color?: string;

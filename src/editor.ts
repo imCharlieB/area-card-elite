@@ -670,6 +670,18 @@ export class AreaCardEliteEditor extends LitElement {
                 @value-changed=${this._valueChanged}
               ></ha-selector>
             </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{ boolean: {} }}
+                .value=${this._config.show_lights_off_button !== false}
+                .configValue=${"show_lights_off_button"}
+                .label=${"Show Turn Off All Lights Button"}
+                .helper=${"Automatically adds a button to turn off all lights in the area"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
           </div>
         </ha-expansion-panel>
 
@@ -738,6 +750,22 @@ export class AreaCardEliteEditor extends LitElement {
                 .value=${this._config.window_sensor || ""}
                 .configValue=${"window_sensor"}
                 .label=${"Window Sensor"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  entity: {
+                    domain: "binary_sensor",
+                    device_class: "moisture"
+                  }
+                }}
+                .value=${this._config.moisture_sensor || ""}
+                .configValue=${"moisture_sensor"}
+                .label=${"Moisture Sensor"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
             </div>
