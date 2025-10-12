@@ -665,16 +665,17 @@ export class AreaCardElite extends LitElement {
 
           ${this._config.display_type === "camera" && this._config.camera_entity ? (() => {
             const cameraEntity = this.hass.states[this._config.camera_entity];
-            const accessToken = cameraEntity?.attributes?.access_token;
-            const cameraUrl = accessToken
-              ? `/api/camera_proxy/${this._config.camera_entity}?token=${accessToken}`
-              : cameraEntity?.attributes?.entity_picture || `/api/camera_proxy/${this._config.camera_entity}`;
+            // Use entity_picture directly as it already includes the token
+            const cameraUrl = cameraEntity?.attributes?.entity_picture || `/api/camera_proxy/${this._config.camera_entity}`;
+
+            console.log(`Using camera URL: ${cameraUrl}`);
 
             return html`
               <img
                 class="camera-view"
                 src="${cameraUrl}"
-                @error=${() => console.error(`Failed to load camera: ${this._config?.camera_entity}`)}
+                @load=${() => console.log(`✓ Camera loaded: ${this._config?.camera_entity}`)}
+                @error=${() => console.error(`✗ Failed to load camera: ${this._config?.camera_entity}`)}
               />
             `;
           })() : ''}
