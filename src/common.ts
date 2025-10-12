@@ -17,7 +17,7 @@ export interface AreaCardEliteConfig extends LovelaceCardConfig {
   alert_classes?: string[];
   sensor_classes?: string[];
   features?: string[];
-  features_position?: "bottom" | "inline";
+  features_position?: "bottom" | "inline" | "left" | "right" | "top";
   exclude_entities?: string[];
   theme?: string;
   
@@ -43,6 +43,7 @@ export interface AreaCardEliteConfig extends LovelaceCardConfig {
   climate_entity?: string;
   switch_entity?: string;
   fan_entity?: string;
+  media_player_entity?: string;
   additional_controls?: string[];
   
   // Alert sensor entity selectors

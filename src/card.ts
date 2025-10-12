@@ -483,6 +483,32 @@ export class AreaCardElite extends LitElement {
       });
     }
 
+    // Media Player control
+    if (this._config.media_player_entity && this.hass.states[this._config.media_player_entity]) {
+      const entity = this.hass.states[this._config.media_player_entity];
+      const isPlaying = entity.state === "playing";
+      const isOn = !STATES_OFF.includes(entity.state) && !UNAVAILABLE_STATES.includes(entity.state);
+
+      let icon = "mdi:speaker-off";
+      let color = "#757575";
+
+      if (isPlaying) {
+        icon = "mdi:speaker-play";
+        color = "#4caf50";
+      } else if (isOn) {
+        icon = "mdi:speaker";
+        color = "#2196f3";
+      }
+
+      controls.push({
+        icon: icon,
+        name: entity.attributes.friendly_name || "Media",
+        entityId: this._config.media_player_entity,
+        isOn: isOn,
+        color: color
+      });
+    }
+
     // Additional controls
     if (this._config.additional_controls) {
       this._config.additional_controls.forEach(entityId => {
@@ -503,23 +529,34 @@ export class AreaCardElite extends LitElement {
 
     if (controls.length === 0) return nothing;
 
+    // Check if there are any lights in the area for the lights-off button
+    const entities = this._getAreaEntities();
+    const hasLights = entities.some(e => e.domain === "light");
+
     return html`
       <div class="area-controls">
         ${controls.map(control => html`
-          <div class="control-button ${control.isOn ? 'active' : ''}" 
+          <div class="control-button ${control.isOn ? 'active' : ''}"
                @click=${() => this._handleControlClick(control.entityId)}>
             <ha-icon icon="${control.icon}" style="color: ${control.color}"></ha-icon>
           </div>
         `)}
+        ${hasLights ? html`
+          <div class="control-button lights-off"
+               title="Turn off all lights"
+               @click=${() => this._handleTurnOffAllLights()}>
+            <ha-icon icon="mdi:lightbulb-off" style="color: #ff9800"></ha-icon>
+          </div>
+        ` : nothing}
       </div>
     `;
   }
 
   private _handleControlClick(entityId: string) {
     const domain = entityId.split(".")[0];
-    
-    if (domain === "climate") {
-      // Open climate more-info dialog
+
+    if (domain === "climate" || domain === "media_player") {
+      // Open more-info dialog for complex entities
       this._handleEntityClick(entityId);
     } else {
       // Toggle the entity
@@ -850,9 +887,18 @@ export class AreaCardElite extends LitElement {
   private _handleToggleAll() {
     const entities = this._getAreaEntities();
     const toggleEntities = entities.filter(e => TOGGLE_DOMAINS.includes(e.domain));
-    
+
     toggleEntities.forEach(entity => {
       this.hass.callService(entity.domain, "toggle", {}, { entity_id: entity.entityId });
+    });
+  }
+
+  private _handleTurnOffAllLights() {
+    const entities = this._getAreaEntities();
+    const lightEntities = entities.filter(e => e.domain === "light");
+
+    lightEntities.forEach(entity => {
+      this.hass.callService("light", "turn_off", {}, { entity_id: entity.entityId });
     });
   }
 
@@ -1155,20 +1201,36 @@ export class AreaCardElite extends LitElement {
 
     /* FEATURES POSITION SUPPORT - All positions from editor */
     
-    /* Controls on the right side - closer to edge */
+    /* Controls on the right side - better aligned */
     .features-right .controls-section {
       position: absolute;
-      right: 8px;
-      bottom: 8px;
+      right: 12px;
+      bottom: 12px;
       z-index: 3;
     }
 
-    /* Controls on the left side - closer to edge */
+    /* Controls on the left side - better aligned */
     .features-left .controls-section {
       position: absolute;
-      left: 8px;
-      bottom: 8px;
+      left: 12px;
+      bottom: 12px;
       z-index: 3;
+    }
+
+    /* When controls on left, move area info to right to prevent overlap */
+    .features-left .icon .area-info {
+      left: auto;
+      right: 8px;
+      text-align: right;
+    }
+
+    .features-left .icon .sensors-section {
+      left: auto;
+      right: 0px;
+    }
+
+    .features-left .icon .sensors {
+      justify-content: flex-end;
     }
 
     /* For vertical layout specifically - controls at bottom right */
@@ -1324,41 +1386,61 @@ export class AreaCardElite extends LitElement {
       display: none;
     }
 
-    /* Alerts inline with sensors */
+    /* Alerts inline with sensors - improved with glow */
     .alerts {
       display: flex;
       flex-direction: row;
       gap: 8px;
       flex-wrap: wrap;
-      margin-top: 4px;
+      margin-top: 6px;
     }
 
     .icon-with-count {
       display: flex;
       align-items: center;
       gap: 6px;
-      background: rgba(244, 67, 54, 0.1);
-      border: 1.5px solid rgba(244, 67, 54, 0.4);
+      background: rgba(244, 67, 54, 0.15);
+      border: 2px solid rgba(244, 67, 54, 0.6);
       color: #f44336;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 0.8em;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 0.85em;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 8px rgba(244, 67, 54, 0.3);
+      animation: alert-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes alert-pulse {
+      0%, 100% {
+        box-shadow: 0 0 8px rgba(244, 67, 54, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 16px rgba(244, 67, 54, 0.6), 0 0 24px rgba(244, 67, 54, 0.3);
+      }
     }
 
     .icon-with-count:hover {
-      background: rgba(244, 67, 54, 0.15);
-      border-color: rgba(244, 67, 54, 0.6);
+      background: rgba(244, 67, 54, 0.25);
+      border-color: rgba(244, 67, 54, 0.8);
+      box-shadow: 0 0 12px rgba(244, 67, 54, 0.5);
+      transform: translateY(-1px);
     }
 
     .icon-with-count ha-icon {
-      --mdc-icon-size: 14px;
+      --mdc-icon-size: 16px;
+      filter: drop-shadow(0 0 2px rgba(244, 67, 54, 0.8));
     }
 
     .alert-label {
-      font-size: 12px;
-      font-weight: 500;
+      font-size: 13px;
+      font-weight: 600;
+      text-shadow: 0 0 4px rgba(244, 67, 54, 0.5);
+    }
+
+    /* Position alerts under humidity sensor */
+    .icon .area-sensors .alerts {
+      margin-top: 8px;
     }
 
     /* Features buttons */
