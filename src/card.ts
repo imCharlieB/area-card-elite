@@ -701,6 +701,7 @@ export class AreaCardElite extends LitElement {
               ${layout === "vertical" ? html`
                 <div class="area-sensors">
                   ${this._renderSensors()}
+                  ${this._renderAlerts()}
                 </div>
               ` : ''}
             </div>
@@ -710,6 +711,7 @@ export class AreaCardElite extends LitElement {
           ${layout !== "vertical" ? html`
             <div class="sensors-section">
               ${this._renderSensors()}
+              ${this._renderAlerts()}
             </div>
           ` : nothing}
 
@@ -719,7 +721,6 @@ export class AreaCardElite extends LitElement {
             </div>
           ` : nothing}
 
-          ${this._renderAlerts()}
           ${this._renderFeatures()}
         </div>
       </ha-card>
@@ -864,11 +865,12 @@ export class AreaCardElite extends LitElement {
 
   static styles = css`
     ha-card {
-      overflow: hidden;  /* Changed back to hidden to hide overflow circle */
+      overflow: hidden;
       position: relative;
       height: 100%;
       padding: 16px;
       transition: all 0.3s ease;
+      background: var(--ha-card-background, var(--card-background-color));
     }
 
     /* Main content layout */
@@ -1307,31 +1309,40 @@ export class AreaCardElite extends LitElement {
       display: none;
     }
 
-    /* Alerts in top-right */
+    /* Alerts inline with sensors */
     .alerts {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      z-index: 2;
       display: flex;
-      gap: 6px;
+      flex-direction: row;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
     }
 
     .icon-with-count {
       display: flex;
       align-items: center;
-      gap: 4px;
-      background: rgba(var(--error-color), 0.15);
-      border: 1px solid rgba(var(--error-color), 0.3);
-      color: var(--error-color);
-      padding: 4px 8px;
-      border-radius: 4px;
+      gap: 6px;
+      background: rgba(244, 67, 54, 0.1);
+      border: 1.5px solid rgba(244, 67, 54, 0.4);
+      color: #f44336;
+      padding: 4px 10px;
+      border-radius: 12px;
       font-size: 0.8em;
       cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .icon-with-count:hover {
+      background: rgba(244, 67, 54, 0.15);
+      border-color: rgba(244, 67, 54, 0.6);
+    }
+
+    .icon-with-count ha-icon {
+      --mdc-icon-size: 14px;
     }
 
     .alert-label {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 500;
     }
 

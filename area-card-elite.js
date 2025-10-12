@@ -142,6 +142,7 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
               ${"vertical"===l?F`
                 <div class="area-sensors">
                   ${this._renderSensors()}
+                  ${this._renderAlerts()}
                 </div>
               `:""}
             </div>
@@ -151,6 +152,7 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
           ${"vertical"!==l?F`
             <div class="sensors-section">
               ${this._renderSensors()}
+              ${this._renderAlerts()}
             </div>
           `:W}
 
@@ -160,7 +162,6 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
             </div>
           `:W}
 
-          ${this._renderAlerts()}
           ${this._renderFeatures()}
         </div>
       </ha-card>
@@ -192,11 +193,12 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
       </ha-button>
     `}_handleMoreInfo(){var e;const t=new CustomEvent("hass-more-info",{detail:{entityId:`area.${null===(e=this._config)||void 0===e?void 0:e.area}`},bubbles:!0,composed:!0});this.dispatchEvent(t)}_handleToggleAll(){const e=this._getAreaEntities().filter((e=>ze.includes(e.domain)));e.forEach((e=>{this.hass.callService(e.domain,"toggle",{},{entity_id:e.entityId})}))}_hexToRgb(e){const t=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(e);return t?`${parseInt(t[1],16)}, ${parseInt(t[2],16)}, ${parseInt(t[3],16)}`:"76, 175, 80"}static getConfigElement(){return document.createElement("area-card-elite-editor")}static getStubConfig(){return{area:""}}};var De,Be;Le.styles=r`
     ha-card {
-      overflow: hidden;  /* Changed back to hidden to hide overflow circle */
+      overflow: hidden;
       position: relative;
       height: 100%;
       padding: 16px;
       transition: all 0.3s ease;
+      background: var(--ha-card-background, var(--card-background-color));
     }
 
     /* Main content layout */
@@ -635,31 +637,40 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
       display: none;
     }
 
-    /* Alerts in top-right */
+    /* Alerts inline with sensors */
     .alerts {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      z-index: 2;
       display: flex;
-      gap: 6px;
+      flex-direction: row;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
     }
 
     .icon-with-count {
       display: flex;
       align-items: center;
-      gap: 4px;
-      background: rgba(var(--error-color), 0.15);
-      border: 1px solid rgba(var(--error-color), 0.3);
-      color: var(--error-color);
-      padding: 4px 8px;
-      border-radius: 4px;
+      gap: 6px;
+      background: rgba(244, 67, 54, 0.1);
+      border: 1.5px solid rgba(244, 67, 54, 0.4);
+      color: #f44336;
+      padding: 4px 10px;
+      border-radius: 12px;
       font-size: 0.8em;
       cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .icon-with-count:hover {
+      background: rgba(244, 67, 54, 0.15);
+      border-color: rgba(244, 67, 54, 0.6);
+    }
+
+    .icon-with-count ha-icon {
+      --mdc-icon-size: 14px;
     }
 
     .alert-label {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 500;
     }
 
