@@ -618,12 +618,16 @@ export class AreaCardElite extends LitElement {
         <div class="content">
           <!-- Large background entity icon - ONLY for icon display type -->
           ${this._config.display_type === "icon" && mainEntityIcon ? html`
-            <div class="main-entity-background ${mainEntity && (mainEntity.state === 'locked' || !STATES_OFF.includes(mainEntity.state)) ? 'active' : ''} 
+            <!-- Separate circle background -->
+            <div class="main-entity-circle ${mainEntity && (mainEntity.state === 'locked' || !STATES_OFF.includes(mainEntity.state)) ? 'active' : ''} 
               ${mainEntity && (mainEntity.state === 'unlocked' || STATES_OFF.includes(mainEntity.state)) ? 'unlocked' : ''}">
+            </div>
+            <!-- Separate lock icon -->
+            <div class="main-entity-icon" 
+                 @click=${() => this._config?.main_entity && this._handleEntityClick(this._config.main_entity)}>
               <ha-icon 
-                icon="${mainEntity?.state === 'locked' ? 'mdi:lock' : mainEntity?.state === 'unlocked' ? 'mdi:lock-open' : mainEntityIcon}" 
-                @click=${() => this._config?.main_entity && this._handleEntityClick(this._config.main_entity)}
-              ></ha-icon>
+                icon="${mainEntity?.state === 'locked' ? 'mdi:lock' : mainEntity?.state === 'unlocked' ? 'mdi:lock-open' : mainEntityIcon}">
+              </ha-icon>
             </div>
           ` : nothing}
 
@@ -877,72 +881,94 @@ export class AreaCardElite extends LitElement {
     }
 
     /* Large background entity icon - positioned based on features position */
-    .main-entity-background {
+    .main-entity-circle {
       position: absolute;
       width: 320px;
       height: 320px;
       z-index: 1;
-      cursor: pointer;
       border-radius: 50%;
       background: rgba(var(--rgb-primary-text-color), 0.08);
-      border: 3px solid rgba(var(--rgb-primary-text-color), 0.15);
-      transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
-    .main-entity-background ha-icon {
+    .main-entity-icon {
+      position: absolute;
+      z-index: 2;
+      cursor: pointer;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .main-entity-icon ha-icon {
       --mdc-icon-size: 80px;
       opacity: 1;
       transition: opacity 0.2s ease;
-      color: inherit;
-      position: absolute;
-      top: 80px;    /* Position from top of circle */
-      right: 80px;  /* Position from right of circle */
-    }
-
-    .main-entity-background:hover {
-      background: rgba(var(--rgb-primary-text-color), 0.12);
-      border-color: rgba(var(--rgb-primary-text-color), 0.2);
-    }
-
-    .main-entity-background:hover ha-icon {
-      opacity: 1;
     }
 
     /* FIXED STATE COLORS - Green when locked/on, red when unlocked/off */
-    .main-entity-background.active {
+    .main-entity-circle.active {
       background: rgba(76, 175, 80, 0.15);
       border-color: #4caf50;
     }
 
-    .main-entity-background.active ha-icon {
-      color: #4caf50;
-    }
-
-    .main-entity-background.unlocked {
+    .main-entity-circle.unlocked {
       background: rgba(244, 67, 54, 0.15);
       border-color: #f44336;
     }
 
-    .main-entity-background.unlocked ha-icon {
+    .main-entity-icon ha-icon.active {
+      color: #4caf50;
+    }
+
+    .main-entity-icon ha-icon.unlocked {
       color: #f44336;
     }
 
     /* Position based on features position - ADJUSTED FOR LARGER CIRCLE */
-    .features-right .main-entity-background {
+    .features-right .main-entity-circle {
       bottom: -200px;  /* Adjusted for 320px circle */
       left: -200px;    /* Adjusted for 320px circle */
     }
 
-    .features-left .main-entity-background {
+    .features-left .main-entity-circle {
       bottom: -200px;  /* Adjusted for 320px circle */
       right: -200px;   /* Adjusted for 320px circle */
     }
 
-    .features-top .main-entity-background,
-    .features-bottom .main-entity-background {
+    .features-top .main-entity-circle,
+    .features-bottom .main-entity-circle {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+    }
+
+    /* Position the separate icon element - can be moved independently */
+    .features-right .main-entity-icon {
+      bottom: 60px;   /* Position icon separately from circle */
+      left: 60px;     /* Position icon separately from circle */
+    }
+
+    .features-left .main-entity-icon {
+      bottom: 60px;   /* Position icon separately from circle */
+      right: 60px;    /* Position icon separately from circle */
+    }
+
+    .features-top .main-entity-icon,
+    .features-bottom .main-entity-icon {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Icon color based on state */
+    .main-entity-circle.active + .main-entity-icon ha-icon {
+      color: #4caf50;
+    }
+
+    .main-entity-circle.unlocked + .main-entity-icon ha-icon {
+      color: #f44336;
     }
 
     /* Hide unnecessary elements in icon mode */
@@ -1182,12 +1208,12 @@ export class AreaCardElite extends LitElement {
     }
 
     /* Icon display type - shows large background icon */
-    .icon .main-entity-background {
+    .icon .main-entity-circle {
       display: flex;
     }
 
     /* Compact display type - hide background icon */
-    .compact .main-entity-background {
+    .compact .main-entity-circle {
       display: none;
     }
 
