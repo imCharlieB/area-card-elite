@@ -609,21 +609,6 @@ export class AreaCardElite extends LitElement {
 
     // Get main entity for large background icon
     const mainEntity = this._config.main_entity ? this.hass.states[this._config.main_entity] : null;
-    const mainEntityIcon = mainEntity ? this._getDomainIcon(
-      mainEntity.entity_id.split('.')[0], 
-      mainEntity.state, 
-      mainEntity.attributes.device_class
-    ) : null;
-    
-    // Fix color logic - red when unlocked/off, primary color when locked/on
-    let mainEntityColor = 'rgba(var(--rgb-primary-text-color), 0.1)'; // Default gray
-    if (mainEntity && !UNAVAILABLE_STATES.includes(mainEntity.state)) {
-      if (STATES_OFF.includes(mainEntity.state) || mainEntity.state === 'unlocked') {
-        mainEntityColor = '#f44336'; // Red when off/unlocked
-      } else {
-        mainEntityColor = 'var(--primary-color)'; // Primary color when on/locked
-      }
-    }
 
     return html`
       <ha-card class="${this._config.display_type || 'compact'} layout-${layout} features-${featuresPosition}" style=${cardStyle}>
@@ -1007,20 +992,29 @@ export class AreaCardElite extends LitElement {
     /* Minimize area info in icon mode - FIXED POSITIONING */
     .icon .area-info {
       position: absolute;
-      top: 8px;    /* Moved from 16px to 8px - closer to top */
-      left: 8px;   /* Moved from 16px to 8px - closer to edge */
-      z-index: 3;  /* Above everything else */
+      top: 0px;
+      left: 0px;
+      z-index: 3;
+      right: auto;
     }
 
     .icon .area-name {
-      font-size: 1.3em;  /* Slightly larger */
-      font-weight: bold;
-      margin-bottom: 4px;  /* Reduced margin */
+      font-size: 1.2em;
+      font-weight: 600;
+      margin-bottom: 8px;
       color: var(--primary-text-color);
     }
 
     .icon .area-sensors {
-      margin-top: 2px;  /* Reduced from 4px */
+      margin-top: 4px;
+    }
+
+    /* In icon mode, sensors should stack vertically under area name */
+    .icon .sensors-section {
+      position: absolute;
+      top: 40px;
+      left: 0px;
+      z-index: 3;
     }
 
     /* Make sure area info stays at top in all icon modes */
@@ -1070,6 +1064,29 @@ export class AreaCardElite extends LitElement {
       display: flex;
       flex-direction: column;
       height: 100%;
+      position: relative;
+      min-height: 200px;
+    }
+
+    .layout-vertical .area-info {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 3;
+    }
+
+    .layout-vertical .area-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .layout-vertical .sensors-section {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin-top: 60px;
+      z-index: 3;
     }
 
     /* Hide area icon in icon display mode */
@@ -1087,18 +1104,24 @@ export class AreaCardElite extends LitElement {
     .features-right .controls-section {
       position: absolute;
       right: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 2;
+      bottom: 8px;
+      z-index: 3;
     }
 
     /* Controls on the left side - closer to edge */
     .features-left .controls-section {
       position: absolute;
       left: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 2;
+      bottom: 8px;
+      z-index: 3;
+    }
+
+    /* For vertical layout specifically - controls at bottom right */
+    .layout-vertical.features-right .controls-section {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      z-index: 3;
     }
 
     /* Controls at the top */

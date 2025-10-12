@@ -51,4 +51,8 @@ export interface AreaCardEliteConfig extends LovelaceCardConfig {
   door_sensor?: string;
   window_sensor?: string;
   additional_alerts?: string[];
+
+  // State colors
+  state_active_color?: string;
+  state_inactive_color?: string;
 }
