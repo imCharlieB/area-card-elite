@@ -121,8 +121,8 @@ export function getStateColors(config: any) {
       rgb: hexToRgb(config?.state_active_color || '#4caf50')
     },
     inactive: {
-      color: config?.state_inactive_color || '#f44336', 
-      rgb: hexToRgb(config?.state_inactive_color || '#f44336')
+      color: config?.state_inactive_color || '#607d8b',
+      rgb: hexToRgb(config?.state_inactive_color || '#607d8b')
     }
   };
 }
