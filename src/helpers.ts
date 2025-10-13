@@ -126,3 +126,46 @@ export function getStateColors(config: any) {
     }
   };
 }
+
+/**
+ * Alert colors based on device class
+ */
+export const ALERT_COLORS: Record<string, string> = {
+  motion: '#ff9800',        // Orange - movement/activity
+  occupancy: '#9c27b0',     // Purple - presence
+  door: '#f44336',          // Red - security concern
+  window: '#f44336',        // Red - security concern
+  moisture: '#2196f3',      // Blue - water
+  smoke: '#f44336',         // Red - danger
+  gas: '#ff5722',           // Deep orange - danger
+  problem: '#f44336',       // Red - issue
+  safety: '#f44336',        // Red - safety concern
+  tamper: '#f44336',        // Red - security
+  heat: '#ff9800',          // Orange - temperature
+  cold: '#03a9f4',          // Light blue - temperature
+  default: '#f44336'        // Red - default alert color
+};
+
+/**
+ * Get alert color based on device class
+ */
+export function getAlertColor(deviceClass?: string, config?: any): { color: string, rgb: string } {
+  // Check if user configured custom alert color
+  const customColor = config?.alert_color;
+  if (customColor) {
+    return {
+      color: customColor,
+      rgb: hexToRgb(customColor)
+    };
+  }
+
+  // Use device class specific color
+  const color = deviceClass && deviceClass in ALERT_COLORS
+    ? ALERT_COLORS[deviceClass]
+    : ALERT_COLORS.default;
+
+  return {
+    color,
+    rgb: hexToRgb(color)
+  };
+}

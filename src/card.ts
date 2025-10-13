@@ -9,7 +9,7 @@ import { actionHandler } from "./ha/helpers/action_handler";
 import { handleAction } from "./ha/helpers/handle_action";
 import { computeDomain } from "./ha/helpers/compute_domain";
 import { UNAVAILABLE, UNKNOWN, STATES_OFF as HA_STATES_OFF } from "./ha";
-import { 
+import {
   SENSOR_DOMAINS,
   ALERT_DOMAINS,
   COVER_DOMAINS,
@@ -18,7 +18,8 @@ import {
   OTHER_DOMAINS,
   DOMAIN_ICONS,
   DEVICE_CLASSES,
-  getStateColors
+  getStateColors,
+  getAlertColor
 } from "./helpers";
 
 const UNAVAILABLE_STATES = ["unavailable", "unknown"];
@@ -356,48 +357,78 @@ export class AreaCardElite extends LitElement {
     });
   }
 
-  private _hasActiveAlerts(): boolean {
-    if (!this._config) return false;
+  private _getActiveAlertInfo(): { hasAlert: boolean, color: string, rgb: string, deviceClass?: string } {
+    if (!this._config) return { hasAlert: false, color: '#f44336', rgb: '244, 67, 54' };
+
+    let firstAlertDeviceClass: string | undefined;
 
     // Check motion sensor
     if (this._config.motion_sensor && this.hass.states[this._config.motion_sensor]) {
       const entity = this.hass.states[this._config.motion_sensor];
-      if (entity.state === "on") return true;
+      if (entity.state === "on") {
+        firstAlertDeviceClass = entity.attributes.device_class || 'motion';
+        const alertColor = getAlertColor(firstAlertDeviceClass, this._config);
+        return { hasAlert: true, ...alertColor, deviceClass: firstAlertDeviceClass };
+      }
     }
 
     // Check occupancy sensor
     if (this._config.occupancy_sensor && this.hass.states[this._config.occupancy_sensor]) {
       const entity = this.hass.states[this._config.occupancy_sensor];
-      if (entity.state === "on") return true;
+      if (entity.state === "on") {
+        firstAlertDeviceClass = entity.attributes.device_class || 'occupancy';
+        const alertColor = getAlertColor(firstAlertDeviceClass, this._config);
+        return { hasAlert: true, ...alertColor, deviceClass: firstAlertDeviceClass };
+      }
     }
 
     // Check door sensor
     if (this._config.door_sensor && this.hass.states[this._config.door_sensor]) {
       const entity = this.hass.states[this._config.door_sensor];
-      if (entity.state === "on") return true;
+      if (entity.state === "on") {
+        firstAlertDeviceClass = entity.attributes.device_class || 'door';
+        const alertColor = getAlertColor(firstAlertDeviceClass, this._config);
+        return { hasAlert: true, ...alertColor, deviceClass: firstAlertDeviceClass };
+      }
     }
 
     // Check window sensor
     if (this._config.window_sensor && this.hass.states[this._config.window_sensor]) {
       const entity = this.hass.states[this._config.window_sensor];
-      if (entity.state === "on") return true;
+      if (entity.state === "on") {
+        firstAlertDeviceClass = entity.attributes.device_class || 'window';
+        const alertColor = getAlertColor(firstAlertDeviceClass, this._config);
+        return { hasAlert: true, ...alertColor, deviceClass: firstAlertDeviceClass };
+      }
     }
 
     // Check moisture sensor
     if (this._config.moisture_sensor && this.hass.states[this._config.moisture_sensor]) {
       const entity = this.hass.states[this._config.moisture_sensor];
-      if (entity.state === "on") return true;
+      if (entity.state === "on") {
+        firstAlertDeviceClass = entity.attributes.device_class || 'moisture';
+        const alertColor = getAlertColor(firstAlertDeviceClass, this._config);
+        return { hasAlert: true, ...alertColor, deviceClass: firstAlertDeviceClass };
+      }
     }
 
     // Check additional alert sensors
     if (this._config.additional_alerts) {
       for (const entityId of this._config.additional_alerts) {
         const entity = this.hass.states[entityId];
-        if (entity && entity.state === "on") return true;
+        if (entity && entity.state === "on") {
+          firstAlertDeviceClass = entity.attributes.device_class;
+          const alertColor = getAlertColor(firstAlertDeviceClass, this._config);
+          return { hasAlert: true, ...alertColor, deviceClass: firstAlertDeviceClass };
+        }
       }
     }
 
-    return false;
+    return { hasAlert: false, color: '#f44336', rgb: '244, 67, 54' };
+  }
+
+  private _hasActiveAlerts(): boolean {
+    return this._getActiveAlertInfo().hasAlert;
   }
 
   private _renderAlerts() {
@@ -743,11 +774,14 @@ export class AreaCardElite extends LitElement {
     
     // Set CSS custom properties for state colors
     const stateColors = getStateColors(this._config);
+    const alertInfo = this._getActiveAlertInfo();
     const cardStyle = styleMap({
       '--state-active-color': stateColors.active.color,
       '--state-active-rgb': stateColors.active.rgb,
       '--state-inactive-color': stateColors.inactive.color,
       '--state-inactive-rgb': stateColors.inactive.rgb,
+      '--alert-color': alertInfo.color,
+      '--alert-rgb': alertInfo.rgb,
       // Apply card background color if set
       ...(this._config.color && { backgroundColor: this._config.color })
     });
@@ -1741,11 +1775,11 @@ export class AreaCardElite extends LitElement {
       color: var(--state-inactive-color, #f44336);
     }
 
-    /* Alert glow on circle - red alert glow with pulse animation */
+    /* Alert glow on circle - uses dynamic alert color based on device class */
     .main-entity-circle.has-alert {
-      background: rgba(244, 67, 54, 0.25) !important;
-      border-color: #f44336 !important;
-      box-shadow: 0 0 20px rgba(244, 67, 54, 0.6), 0 0 40px rgba(244, 67, 54, 0.3);
+      background: rgba(var(--alert-rgb, 244, 67, 54), 0.25) !important;
+      border-color: var(--alert-color, #f44336) !important;
+      box-shadow: 0 0 20px rgba(var(--alert-rgb, 244, 67, 54), 0.6), 0 0 40px rgba(var(--alert-rgb, 244, 67, 54), 0.3);
       animation: alert-pulse-circle 2s ease-in-out infinite;
     }
 
@@ -1753,13 +1787,13 @@ export class AreaCardElite extends LitElement {
     @keyframes alert-pulse-circle {
       0%, 100% {
         transform: scale(1);
-        background: rgba(244, 67, 54, 0.25);
-        box-shadow: 0 0 20px rgba(244, 67, 54, 0.6), 0 0 40px rgba(244, 67, 54, 0.3);
+        background: rgba(var(--alert-rgb, 244, 67, 54), 0.25);
+        box-shadow: 0 0 20px rgba(var(--alert-rgb, 244, 67, 54), 0.6), 0 0 40px rgba(var(--alert-rgb, 244, 67, 54), 0.3);
       }
       50% {
         transform: scale(1.05);
-        background: rgba(244, 67, 54, 0.35);
-        box-shadow: 0 0 30px rgba(244, 67, 54, 0.8), 0 0 60px rgba(244, 67, 54, 0.5);
+        background: rgba(var(--alert-rgb, 244, 67, 54), 0.35);
+        box-shadow: 0 0 30px rgba(var(--alert-rgb, 244, 67, 54), 0.8), 0 0 60px rgba(var(--alert-rgb, 244, 67, 54), 0.5);
       }
     }
 
@@ -1777,13 +1811,13 @@ export class AreaCardElite extends LitElement {
     @keyframes alert-pulse-circle-centered {
       0%, 100% {
         transform: translate(-50%, -50%) scale(1);
-        background: rgba(244, 67, 54, 0.25);
-        box-shadow: 0 0 20px rgba(244, 67, 54, 0.6), 0 0 40px rgba(244, 67, 54, 0.3);
+        background: rgba(var(--alert-rgb, 244, 67, 54), 0.25);
+        box-shadow: 0 0 20px rgba(var(--alert-rgb, 244, 67, 54), 0.6), 0 0 40px rgba(var(--alert-rgb, 244, 67, 54), 0.3);
       }
       50% {
         transform: translate(-50%, -50%) scale(1.05);
-        background: rgba(244, 67, 54, 0.35);
-        box-shadow: 0 0 30px rgba(244, 67, 54, 0.8), 0 0 60px rgba(244, 67, 54, 0.5);
+        background: rgba(var(--alert-rgb, 244, 67, 54), 0.35);
+        box-shadow: 0 0 30px rgba(var(--alert-rgb, 244, 67, 54), 0.8), 0 0 60px rgba(var(--alert-rgb, 244, 67, 54), 0.5);
       }
     }
 

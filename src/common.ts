@@ -60,4 +60,5 @@ export interface AreaCardEliteConfig extends LovelaceCardConfig {
   // State colors
   state_active_color?: string;
   state_inactive_color?: string;
+  alert_color?: string;  // Override color for all alerts (otherwise uses device-class colors)
 }
