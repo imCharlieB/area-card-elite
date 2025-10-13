@@ -343,6 +343,19 @@ export class AreaCardElite extends LitElement {
     `;
   }
 
+  private _areAnyLightsOn(): boolean {
+    if (!this._config?.area) return false;
+
+    // Check all light entities in area
+    const entities = this._getAreaEntities();
+    const lightEntities = entities.filter(e => e.domain === "light");
+
+    return lightEntities.some(entity => {
+      const state = this.hass.states[entity.entityId];
+      return state && state.state === "on";
+    });
+  }
+
   private _hasActiveAlerts(): boolean {
     if (!this._config) return false;
 
@@ -600,6 +613,11 @@ export class AreaCardElite extends LitElement {
     // The button will work via websocket API when clicked
     const showLightsOffButton = this._config.show_lights_off_button !== false;
 
+    // Check if any lights are on for dynamic icon/color
+    const anyLightsOn = this._areAnyLightsOn();
+    const lightsIcon = anyLightsOn ? "mdi:lightbulb-group" : "mdi:lightbulb-group-off-outline";
+    const lightsColor = anyLightsOn ? "#ffc107" : "#757575";
+
     // Don't render if no controls AND no lights-off button
     if (controls.length === 0 && !showLightsOffButton) return nothing;
 
@@ -612,10 +630,10 @@ export class AreaCardElite extends LitElement {
           </div>
         `)}
         ${showLightsOffButton ? html`
-          <div class="control-button"
+          <div class="control-button ${anyLightsOn ? 'active' : ''}"
                title="Toggle all lights"
                @click=${() => this._handleTurnOffAllLights()}>
-            <ha-icon icon="mdi:lightbulb-group" style="color: #ffc107"></ha-icon>
+            <ha-icon icon="${lightsIcon}" style="color: ${lightsColor}"></ha-icon>
           </div>
         ` : nothing}
       </div>
@@ -1725,6 +1743,7 @@ export class AreaCardElite extends LitElement {
 
     /* Alert glow on circle - red alert glow with pulse animation */
     .main-entity-circle.has-alert {
+      background: rgba(244, 67, 54, 0.25) !important;
       border-color: #f44336 !important;
       box-shadow: 0 0 20px rgba(244, 67, 54, 0.6), 0 0 40px rgba(244, 67, 54, 0.3);
       animation: alert-pulse-circle 2s ease-in-out infinite;
@@ -1734,10 +1753,12 @@ export class AreaCardElite extends LitElement {
     @keyframes alert-pulse-circle {
       0%, 100% {
         transform: scale(1);
+        background: rgba(244, 67, 54, 0.25);
         box-shadow: 0 0 20px rgba(244, 67, 54, 0.6), 0 0 40px rgba(244, 67, 54, 0.3);
       }
       50% {
         transform: scale(1.05);
+        background: rgba(244, 67, 54, 0.35);
         box-shadow: 0 0 30px rgba(244, 67, 54, 0.8), 0 0 60px rgba(244, 67, 54, 0.5);
       }
     }
@@ -1756,10 +1777,12 @@ export class AreaCardElite extends LitElement {
     @keyframes alert-pulse-circle-centered {
       0%, 100% {
         transform: translate(-50%, -50%) scale(1);
+        background: rgba(244, 67, 54, 0.25);
         box-shadow: 0 0 20px rgba(244, 67, 54, 0.6), 0 0 40px rgba(244, 67, 54, 0.3);
       }
       50% {
         transform: translate(-50%, -50%) scale(1.05);
+        background: rgba(244, 67, 54, 0.35);
         box-shadow: 0 0 30px rgba(244, 67, 54, 0.8), 0 0 60px rgba(244, 67, 54, 0.5);
       }
     }
