@@ -1060,15 +1060,15 @@ export class AreaCardElite extends LitElement {
       transform: translate(-50%, -50%);
     }
 
-    /* Position the separate icon element - closer to corner */
+    /* Position the separate icon element - very close to card corner */
     .features-right .main-entity-icon {
-      bottom: 10px;   /* 10px from bottom edge - half of previous */
-      left: 10px;     /* 10px from left edge - half of previous */
+      bottom: 3px;   /* 3px from bottom edge - very close to corner */
+      left: 3px;     /* 3px from left edge - very close to corner */
     }
 
     .features-left .main-entity-icon {
-      bottom: 10px;   /* 10px from bottom edge - half of previous */
-      right: 10px;    /* 10px from right edge - half of previous */
+      bottom: 3px;   /* 3px from bottom edge - very close to corner */
+      right: 3px;    /* 3px from right edge - very close to corner */
     }
 
     .features-top .main-entity-icon,
