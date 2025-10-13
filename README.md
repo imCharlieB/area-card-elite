@@ -50,6 +50,10 @@ An enhanced area card for Home Assistant that displays comprehensive information
 ![Alert Display](screenshots/alert-display.png)
 *Kitchen area card with occupancy alert - note the purple pulsing glow around the main icon and the "Occupied" badge below the temperature sensor*
 
+### Multiple Alerts with Different Colors
+![Multiple Alerts](screenshots/alert-display-2.png)
+*Multiple area cards showing different alert types simultaneously: Master Bedroom with "Garage Motion" (orange glow), Garage with "Motion" (orange glow), and Kitchen with "Occupied" (purple glow) - demonstrating the smart color-coded alert system*
+
 ## Usage
 
 ### Basic Example
