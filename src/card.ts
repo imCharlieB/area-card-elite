@@ -552,31 +552,10 @@ export class AreaCardElite extends LitElement {
       });
     }
 
-    // Check if there are any lights in the area for the lights-off button
-    // Search ALL light entities and see which ones belong to this area
-    const allLights = Object.entries(this.hass.states || {})
-      .filter(([entityId]) => entityId.startsWith("light."))
-      .map(([entityId, entity]) => ({
-        entityId,
-        area_id: entity.attributes?.area_id,
-        device_id: entity.attributes?.device_id
-      }));
-
-    const entities = this._getAreaEntities();
-    const areaLights = entities.filter(e => e.domain === "light");
-    const hasLights = areaLights.length > 0;
-    const showLightsOffButton = this._config.show_lights_off_button !== false && hasLights;
-
-    console.log('Lights debug:', {
-      areaName: this._config.area,
-      hasLights,
-      lightCount: areaLights.length,
-      show_lights_off_button: this._config.show_lights_off_button,
-      showLightsOffButton,
-      controlsLength: controls.length,
-      areaLights: areaLights.map(l => l.entityId),
-      sampleAllLights: allLights.slice(0, 5) // Show first 5 lights to see their structure
-    });
+    // TEMPORARY WORKAROUND: Show button if controls exist
+    // The proper fix requires websocket API call to get area entities
+    // For now, just show the button and it will turn off all lights it can find
+    const showLightsOffButton = this._config.show_lights_off_button !== false && controls.length > 0;
 
     // Don't render if no controls AND no lights-off button
     if (controls.length === 0 && !showLightsOffButton) return nothing;
@@ -934,16 +913,38 @@ export class AreaCardElite extends LitElement {
     });
   }
 
-  private _handleTurnOffAllLights() {
-    const entities = this._getAreaEntities();
-    const lightEntities = entities.filter(e => e.domain === "light");
+  private async _handleTurnOffAllLights() {
+    if (!this._config?.area) return;
 
-    console.log(`Turning off ${lightEntities.length} lights in area:`, lightEntities.map(e => e.entityId));
+    try {
+      // Use Home Assistant's websocket connection to get all entities in the area
+      const conn = (this.hass as any).connection;
+      if (!conn) {
+        console.error('No websocket connection available');
+        return;
+      }
 
-    // Turn off all lights in the area
-    lightEntities.forEach(entity => {
-      this.hass.callService("light", "turn_off", {}, { entity_id: entity.entityId });
-    });
+      const result: any = await conn.sendMessagePromise({
+        type: "config/entity_registry/list",
+      });
+
+      // Filter for light entities in this area
+      const areaLightIds = result
+        .filter((entity: any) =>
+          entity.area_id === this._config?.area &&
+          entity.entity_id.startsWith("light.")
+        )
+        .map((entity: any) => entity.entity_id);
+
+      console.log(`Turning off ${areaLightIds.length} lights in ${this._config.area}:`, areaLightIds);
+
+      // Turn off all lights found
+      if (areaLightIds.length > 0) {
+        await this.hass.callService("light", "turn_off", { entity_id: areaLightIds });
+      }
+    } catch (error) {
+      console.error('Error turning off lights:', error);
+    }
   }
 
   // Helper method to convert hex to RGB values
