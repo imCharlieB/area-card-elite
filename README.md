@@ -148,7 +148,7 @@ Temperature and humidity sensors enable a subtle weather-style gradient overlay 
 
 ### Alerts
 
-Alert sensors display at the bottom of the card and trigger a colored pulsing glow effect on the main entity circle (when using icon display type). Each alert type automatically uses an appropriate color:
+Alert sensors display as pill-shaped badges below the temperature/humidity sensors and trigger a colored pulsing glow effect on the main entity circle (when using icon display type). Each alert type automatically uses an appropriate color:
 
 - **Moisture/Water**: Blue (#2196f3) - water-related alerts
 - **Motion**: Orange (#ff9800) - movement/activity
