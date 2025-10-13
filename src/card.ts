@@ -552,10 +552,9 @@ export class AreaCardElite extends LitElement {
       });
     }
 
-    // TEMPORARY WORKAROUND: Show button if controls exist
-    // The proper fix requires websocket API call to get area entities
-    // For now, just show the button and it will turn off all lights it can find
-    const showLightsOffButton = this._config.show_lights_off_button !== false && controls.length > 0;
+    // Show lights-off button if configured (defaults to true)
+    // The button will work via websocket API when clicked
+    const showLightsOffButton = this._config.show_lights_off_button !== false;
 
     // Don't render if no controls AND no lights-off button
     if (controls.length === 0 && !showLightsOffButton) return nothing;
@@ -917,23 +916,42 @@ export class AreaCardElite extends LitElement {
     if (!this._config?.area) return;
 
     try {
-      // Use Home Assistant's websocket connection to get all entities in the area
       const conn = (this.hass as any).connection;
       if (!conn) {
         console.error('No websocket connection available');
         return;
       }
 
-      const result: any = await conn.sendMessagePromise({
-        type: "config/entity_registry/list",
+      // Get both entity registry and device registry
+      const [entities, devices]: [any[], any[]] = await Promise.all([
+        conn.sendMessagePromise({ type: "config/entity_registry/list" }),
+        conn.sendMessagePromise({ type: "config/device_registry/list" })
+      ]);
+
+      // Create a map of device_id -> area_id from device registry
+      const deviceAreaMap = new Map();
+      devices.forEach((device: any) => {
+        if (device.area_id) {
+          deviceAreaMap.set(device.id, device.area_id);
+        }
       });
 
       // Filter for light entities in this area
-      const areaLightIds = result
-        .filter((entity: any) =>
-          entity.area_id === this._config?.area &&
-          entity.entity_id.startsWith("light.")
-        )
+      // Check BOTH entity area_id AND device area_id
+      const areaLightIds = entities
+        .filter((entity: any) => {
+          if (!entity.entity_id.startsWith("light.")) return false;
+
+          // Check if entity has area_id directly
+          if (entity.area_id === this._config?.area) return true;
+
+          // Check if entity's device is in this area
+          if (entity.device_id && deviceAreaMap.get(entity.device_id) === this._config?.area) {
+            return true;
+          }
+
+          return false;
+        })
         .map((entity: any) => entity.entity_id);
 
       console.log(`Turning off ${areaLightIds.length} lights in ${this._config.area}:`, areaLightIds);
