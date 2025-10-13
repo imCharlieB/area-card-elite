@@ -544,6 +544,14 @@ export class AreaCardElite extends LitElement {
     const hasLights = entities.some(e => e.domain === "light");
     const showLightsOffButton = this._config.show_lights_off_button !== false && hasLights;
 
+    console.log('Lights debug:', {
+      hasLights,
+      show_lights_off_button: this._config.show_lights_off_button,
+      showLightsOffButton,
+      controlsLength: controls.length,
+      lightEntities: entities.filter(e => e.domain === "light")
+    });
+
     // Don't render if no controls AND no lights-off button
     if (controls.length === 0 && !showLightsOffButton) return nothing;
 
@@ -567,15 +575,8 @@ export class AreaCardElite extends LitElement {
   }
 
   private _handleControlClick(entityId: string) {
-    const domain = entityId.split(".")[0];
-
-    if (domain === "climate" || domain === "media_player") {
-      // Open more-info dialog for complex entities
-      this._handleEntityClick(entityId);
-    } else {
-      // Toggle the entity
-      this.hass.callService(domain, "toggle", {}, { entity_id: entityId });
-    }
+    // Always open more-info dialog for ALL controls
+    this._handleEntityClick(entityId);
   }
 
   private _handleEntityClick(entityId: string) {
