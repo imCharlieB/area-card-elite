@@ -169,3 +169,49 @@ export function getAlertColor(deviceClass?: string, config?: any): { color: stri
     rgb: hexToRgb(color)
   };
 }
+
+/**
+ * Get temperature-based gradient color
+ * Returns a subtle color for weather-style background overlay
+ */
+export function getTemperatureColor(temperature?: number): { color: string, rgb: string } {
+  if (temperature === undefined || temperature === null) {
+    return { color: 'transparent', rgb: '0, 0, 0' };
+  }
+
+  let color: string;
+
+  if (temperature >= 80) {
+    color = '#ff5722'; // Deep orange/red - hot
+  } else if (temperature >= 75) {
+    color = '#ff9800'; // Orange - warm
+  } else if (temperature >= 70) {
+    color = '#ffc107'; // Amber - comfortable warm
+  } else if (temperature >= 65) {
+    color = '#4caf50'; // Green - perfect
+  } else if (temperature >= 60) {
+    color = '#03a9f4'; // Light blue - cool
+  } else {
+    color = '#2196f3'; // Blue - cold
+  }
+
+  return {
+    color,
+    rgb: hexToRgb(color)
+  };
+}
+
+/**
+ * Get humidity intensity multiplier
+ * Higher humidity increases overlay intensity
+ */
+export function getHumidityIntensity(humidity?: number): number {
+  if (humidity === undefined || humidity === null) {
+    return 0.15; // Default base opacity
+  }
+
+  if (humidity >= 70) return 0.25; // Very humid - more intense
+  if (humidity >= 60) return 0.20; // Humid
+  if (humidity >= 40) return 0.15; // Normal
+  return 0.12; // Dry - less intense
+}

@@ -19,7 +19,9 @@ import {
   DOMAIN_ICONS,
   DEVICE_CLASSES,
   getStateColors,
-  getAlertColor
+  getAlertColor,
+  getTemperatureColor,
+  getHumidityIntensity
 } from "./helpers";
 
 const UNAVAILABLE_STATES = ["unavailable", "unknown"];
@@ -775,6 +777,26 @@ export class AreaCardElite extends LitElement {
     // Set CSS custom properties for state colors
     const stateColors = getStateColors(this._config);
     const alertInfo = this._getActiveAlertInfo();
+
+    // Get temperature and humidity for weather gradient
+    let temperature: number | undefined;
+    let humidity: number | undefined;
+
+    if (this._config.temperature_entity && this.hass.states[this._config.temperature_entity]) {
+      const tempState = this.hass.states[this._config.temperature_entity].state;
+      temperature = parseFloat(tempState);
+      if (isNaN(temperature)) temperature = undefined;
+    }
+
+    if (this._config.humidity_entity && this.hass.states[this._config.humidity_entity]) {
+      const humidityState = this.hass.states[this._config.humidity_entity].state;
+      humidity = parseFloat(humidityState);
+      if (isNaN(humidity)) humidity = undefined;
+    }
+
+    const tempColor = getTemperatureColor(temperature);
+    const humidityIntensity = getHumidityIntensity(humidity);
+
     const cardStyle = styleMap({
       '--state-active-color': stateColors.active.color,
       '--state-active-rgb': stateColors.active.rgb,
@@ -782,6 +804,9 @@ export class AreaCardElite extends LitElement {
       '--state-inactive-rgb': stateColors.inactive.rgb,
       '--alert-color': alertInfo.color,
       '--alert-rgb': alertInfo.rgb,
+      '--temp-color': tempColor.color,
+      '--temp-rgb': tempColor.rgb,
+      '--humidity-intensity': humidityIntensity.toString(),
       // Apply card background color if set
       ...(this._config.color && { backgroundColor: this._config.color })
     });
@@ -1096,6 +1121,27 @@ export class AreaCardElite extends LitElement {
       transition: all 0.3s ease;
       background: var(--ha-card-background, var(--card-background-color));
       container-type: inline-size;
+    }
+
+    /* Temperature weather gradient overlay - subtle colored glow based on temp */
+    ha-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: 0;
+      opacity: var(--humidity-intensity, 0.15);
+      background: radial-gradient(
+        circle at top right,
+        rgba(var(--temp-rgb, 76, 175, 80), 0.3) 0%,
+        rgba(var(--temp-rgb, 76, 175, 80), 0.15) 40%,
+        transparent 70%
+      );
+      transition: opacity 0.5s ease, background 0.5s ease;
     }
 
     /* Main content layout */
