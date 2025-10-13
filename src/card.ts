@@ -553,6 +553,15 @@ export class AreaCardElite extends LitElement {
     }
 
     // Check if there are any lights in the area for the lights-off button
+    // Search ALL light entities and see which ones belong to this area
+    const allLights = Object.entries(this.hass.states || {})
+      .filter(([entityId]) => entityId.startsWith("light."))
+      .map(([entityId, entity]) => ({
+        entityId,
+        area_id: entity.attributes?.area_id,
+        device_id: entity.attributes?.device_id
+      }));
+
     const entities = this._getAreaEntities();
     const areaLights = entities.filter(e => e.domain === "light");
     const hasLights = areaLights.length > 0;
@@ -565,7 +574,8 @@ export class AreaCardElite extends LitElement {
       show_lights_off_button: this._config.show_lights_off_button,
       showLightsOffButton,
       controlsLength: controls.length,
-      lightEntityIds: areaLights.map(l => l.entityId)
+      areaLights: areaLights.map(l => l.entityId),
+      sampleAllLights: allLights.slice(0, 5) // Show first 5 lights to see their structure
     });
 
     // Don't render if no controls AND no lights-off button
