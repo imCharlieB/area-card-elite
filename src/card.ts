@@ -569,9 +569,9 @@ export class AreaCardElite extends LitElement {
         `)}
         ${showLightsOffButton ? html`
           <div class="control-button"
-               title="Turn off all lights"
+               title="Toggle all lights"
                @click=${() => this._handleTurnOffAllLights()}>
-            <ha-icon icon="mdi:lightbulb-off-outline" style="color: #ff9800"></ha-icon>
+            <ha-icon icon="mdi:lightbulb-group" style="color: #ffc107"></ha-icon>
           </div>
         ` : nothing}
       </div>
@@ -954,14 +954,24 @@ export class AreaCardElite extends LitElement {
         })
         .map((entity: any) => entity.entity_id);
 
-      console.log(`Turning off ${areaLightIds.length} lights in ${this._config.area}:`, areaLightIds);
-
-      // Turn off all lights found
-      if (areaLightIds.length > 0) {
-        await this.hass.callService("light", "turn_off", { entity_id: areaLightIds });
+      if (areaLightIds.length === 0) {
+        console.log(`No lights found in ${this._config.area}`);
+        return;
       }
+
+      // Check if any lights are currently on
+      const anyLightsOn = areaLightIds.some(entityId => {
+        const state = this.hass.states[entityId];
+        return state && state.state === "on";
+      });
+
+      // Toggle: if any are on, turn all off; if all off, turn all on
+      const action = anyLightsOn ? "turn_off" : "turn_on";
+      console.log(`${action === "turn_off" ? "Turning off" : "Turning on"} ${areaLightIds.length} lights in ${this._config.area}:`, areaLightIds);
+
+      await this.hass.callService("light", action, { entity_id: areaLightIds });
     } catch (error) {
-      console.error('Error turning off lights:', error);
+      console.error('Error toggling lights:', error);
     }
   }
 

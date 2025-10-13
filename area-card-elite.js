@@ -94,9 +94,9 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
         `))}
         ${t?F`
           <div class="control-button"
-               title="Turn off all lights"
+               title="Toggle all lights"
                @click=${()=>this._handleTurnOffAllLights()}>
-            <ha-icon icon="mdi:lightbulb-off-outline" style="color: #ff9800"></ha-icon>
+            <ha-icon icon="mdi:lightbulb-group" style="color: #ffc107"></ha-icon>
           </div>
         `:q}
       </div>
@@ -205,7 +205,7 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
         <ha-icon icon="mdi:power"></ha-icon>
         Toggle All
       </ha-button>
-    `}_handleMoreInfo(){var e;const t=new CustomEvent("hass-more-info",{detail:{entityId:`area.${null===(e=this._config)||void 0===e?void 0:e.area}`},bubbles:!0,composed:!0});this.dispatchEvent(t)}_handleToggleAll(){const e=this._getAreaEntities().filter((e=>Re.includes(e.domain)));e.forEach((e=>{this.hass.callService(e.domain,"toggle",{},{entity_id:e.entityId})}))}async _handleTurnOffAllLights(){var e;if(null===(e=this._config)||void 0===e?void 0:e.area)try{const e=this.hass.connection;if(!e)return void console.error("No websocket connection available");const[t,i]=await Promise.all([e.sendMessagePromise({type:"config/entity_registry/list"}),e.sendMessagePromise({type:"config/device_registry/list"})]),o=new Map;i.forEach((e=>{e.area_id&&o.set(e.id,e.area_id)}));const s=t.filter((e=>{var t,i;return!!e.entity_id.startsWith("light.")&&(e.area_id===(null===(t=this._config)||void 0===t?void 0:t.area)||!(!e.device_id||o.get(e.device_id)!==(null===(i=this._config)||void 0===i?void 0:i.area)))})).map((e=>e.entity_id));console.log(`Turning off ${s.length} lights in ${this._config.area}:`,s),s.length>0&&await this.hass.callService("light","turn_off",{entity_id:s})}catch(e){console.error("Error turning off lights:",e)}}_hexToRgb(e){const t=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(e);return t?`${parseInt(t[1],16)}, ${parseInt(t[2],16)}, ${parseInt(t[3],16)}`:"76, 175, 80"}static getConfigElement(){return document.createElement("area-card-elite-editor")}static getStubConfig(){return{area:""}}};var De,Be;Le.styles=r`
+    `}_handleMoreInfo(){var e;const t=new CustomEvent("hass-more-info",{detail:{entityId:`area.${null===(e=this._config)||void 0===e?void 0:e.area}`},bubbles:!0,composed:!0});this.dispatchEvent(t)}_handleToggleAll(){const e=this._getAreaEntities().filter((e=>Re.includes(e.domain)));e.forEach((e=>{this.hass.callService(e.domain,"toggle",{},{entity_id:e.entityId})}))}async _handleTurnOffAllLights(){var e;if(null===(e=this._config)||void 0===e?void 0:e.area)try{const e=this.hass.connection;if(!e)return void console.error("No websocket connection available");const[t,i]=await Promise.all([e.sendMessagePromise({type:"config/entity_registry/list"}),e.sendMessagePromise({type:"config/device_registry/list"})]),o=new Map;i.forEach((e=>{e.area_id&&o.set(e.id,e.area_id)}));const s=t.filter((e=>{var t,i;return!!e.entity_id.startsWith("light.")&&(e.area_id===(null===(t=this._config)||void 0===t?void 0:t.area)||!(!e.device_id||o.get(e.device_id)!==(null===(i=this._config)||void 0===i?void 0:i.area)))})).map((e=>e.entity_id));if(0===s.length)return void console.log(`No lights found in ${this._config.area}`);const a=s.some((e=>{const t=this.hass.states[e];return t&&"on"===t.state}))?"turn_off":"turn_on";console.log(`${"turn_off"===a?"Turning off":"Turning on"} ${s.length} lights in ${this._config.area}:`,s),await this.hass.callService("light",a,{entity_id:s})}catch(e){console.error("Error toggling lights:",e)}}_hexToRgb(e){const t=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(e);return t?`${parseInt(t[1],16)}, ${parseInt(t[2],16)}, ${parseInt(t[3],16)}`:"76, 175, 80"}static getConfigElement(){return document.createElement("area-card-elite-editor")}static getStubConfig(){return{area:""}}};var De,Be;Le.styles=r`
     ha-card {
       overflow: hidden;
       position: relative;
