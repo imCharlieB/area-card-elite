@@ -1530,17 +1530,12 @@ const dt=t=>(e,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(t,e)
         flex-direction: row;
         gap: 2px;
       }
-      
-      .layout-preview.v1 {
-        flex-direction: column;
-        gap: 1px;
-      }
-      
-      .layout-preview.v2 {
+
+      .layout-preview.compact {
         flex-direction: row;
         gap: 1px;
       }
-      
+
       .layout-icon {
         width: 8px;
         height: 8px;

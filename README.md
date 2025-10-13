@@ -8,9 +8,10 @@ An enhanced area card for Home Assistant that displays comprehensive information
 - 📐 **Flexible Layouts**: Vertical, Horizontal, and Compact layouts
 - 🌡️ **Smart Sensor Display**: Temperature, humidity, illuminance, power, energy, and battery with color-coded icons
 - 🎮 **Quick Controls**: Lights, climate, switches, fans, media players, and more
-- 💡 **Smart Lights Toggle**: Automatic button to toggle all lights in the area - turns off when any are on, turns on when all are off
+- 💡 **Smart Lights Toggle**: Automatic button that toggles all lights in the area - turns off when any are on, turns on when all are off, with dynamic icon feedback
 - 🚨 **Alert Monitoring**: Motion, occupancy, door, window, and moisture sensors with visual alerts
-- ✨ **Alert Glow Effect**: Main entity circle pulses with red glow when any alert sensor is triggered
+- ✨ **Smart Alert Colors**: Main entity circle pulses with appropriate colors based on alert type (blue for water, orange for motion, purple for occupancy, red for doors)
+- 🌡️ **Weather-Style Temperature Overlay**: Subtle colored gradient overlay based on room temperature (blue=cold, green=perfect, orange=warm, red=hot), with humidity-based intensity
 - 🔄 **State-based Styling**: Customizable colors for active/inactive states
 - 🎯 **Large Background Icons**: Eye-catching entity status display
 - 📱 **Responsive Controls**: Buttons automatically scale down for smaller card sizes
@@ -122,10 +123,12 @@ color: 'rgba(0, 0, 0, 0.3)'
 
 ### Sensors
 
+Temperature and humidity sensors enable a subtle weather-style gradient overlay on the card background. The gradient color changes based on temperature (blue=cold, green=perfect, orange=warm, red=hot), and humidity affects the intensity of the overlay.
+
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `temperature_entity` | string | - | Temperature sensor |
-| `humidity_entity` | string | - | Humidity sensor |
+| `temperature_entity` | string | - | Temperature sensor - enables temperature-based gradient overlay |
+| `humidity_entity` | string | - | Humidity sensor - affects gradient overlay intensity |
 | `illuminance_entity` | string | - | Light level sensor |
 | `power_entity` | string | - | Power sensor |
 | `energy_entity` | string | - | Energy sensor |
@@ -145,16 +148,24 @@ color: 'rgba(0, 0, 0, 0.3)'
 
 ### Alerts
 
-Alert sensors display at the bottom of the card and trigger a red pulsing glow effect on the main entity circle (when using icon display type).
+Alert sensors display at the bottom of the card and trigger a colored pulsing glow effect on the main entity circle (when using icon display type). Each alert type automatically uses an appropriate color:
+
+- **Moisture/Water**: Blue (#2196f3) - water-related alerts
+- **Motion**: Orange (#ff9800) - movement/activity
+- **Occupancy**: Purple (#9c27b0) - presence detection
+- **Door/Window**: Red (#f44336) - security concerns
+- **Smoke/Gas**: Red/Deep orange - danger alerts
+- **Heat/Cold**: Orange/Light blue - temperature warnings
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `motion_sensor` | string | - | Motion sensor - triggers alert glow when motion detected |
-| `occupancy_sensor` | string | - | Occupancy sensor - triggers alert glow when occupied |
-| `door_sensor` | string | - | Door sensor - triggers alert glow when open |
-| `window_sensor` | string | - | Window sensor - triggers alert glow when open |
-| `moisture_sensor` | string | - | Moisture sensor - triggers alert glow when moisture detected |
+| `motion_sensor` | string | - | Motion sensor - triggers orange glow when motion detected |
+| `occupancy_sensor` | string | - | Occupancy sensor - triggers purple glow when occupied |
+| `door_sensor` | string | - | Door sensor - triggers red glow when open |
+| `window_sensor` | string | - | Window sensor - triggers red glow when open |
+| `moisture_sensor` | string | - | Moisture sensor - triggers blue glow when moisture detected |
 | `additional_alerts` | list | - | Additional binary sensor entities to monitor for alerts |
+| `alert_color` | string | - | Override color for ALL alerts (otherwise uses smart device-class colors above) |
 
 ### Features
 

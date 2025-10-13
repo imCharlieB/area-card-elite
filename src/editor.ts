@@ -874,7 +874,7 @@ export class AreaCardEliteEditor extends LitElement {
       this._config = {
         ...this._config,
         mirror_card_layout: true,
-        layout: layout as "vertical" | "horizontal" | "v1" | "v2"
+        layout: layout as "vertical" | "horizontal" | "compact"
       };
       
       fireEvent(this, "config-changed", { config: this._config });
@@ -884,8 +884,8 @@ export class AreaCardEliteEditor extends LitElement {
 
   private _layoutChanged(ev: CustomEvent): void {
     if (this._config && ev.detail) {
-      const layout = ev.detail.value as "vertical" | "horizontal" | "v1" | "v2";
-      
+      const layout = ev.detail.value as "vertical" | "horizontal" | "compact";
+
       this._config = {
         ...this._config,
         mirror_card_layout: true,
@@ -997,17 +997,12 @@ export class AreaCardEliteEditor extends LitElement {
         flex-direction: row;
         gap: 2px;
       }
-      
-      .layout-preview.v1 {
-        flex-direction: column;
-        gap: 1px;
-      }
-      
-      .layout-preview.v2 {
+
+      .layout-preview.compact {
         flex-direction: row;
         gap: 1px;
       }
-      
+
       .layout-icon {
         width: 8px;
         height: 8px;

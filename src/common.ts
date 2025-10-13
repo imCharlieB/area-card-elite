@@ -22,7 +22,7 @@ export interface AreaCardEliteConfig extends LovelaceCardConfig {
   theme?: string;
   
   // New layout properties
-  layout?: "vertical" | "horizontal" | "v1" | "v2" | "compact";
+  layout?: "vertical" | "horizontal" | "compact";
   mirror_card_layout?: boolean;
   area_name_color?: string;
   area_icon_color?: string;
