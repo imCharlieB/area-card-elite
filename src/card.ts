@@ -541,15 +541,19 @@ export class AreaCardElite extends LitElement {
 
     // Check if there are any lights in the area for the lights-off button
     const entities = this._getAreaEntities();
-    const hasLights = entities.some(e => e.domain === "light");
+    const areaLights = entities.filter(e => e.domain === "light");
+    const hasConfiguredLight = !!this._config.light_entity;
+    const hasLights = areaLights.length > 0 || hasConfiguredLight;
     const showLightsOffButton = this._config.show_lights_off_button !== false && hasLights;
 
     console.log('Lights debug:', {
       hasLights,
+      hasConfiguredLight,
+      light_entity: this._config.light_entity,
       show_lights_off_button: this._config.show_lights_off_button,
       showLightsOffButton,
       controlsLength: controls.length,
-      lightEntities: entities.filter(e => e.domain === "light")
+      areaLights
     });
 
     // Don't render if no controls AND no lights-off button
@@ -912,9 +916,15 @@ export class AreaCardElite extends LitElement {
     const entities = this._getAreaEntities();
     const lightEntities = entities.filter(e => e.domain === "light");
 
+    // Turn off all area lights
     lightEntities.forEach(entity => {
       this.hass.callService("light", "turn_off", {}, { entity_id: entity.entityId });
     });
+
+    // Also turn off the configured light_entity if it exists
+    if (this._config?.light_entity && this.hass.states[this._config.light_entity]) {
+      this.hass.callService("light", "turn_off", {}, { entity_id: this._config.light_entity });
+    }
   }
 
   // Helper method to convert hex to RGB values
