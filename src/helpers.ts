@@ -215,3 +215,27 @@ export function getHumidityIntensity(humidity?: number): number {
   if (humidity >= 40) return 0.15; // Normal
   return 0.12; // Dry - less intense
 }
+
+/**
+ * Get temperature icon based on temperature
+ * Returns icon and whether it should animate
+ */
+export function getTemperatureIcon(temperature?: number): { icon: string, animate: boolean } {
+  if (temperature === undefined || temperature === null) {
+    return { icon: 'mdi:thermometer', animate: false };
+  }
+
+  if (temperature >= 80) {
+    return { icon: 'mdi:fire', animate: true }; // Hot - animated fire
+  } else if (temperature >= 75) {
+    return { icon: 'mdi:weather-sunny', animate: false }; // Warm - sun
+  } else if (temperature >= 70) {
+    return { icon: 'mdi:thermometer', animate: false }; // Comfortable warm - thermometer
+  } else if (temperature >= 65) {
+    return { icon: 'mdi:thermometer-check', animate: false }; // Perfect - thermometer with check
+  } else if (temperature >= 60) {
+    return { icon: 'mdi:thermometer', animate: false }; // Cool - thermometer
+  } else {
+    return { icon: 'mdi:snowflake', animate: true }; // Cold - animated snowflake
+  }
+}

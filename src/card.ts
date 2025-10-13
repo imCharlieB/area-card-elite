@@ -21,7 +21,8 @@ import {
   getStateColors,
   getAlertColor,
   getTemperatureColor,
-  getHumidityIntensity
+  getHumidityIntensity,
+  getTemperatureIcon
 } from "./helpers";
 
 const UNAVAILABLE_STATES = ["unavailable", "unknown"];
@@ -227,25 +228,20 @@ export class AreaCardElite extends LitElement {
 
     const sensors = [];
     
-    // Temperature sensor with colored icon
+    // Temperature sensor with dynamic icon and colored icon
     if (this._config.temperature_entity && this.hass.states[this._config.temperature_entity]) {
       const entity = this.hass.states[this._config.temperature_entity];
       if (!UNAVAILABLE_STATES.includes(entity.state)) {
         const temp = parseFloat(entity.state);
-        let tempColor = "#03a9f4"; // Default blue
-        if (!isNaN(temp)) {
-          if (temp >= 80) tempColor = "#f44336"; // Hot - red
-          else if (temp >= 75) tempColor = "#ff9800"; // Warm - orange  
-          else if (temp >= 70) tempColor = "#ffc107"; // Mild - yellow
-          else if (temp >= 60) tempColor = "#4caf50"; // Cool - green
-          else tempColor = "#03a9f4"; // Cold - blue
-        }
-        
+        const tempColor = getTemperatureColor(temp);
+        const tempIcon = getTemperatureIcon(temp);
+
         sensors.push({
-          icon: "mdi:thermometer",
+          icon: tempIcon.icon,
           value: this.hass.formatEntityState(entity),
           deviceClass: "temperature",
-          color: tempColor
+          color: tempColor.color,
+          animate: tempIcon.animate
         });
       }
     }
@@ -338,7 +334,7 @@ export class AreaCardElite extends LitElement {
       <div class="sensors">
         ${sensors.map(sensor => html`
           <div class="sensor">
-            <ha-icon icon="${sensor.icon}" style="color: ${sensor.color}"></ha-icon>
+            <ha-icon icon="${sensor.icon}" class="${sensor.animate ? 'temp-icon-animate' : ''}" style="color: ${sensor.color}"></ha-icon>
             <span class="sensor-value">${sensor.value}</span>
           </div>
         `)}
@@ -1566,6 +1562,46 @@ export class AreaCardElite extends LitElement {
     /* Spinning fan icon when active */
     .control-button.active ha-icon[icon*="fan"]:not([icon*="off"]) {
       animation: spin 2s linear infinite;
+    }
+
+    /* Temperature icon animations for extremes */
+    @keyframes fire-flicker {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      25% {
+        transform: scale(1.05) rotate(-2deg);
+        opacity: 0.9;
+      }
+      50% {
+        transform: scale(0.98) rotate(1deg);
+        opacity: 1;
+      }
+      75% {
+        transform: scale(1.03) rotate(-1deg);
+        opacity: 0.95;
+      }
+    }
+
+    @keyframes snowflake-pulse {
+      0%, 100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.1) rotate(10deg);
+        opacity: 0.85;
+      }
+    }
+
+    /* Apply animations to temperature icons */
+    .sensor ha-icon.temp-icon-animate[icon="mdi:fire"] {
+      animation: fire-flicker 1.5s ease-in-out infinite;
+    }
+
+    .sensor ha-icon.temp-icon-animate[icon="mdi:snowflake"] {
+      animation: snowflake-pulse 2s ease-in-out infinite;
     }
 
     /* DISPLAY TYPE SUPPORT - All display types from editor */
