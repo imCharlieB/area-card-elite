@@ -40,6 +40,16 @@ An enhanced area card for Home Assistant that displays comprehensive information
    - URL: `/local/area-card-elite.js`
    - Resource type: JavaScript Module
 
+## Screenshots
+
+### Normal Display
+![Normal Display](screenshots/normal-display.png)
+*Multiple area cards showing temperature, humidity, and various room states with temperature-based gradient overlays*
+
+### Alert Active
+![Alert Display](screenshots/alert-display.png)
+*Kitchen area card with occupancy alert - note the purple pulsing glow around the main icon and the "Occupied" badge below the temperature sensor*
+
 ## Usage
 
 ### Basic Example
