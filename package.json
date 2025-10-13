@@ -1,6 +1,6 @@
 {
   "name": "area-card-elite",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "An enhanced area card for Home Assistant",
   "main": "index.js",
   "scripts": {

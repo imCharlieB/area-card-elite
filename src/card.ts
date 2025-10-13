@@ -343,6 +343,50 @@ export class AreaCardElite extends LitElement {
     `;
   }
 
+  private _hasActiveAlerts(): boolean {
+    if (!this._config) return false;
+
+    // Check motion sensor
+    if (this._config.motion_sensor && this.hass.states[this._config.motion_sensor]) {
+      const entity = this.hass.states[this._config.motion_sensor];
+      if (entity.state === "on") return true;
+    }
+
+    // Check occupancy sensor
+    if (this._config.occupancy_sensor && this.hass.states[this._config.occupancy_sensor]) {
+      const entity = this.hass.states[this._config.occupancy_sensor];
+      if (entity.state === "on") return true;
+    }
+
+    // Check door sensor
+    if (this._config.door_sensor && this.hass.states[this._config.door_sensor]) {
+      const entity = this.hass.states[this._config.door_sensor];
+      if (entity.state === "on") return true;
+    }
+
+    // Check window sensor
+    if (this._config.window_sensor && this.hass.states[this._config.window_sensor]) {
+      const entity = this.hass.states[this._config.window_sensor];
+      if (entity.state === "on") return true;
+    }
+
+    // Check moisture sensor
+    if (this._config.moisture_sensor && this.hass.states[this._config.moisture_sensor]) {
+      const entity = this.hass.states[this._config.moisture_sensor];
+      if (entity.state === "on") return true;
+    }
+
+    // Check additional alert sensors
+    if (this._config.additional_alerts) {
+      for (const entityId of this._config.additional_alerts) {
+        const entity = this.hass.states[entityId];
+        if (entity && entity.state === "on") return true;
+      }
+    }
+
+    return false;
+  }
+
   private _renderAlerts() {
     if (!this._config) return nothing;
 
@@ -704,7 +748,7 @@ export class AreaCardElite extends LitElement {
           <!-- Large background entity icon - ONLY for icon display type -->
           ${this._config.display_type === "icon" && mainEntity ? html`
             <!-- Separate circle background -->
-            <div class="main-entity-circle ${this._isEntityActive(mainEntity) ? 'active' : 'inactive'}">
+            <div class="main-entity-circle ${this._isEntityActive(mainEntity) ? 'active' : 'inactive'} ${this._hasActiveAlerts() ? 'has-alert' : ''}">
             </div>
             <!-- Separate entity icon - uses proper domain icon -->
             <div class="main-entity-icon"
@@ -1677,6 +1721,47 @@ export class AreaCardElite extends LitElement {
 
     .main-entity-circle.inactive + .main-entity-icon ha-icon {
       color: var(--state-inactive-color, #f44336);
+    }
+
+    /* Alert glow on circle - red alert glow with pulse animation */
+    .main-entity-circle.has-alert {
+      border-color: #f44336 !important;
+      box-shadow: 0 0 20px rgba(244, 67, 54, 0.6), 0 0 40px rgba(244, 67, 54, 0.3);
+      animation: alert-pulse-circle 2s ease-in-out infinite;
+    }
+
+    /* Pulsing grow/shrink animation for circle when alert active */
+    @keyframes alert-pulse-circle {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(244, 67, 54, 0.6), 0 0 40px rgba(244, 67, 54, 0.3);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 30px rgba(244, 67, 54, 0.8), 0 0 60px rgba(244, 67, 54, 0.5);
+      }
+    }
+
+    /* Alert glow positioning adjustments for different positions */
+    .features-right .main-entity-circle.has-alert,
+    .features-left .main-entity-circle.has-alert {
+      transform-origin: center center;
+    }
+
+    .features-top .main-entity-circle.has-alert,
+    .features-bottom .main-entity-circle.has-alert {
+      animation: alert-pulse-circle-centered 2s ease-in-out infinite;
+    }
+
+    @keyframes alert-pulse-circle-centered {
+      0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow: 0 0 20px rgba(244, 67, 54, 0.6), 0 0 40px rgba(244, 67, 54, 0.3);
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.05);
+        box-shadow: 0 0 30px rgba(244, 67, 54, 0.8), 0 0 60px rgba(244, 67, 54, 0.5);
+      }
     }
 
     /* Fix area name/temp positioning - closer to top */

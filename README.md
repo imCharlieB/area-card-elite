@@ -8,8 +8,9 @@ An enhanced area card for Home Assistant that displays comprehensive information
 - 📐 **Flexible Layouts**: Vertical, Horizontal, and Compact layouts
 - 🌡️ **Smart Sensor Display**: Temperature, humidity, illuminance, power, energy, and battery with color-coded icons
 - 🎮 **Quick Controls**: Lights, climate, switches, fans, media players, and more
-- 💡 **Turn Off All Lights**: Automatic button to turn off all lights in the area
-- 🚨 **Alert Monitoring**: Motion, occupancy, door, window, and moisture sensors with pulsing glow effects
+- 💡 **Smart Lights Toggle**: Automatic button to toggle all lights in the area - turns off when any are on, turns on when all are off
+- 🚨 **Alert Monitoring**: Motion, occupancy, door, window, and moisture sensors with visual alerts
+- ✨ **Alert Glow Effect**: Main entity circle pulses with red glow when any alert sensor is triggered
 - 🔄 **State-based Styling**: Customizable colors for active/inactive states
 - 🎯 **Large Background Icons**: Eye-catching entity status display
 - 📱 **Responsive Controls**: Buttons automatically scale down for smaller card sizes
@@ -140,18 +141,20 @@ color: 'rgba(0, 0, 0, 0.3)'
 | `fan_entity` | string | - | Fan entity |
 | `media_player_entity` | string | - | Media player entity (opens more-info on click) |
 | `additional_controls` | list | - | Additional control entities |
-| `show_lights_off_button` | boolean | `true` | Show button to turn off all lights in the area |
+| `show_lights_off_button` | boolean | `true` | Show button to toggle all lights in the area (smart toggle - turns off if any on, turns on if all off) |
 
 ### Alerts
 
+Alert sensors display at the bottom of the card and trigger a red pulsing glow effect on the main entity circle (when using icon display type).
+
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `motion_sensor` | string | - | Motion sensor (pulsing glow when triggered) |
-| `occupancy_sensor` | string | - | Occupancy sensor (pulsing glow when triggered) |
-| `door_sensor` | string | - | Door sensor (pulsing glow when open) |
-| `window_sensor` | string | - | Window sensor (pulsing glow when open) |
-| `moisture_sensor` | string | - | Moisture sensor (pulsing glow when detected) |
-| `additional_alerts` | list | - | Additional alert sensors |
+| `motion_sensor` | string | - | Motion sensor - triggers alert glow when motion detected |
+| `occupancy_sensor` | string | - | Occupancy sensor - triggers alert glow when occupied |
+| `door_sensor` | string | - | Door sensor - triggers alert glow when open |
+| `window_sensor` | string | - | Window sensor - triggers alert glow when open |
+| `moisture_sensor` | string | - | Moisture sensor - triggers alert glow when moisture detected |
+| `additional_alerts` | list | - | Additional binary sensor entities to monitor for alerts |
 
 ### Features
 
