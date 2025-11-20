@@ -997,6 +997,21 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
       filter: drop-shadow(0 0 calc(max(var(--occupancy-glow-strength) * 14px, 6px)) rgba(var(--occupancy-rgb, 255,255,255), calc(var(--occupancy-glow-strength) * 0.28)));
     }
 
+    /* If the browser supports color-mix, prefer mixing the user-provided color variable
+       with transparent to produce a translucent glow while preserving the exact hue when
+       the user supplies a CSS variable (e.g. var(--primary-color)). This avoids falling
+       back to white when occupancy_color is not a hex string. Older browsers will use the
+       rgba(var(--occupancy-rgb)) fallback above.
+    */
+    @supports (color: color-mix(in srgb, var(--occupancy-color) 10%, transparent)) {
+      ha-card.occupied {
+        box-shadow:
+          0 0 calc(max(var(--occupancy-glow-strength) * 46px, 28px)) color-mix(in srgb, var(--occupancy-color) calc(var(--occupancy-glow-strength) * 18%), transparent),
+          0 0 calc(max(var(--occupancy-glow-strength) * 20px, 10px)) color-mix(in srgb, var(--occupancy-color) calc(var(--occupancy-glow-strength) * 28%), transparent);
+        filter: drop-shadow(0 0 calc(max(var(--occupancy-glow-strength) * 14px, 6px)) color-mix(in srgb, var(--occupancy-color) calc(var(--occupancy-glow-strength) * 28%), transparent));
+      }
+    }
+
     /* Make controls scale down for smaller cards */
     @container (max-width: 250px) {
       .control-button {
