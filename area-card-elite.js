@@ -988,13 +988,13 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
          the RGB variable for predictable translucency (works whether user supplied a hex or var).
       */
       box-shadow:
-        /* soft wide halo (larger blur, lower opacity) */
-        0 0 calc(max(var(--occupancy-glow-strength) * 36px, 20px)) rgba(var(--occupancy-rgb, 255,255,255), calc(var(--occupancy-glow-strength) * 0.45)),
-        /* nearer glow (smaller blur, higher opacity) */
-        0 0 calc(max(var(--occupancy-glow-strength) * 18px, 6px)) rgba(var(--occupancy-rgb, 255,255,255), calc(var(--occupancy-glow-strength) * 0.9));
+        /* soft wide halo (larger blur, much lower opacity) */
+        0 0 calc(max(var(--occupancy-glow-strength) * 46px, 28px)) rgba(var(--occupancy-rgb, 255,255,255), calc(var(--occupancy-glow-strength) * 0.18)),
+        /* nearer glow (smaller blur, low opacity) */
+        0 0 calc(max(var(--occupancy-glow-strength) * 20px, 10px)) rgba(var(--occupancy-rgb, 255,255,255), calc(var(--occupancy-glow-strength) * 0.28));
       border: 1px solid rgba(var(--occupancy-rgb, 255,255,255), 0.04);
       /* drop-shadow for subtle edge glow; also softened with a minimum blur */
-      filter: drop-shadow(0 0 calc(max(var(--occupancy-glow-strength) * 12px, 4px)) rgba(var(--occupancy-rgb, 255,255,255), calc(var(--occupancy-glow-strength) * 0.6)));
+      filter: drop-shadow(0 0 calc(max(var(--occupancy-glow-strength) * 14px, 6px)) rgba(var(--occupancy-rgb, 255,255,255), calc(var(--occupancy-glow-strength) * 0.28)));
     }
 
     /* Make controls scale down for smaller cards */
