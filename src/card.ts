@@ -835,13 +835,21 @@ export class AreaCardElite extends LitElement {
 
       switch (resolvedOccDisplay) {
         case 'icon':
-          // Always show an icon; use occupancy color when available. Show last-seen when configured and sensor is off.
-          occupancyHtml = html`
-            <span class="occupancy-indicator" title="${occLabel}" style="color: ${occColorVar}">
-              <ha-icon .icon=${occIcon} style="--mdc-icon-size: 18px"></ha-icon>
-              ${this._config?.occupancy_show_last_seen && !isOccupied ? html`<span class="occupancy-lastseen">${this._formatTimeSince(occupancyEntity)}</span>` : nothing}
-            </span>
-          `;
+          // Show the person icon only when the occupancy sensor reports 'on'. If configured,
+          // show a last-seen timestamp (text-only) when vacant — do not display the icon when vacant.
+          if (isOccupied) {
+            occupancyHtml = html`
+              <span class="occupancy-indicator" title="${occLabel}" style="color: ${occColorVar}">
+                <ha-icon .icon=${occIcon} style="--mdc-icon-size: 18px"></ha-icon>
+              </span>
+            `;
+          } else if (this._config?.occupancy_show_last_seen) {
+            occupancyHtml = html`
+              <span class="occupancy-lastseen" title="Last seen">${this._formatTimeSince(occupancyEntity)}</span>
+            `;
+          } else {
+            occupancyHtml = nothing;
+          }
           break;
   case 'badge':
           // Use RGB for translucent backgrounds when hex provided
