@@ -1982,13 +1982,13 @@ export class AreaCardElite extends LitElement {
          the RGB variable for predictable translucency (works whether user supplied a hex or var).
       */
       box-shadow:
-        /* soft wide halo (larger blur, much lower opacity) */
-        0 0 calc(max(var(--occupancy-glow-strength) * 46px, 28px)) rgba(var(--occupancy-rgb, 255,255,255), calc(var(--occupancy-glow-strength) * 0.18)),
+        /* prefer using the user-provided color var when available; fall back to rgba(rgb) */
+        0 0 calc(max(var(--occupancy-glow-strength) * 46px, 28px)) var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), calc(var(--occupancy-glow-strength) * 0.18))),
         /* nearer glow (smaller blur, low opacity) */
-        0 0 calc(max(var(--occupancy-glow-strength) * 20px, 10px)) rgba(var(--occupancy-rgb, 255,255,255), calc(var(--occupancy-glow-strength) * 0.28));
+        0 0 calc(max(var(--occupancy-glow-strength) * 20px, 10px)) var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), calc(var(--occupancy-glow-strength) * 0.28)));
       border: 1px solid rgba(var(--occupancy-rgb, 255,255,255), 0.04);
       /* drop-shadow for subtle edge glow; also softened with a minimum blur */
-      filter: drop-shadow(0 0 calc(max(var(--occupancy-glow-strength) * 14px, 6px)) rgba(var(--occupancy-rgb, 255,255,255), calc(var(--occupancy-glow-strength) * 0.28)));
+    filter: drop-shadow(0 0 calc(max(var(--occupancy-glow-strength) * 14px, 6px)) var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), calc(var(--occupancy-glow-strength) * 0.28))));
     }
 
     /* If the browser supports color-mix, prefer mixing the user-provided color variable
