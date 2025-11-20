@@ -333,8 +333,9 @@ export class AreaCardElite extends LitElement {
       ? this.hass.states[this._config.occupancy_sensor]
       : null;
     const _isOccupied = _occupancyEntity ? _occupancyEntity.state === 'on' : false;
-    const _occDisplay = this._config?.occupancy_display || 'auto';
-    const _resolvedOccDisplay = _occDisplay === 'auto' ? (_occupancyEntity ? 'count' : 'none') : _occDisplay;
+  const _occDisplay = this._config?.occupancy_display || 'auto';
+  // Resolve 'auto' consistently to 'icon' when an occupancy binary_sensor is configured
+  const _resolvedOccDisplay = _occDisplay === 'auto' ? (_occupancyEntity ? 'icon' : 'none') : _occDisplay;
     if (_occupancyEntity && (_resolvedOccDisplay === 'sensor')) {
       sensors.unshift({
         icon: 'mdi:account',
@@ -833,7 +834,7 @@ export class AreaCardElite extends LitElement {
 
       switch (resolvedOccDisplay) {
         case 'icon':
-          // For binary occupancy sensors, show icon-only when occupied. If we later support multi-count, show number when count>1.
+          // Always show an icon; use occupancy color when available. Show last-seen when configured and sensor is off.
           occupancyHtml = html`
             <span class="occupancy-indicator" title="${occLabel}" style="color: ${occColorVar}">
               <ha-icon icon="${occIcon}" style="--mdc-icon-size: 14px"></ha-icon>
@@ -842,8 +843,12 @@ export class AreaCardElite extends LitElement {
           `;
           break;
   case 'badge':
+          // Use RGB for translucent backgrounds when hex provided
+          const pillBg = isHexColor(occColorRaw) ? `rgba(${occRgbVar}, 0.12)` : 'rgba(255,255,255,0.06)';
+          const pillBorder = isHexColor(occColorRaw) ? `rgba(${occRgbVar}, 0.18)` : 'rgba(255,255,255,0.08)';
           occupancyHtml = html`
-            <span class="occupancy-pill ${isOccupied ? 'on' : 'off'}" title="${occLabel}" style="--occ-pill-color: ${occColorVar}">
+            <span class="occupancy-pill ${isOccupied ? 'on' : 'off'}" title="${occLabel}"
+                  style="color: ${occColorVar}; background: ${pillBg}; border-color: ${pillBorder};">
               <ha-icon icon="${occIcon}"></ha-icon>
               <span class="pill-label">${isOccupied ? 'Occupied' : 'Vacant'}</span>
               ${this._config?.occupancy_show_last_seen && !isOccupied ? html`<span class="occupancy-lastseen">${this._formatTimeSince(occupancyEntity)}</span>` : nothing}
@@ -855,8 +860,12 @@ export class AreaCardElite extends LitElement {
           occupancyHtml = nothing;
           break;
         case 'overlay':
+          // Overlay uses a translucent background derived from occupancy color when available
+          const overlayBg = isHexColor(occColorRaw) ? `rgba(${occRgbVar}, 0.12)` : 'rgba(255,255,255,0.06)';
+          const overlayBorder = isHexColor(occColorRaw) ? `rgba(${occRgbVar}, 0.18)` : 'rgba(255,255,255,0.08)';
           occupancyHtml = html`
-            <div class="occupancy-overlay" title="${occLabel}" style="--occ-overlay-color: ${occColorVar}">
+            <div class="occupancy-overlay" title="${occLabel}"
+                 style="background: ${overlayBg}; border-color: ${overlayBorder}; color: ${occColorVar};">
               <ha-icon icon="${occIcon}"></ha-icon>
             </div>
           `;
@@ -1900,8 +1909,10 @@ export class AreaCardElite extends LitElement {
     }
 
     .occupancy-indicator ha-icon {
-      --mdc-icon-size: 14px;
-      filter: drop-shadow(0 0 2px rgba(255,255,255,0.5));
+      --mdc-icon-size: 18px;
+      color: var(--occupancy-color, var(--primary-text-color));
+      filter: drop-shadow(0 0 4px var(--occupancy-color, rgba(255,255,255,0.75)));
+      vertical-align: middle;
     }
 
     .occupancy-count {
@@ -1942,8 +1953,8 @@ export class AreaCardElite extends LitElement {
     /* Corner overlay badge */
     .occupancy-overlay {
       position: absolute;
-      top: 8px;
-      right: 8px;
+      bottom: 8px;
+      left: 8px;
       z-index: 5;
       display: inline-flex;
       align-items: center;
@@ -1951,26 +1962,26 @@ export class AreaCardElite extends LitElement {
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.08);
+      /* background/border set inline to respect occupancy_color */
       pointer-events: none;
     }
 
     .occupancy-overlay ha-icon {
-      --mdc-icon-size: 16px;
-      color: var(--primary-text-color);
+      --mdc-icon-size: 18px;
+      color: var(--occupancy-color, var(--primary-text-color));
+      filter: drop-shadow(0 0 6px var(--occupancy-color, rgba(255,255,255,0.9)));
     }
 
-    /* Occupied glow — uses occupancy color (configurable) for visibility across themes */
+    /* Occupied glow — prefer using the configured occupancy color when provided */
     ha-card.occupied {
       transition: box-shadow 0.25s ease, transform 0.25s ease;
-      /* layered glow using occupancy color */
+      /* Try to use the CSS color variable directly for a colored glow; fall back to rgb fallback when available */
       box-shadow:
-        0 0 8px rgba(var(--occupancy-rgb, 255,255,255), 0.12),
-        0 0 24px rgba(var(--occupancy-rgb, 255,255,255), 0.10),
-        0 0 48px rgba(var(--occupancy-rgb, 255,255,255), 0.06) !important;
+        0 0 8px var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.12)),
+        0 0 24px var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.10)),
+        0 0 48px var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.06)) !important;
       border: 1px solid rgba(var(--occupancy-rgb, 255,255,255), 0.06);
-      filter: drop-shadow(0 0 10px rgba(var(--occupancy-rgb, 255,255,255), 0.12));
+      filter: drop-shadow(0 0 10px var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.12)));
     }
 
     ha-card.occupied::after {
@@ -1983,7 +1994,8 @@ export class AreaCardElite extends LitElement {
       border-radius: inherit;
       pointer-events: none;
       z-index: 1; /* sit above background overlays but below content (content z-index:2) */
-      background: radial-gradient(circle at center, rgba(var(--occupancy-rgb, 255,255,255), 0.08), rgba(var(--occupancy-rgb, 255,255,255), 0.02));
+      /* Use the occupancy color directly for the radial highlight when available */
+      background: radial-gradient(circle at center, var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.08)), transparent 40%);
       mix-blend-mode: screen;
       opacity: 1;
     }
