@@ -888,7 +888,8 @@ export class AreaCardElite extends LitElement {
       '--alert-rgb': alertInfo.rgb,
       // occupancy color variables for CSS use
       '--occupancy-color': occColorVar,
-      '--occupancy-rgb': occRgbVar,
+  '--occupancy-rgb': occRgbVar,
+  '--occupancy-glow-strength': (this._config?.occupancy_glow_strength ?? 0.12).toString(),
       '--temp-color': tempColor.color,
       '--temp-rgb': tempColor.rgb,
       '--humidity-intensity': humidityIntensity.toString(),
@@ -1973,34 +1974,15 @@ export class AreaCardElite extends LitElement {
       filter: drop-shadow(0 0 6px var(--occupancy-color, rgba(255,255,255,0.9)));
     }
 
-    /* Occupied glow — prefer using the configured occupancy color when provided */
+    /* Occupied glow — scaled by occupancy_glow_strength and using the configured color when possible */
     ha-card.occupied {
       transition: box-shadow 0.25s ease, transform 0.25s ease;
-      /* Prefer the configured occupancy color (hex or CSS var). If user provided a hex, the rgb fallback
-         will be used for translucent shadows when needed. */
+      /* Use the configured color directly when available; fall back to translucent RGB when only hex provided */
       box-shadow:
-        0 0 8px var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.12)),
-        0 0 18px var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.08)),
-        0 0 32px var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.05)) !important;
+        0 0 calc(var(--occupancy-glow-strength) * 10px) var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.12)),
+        0 0 calc(var(--occupancy-glow-strength) * 20px) var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.08));
       border: 1px solid rgba(var(--occupancy-rgb, 255,255,255), 0.04);
-      filter: drop-shadow(0 0 8px var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.10)));
-    }
-
-    ha-card.occupied::after {
-      content: '';
-      position: absolute;
-      /* keep the highlight subtle and avoid a large centered blob */
-      top: 12%;
-      left: 12%;
-      right: 12%;
-      bottom: 12%;
-      border-radius: inherit;
-      pointer-events: none;
-      z-index: 1; /* sit above background overlays but below content (content z-index:2) */
-      /* Use the configured color when available; use the rgb fallback for translucency when only hex provided */
-      background: radial-gradient(circle at center, var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.08)) 0%, rgba(var(--occupancy-rgb, 255,255,255), 0.02) 35%, transparent 60%);
-      mix-blend-mode: screen;
-      opacity: 0.9;
+      filter: drop-shadow(0 0 calc(var(--occupancy-glow-strength) * 8px) var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.10)));
     }
 
     /* Make controls scale down for smaller cards */

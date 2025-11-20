@@ -745,6 +745,18 @@ export class AreaCardEliteEditor extends LitElement {
             <div class="option">
               <ha-selector
                 .hass=${this.hass}
+                .selector=${{ number: { min: 0, max: 1, step: 0.05 } }}
+                .value=${this._config.occupancy_glow_strength ?? 0.12}
+                .configValue=${"occupancy_glow_strength"}
+                .label=${"Occupancy Glow Strength"}
+                .helper=${"Set how strong the occupancy glow is (0 = off, 1 = max)."}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
                 .selector=${{ boolean: {} }}
                 .value=${this._config.occupancy_show_last_seen === true}
                 .configValue=${"occupancy_show_last_seen"}

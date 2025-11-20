@@ -59,6 +59,8 @@ export interface AreaCardEliteConfig extends LovelaceCardConfig {
   occupancy_color?: string;
   // Show last seen timestamp next to the occupancy indicator
   occupancy_show_last_seen?: boolean;
+  // Occupancy glow strength (0.0 - 1.0) where 0 = no glow, 1 = strong glow
+  occupancy_glow_strength?: number;
   door_sensor?: string;
   window_sensor?: string;
   moisture_sensor?: string;
