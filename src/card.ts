@@ -1985,6 +1985,31 @@ export class AreaCardElite extends LitElement {
       filter: drop-shadow(0 0 6px var(--occupancy-color, rgba(255,255,255,0.9)));
     }
 
+    /* Override: when the card display_type is "icon" we intentionally hide the area-name's
+       built-in icon, but occupancy indicators should still be visible. Force occupancy icons
+       to display and inherit color even in that mode. */
+    .icon .area-name .occupancy-indicator ha-icon,
+    .icon .area-name .occupancy-indicator ha-icon svg {
+      display: inline-flex !important;
+      width: auto !important;
+      height: auto !important;
+      fill: currentColor !important;
+      stroke: none !important;
+      opacity: 1 !important;
+      vertical-align: middle !important;
+    }
+
+    /* Also ensure overlay/pill icons are visible if some theme rules hide ha-icon globally */
+    .occupancy-pill ha-icon,
+    .occupancy-pill ha-icon svg,
+    .occupancy-overlay ha-icon,
+    .occupancy-overlay ha-icon svg {
+      display: inline-flex !important;
+      fill: currentColor !important;
+      stroke: none !important;
+      opacity: 1 !important;
+    }
+
     /* Occupied glow — layered and softened so low strengths don't render as a hard line. */
     ha-card.occupied {
       transition: box-shadow 0.25s ease, transform 0.25s ease;
