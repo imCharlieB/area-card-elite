@@ -27,6 +27,7 @@ import {
 
 const UNAVAILABLE_STATES = ["unavailable", "unknown"];
 const STATES_OFF = ["off", "closed", "idle"];
+const OCCUPIED_STATES = ["on", "occupied", "present", "home", "detected"];
 
 @customElement("area-card-elite")
 export class AreaCardElite extends LitElement {
@@ -705,6 +706,37 @@ export class AreaCardElite extends LitElement {
     return area?.name || this._config?.area || "Unknown Area";
   }
 
+  // Count occupied persons / trackers in the selected area.
+  // Returns a number >= 0. Uses configured occupancy_sensor as a fallback
+  // (counts as 1 when it reports an occupied-like state), otherwise counts
+  // `person` and `device_tracker` entities in the area whose state matches
+  // OCCUPIED_STATES. This supports showing a small person icon + count.
+  private _getOccupancyCount(): number {
+    if (!this._config?.area) return 0;
+
+    // Check explicit occupancy_sensor first
+    if (this._config.occupancy_sensor && this.hass.states[this._config.occupancy_sensor]) {
+      const ent = this.hass.states[this._config.occupancy_sensor];
+      if (!UNAVAILABLE_STATES.includes(ent.state) && OCCUPIED_STATES.includes(ent.state)) {
+        return 1;
+      }
+    }
+
+    // Otherwise, count persons / device_trackers in the area
+    const entities = this._getAreaEntities();
+    let count = 0;
+    entities.forEach((e: any) => {
+      if (e.domain === 'person' || e.domain === 'device_tracker') {
+        const state = (this.hass.states[e.entityId] || {}).state;
+        if (state && !UNAVAILABLE_STATES.includes(state) && OCCUPIED_STATES.includes(state)) {
+          count += 1;
+        }
+      }
+    });
+
+    return count;
+  }
+
   private _getAreaIcon(): string {
     if (this._config?.icon) return this._config.icon;
     
@@ -806,6 +838,9 @@ export class AreaCardElite extends LitElement {
       // Apply card background color if set
       ...(this._config.color && { backgroundColor: this._config.color })
     });
+    const occupancyCount = this._getOccupancyCount();
+    const isOccupied = occupancyCount > 0;
+    const occupancyColor = getAlertColor('occupancy', this._config).color;
     
     // Determine layout classes - FIX THE LOGIC
     const layout = this._config.layout || 'compact';
@@ -816,7 +851,7 @@ export class AreaCardElite extends LitElement {
     const mainEntity = this._config.main_entity ? this.hass.states[this._config.main_entity] : null;
 
     return html`
-      <ha-card class="${this._config.display_type || 'compact'} layout-${layout} features-${featuresPosition}" style=${cardStyle}>
+      <ha-card class="${this._config.display_type || 'compact'} layout-${layout} features-${featuresPosition}${isOccupied ? ' occupied' : ''}" style=${cardStyle}>
         <div class="content">
           <!-- Large background entity icon - ONLY for icon display type -->
           ${this._config.display_type === "icon" && mainEntity ? html`
@@ -877,6 +912,15 @@ export class AreaCardElite extends LitElement {
                   <ha-icon icon="${areaIcon}" style="${areaIconColor}"></ha-icon>
                 ` : ''}
                 ${areaName}
+                ${isOccupied ? html`
+                  <span class="occupancy" title="${occupancyCount} present">
+                    <ha-icon
+                      icon="${occupancyCount > 1 ? 'mdi:account-multiple' : 'mdi:account'}"
+                      style="color: ${occupancyColor}; --mdc-icon-size: 16px;"
+                    ></ha-icon>
+                    ${occupancyCount > 1 ? html`<span class="occupancy-count">${occupancyCount}</span>` : nothing}
+                  </span>
+                ` : nothing}
               </div>
               
               <!-- For vertical layout, show sensors under the name -->
@@ -1920,6 +1964,34 @@ export class AreaCardElite extends LitElement {
 
     .icon .area-sensors {
       margin-top: 2px;  /* Reduced from 4px */
+    }
+
+    /* Occupancy indicator next to area name */
+    .occupancy {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 8px;
+      font-size: 0.9em;
+      color: var(--secondary-text-color);
+    }
+
+    .occupancy ha-icon {
+      --mdc-icon-size: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .occupancy-count {
+      font-weight: 600;
+      font-size: 0.9em;
+      color: var(--secondary-text-color);
+    }
+
+    /* Soft white whole-card glow when occupied (low opacity) */
+    ha-card.occupied {
+      box-shadow: var(--occupancy-glow, 0 0 18px rgba(255,255,255,0.12));
     }
   `;
 }
