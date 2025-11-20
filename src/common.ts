@@ -49,6 +49,16 @@ export interface AreaCardEliteConfig extends LovelaceCardConfig {
   // Alert sensor entity selectors
   motion_sensor?: string;
   occupancy_sensor?: string;
+  // Allow selecting multiple person/device_tracker entities or specific occupancy sources
+  occupancy_entities?: string[];
+  // Display mode for occupancy (count next to name, badge, sensor row, etc.)
+  occupancy_display?: "count" | "badge" | "sensor" | "overlay" | "auto" | "none";
+  // If true, include occupancy in the Alerts list (legacy behaviour). Default: false
+  occupancy_include_in_alerts?: boolean;
+  // Optional colour override for occupancy indicator
+  occupancy_color?: string;
+  // Show last seen timestamp next to the occupancy indicator
+  occupancy_show_last_seen?: boolean;
   door_sensor?: string;
   window_sensor?: string;
   moisture_sensor?: string;

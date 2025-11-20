@@ -371,7 +371,8 @@ export class AreaCardElite extends LitElement {
     }
 
     // Check occupancy sensor
-    if (this._config.occupancy_sensor && this.hass.states[this._config.occupancy_sensor]) {
+    // Check occupancy sensor (only treat as alert when explicitly included in alerts)
+    if (this._config.occupancy_include_in_alerts === true && this._config.occupancy_sensor && this.hass.states[this._config.occupancy_sensor]) {
       const entity = this.hass.states[this._config.occupancy_sensor];
       if (entity.state === "on") {
         firstAlertDeviceClass = entity.attributes.device_class || 'occupancy';
@@ -447,7 +448,8 @@ export class AreaCardElite extends LitElement {
     }
 
     // Occupancy sensor
-    if (this._config.occupancy_sensor && this.hass.states[this._config.occupancy_sensor]) {
+    // Occupancy sensor - only include as an alert if configured to do so
+    if (this._config.occupancy_include_in_alerts === true && this._config.occupancy_sensor && this.hass.states[this._config.occupancy_sensor]) {
       const entity = this.hass.states[this._config.occupancy_sensor];
       if (entity.state === "on") {
         alerts.push({
@@ -793,6 +795,16 @@ export class AreaCardElite extends LitElement {
     const tempColor = getTemperatureColor(temperature);
     const humidityIntensity = getHumidityIntensity(humidity);
 
+    // Occupancy state and display decisions
+    const occupancyEntity = this._config?.occupancy_sensor && this.hass.states[this._config.occupancy_sensor]
+      ? this.hass.states[this._config.occupancy_sensor]
+      : null;
+    const occupancyState = occupancyEntity ? occupancyEntity.state : undefined;
+    const isOccupied = occupancyState === "on";
+    const occDisplay = this._config?.occupancy_display || "auto";
+    const showOccupancyNextToName = occDisplay === "count" || occDisplay === "auto";
+    const occColor = this._config?.occupancy_color || "#ffffff";
+
     const cardStyle = styleMap({
       '--state-active-color': stateColors.active.color,
       '--state-active-rgb': stateColors.active.rgb,
@@ -816,7 +828,7 @@ export class AreaCardElite extends LitElement {
     const mainEntity = this._config.main_entity ? this.hass.states[this._config.main_entity] : null;
 
     return html`
-      <ha-card class="${this._config.display_type || 'compact'} layout-${layout} features-${featuresPosition}" style=${cardStyle}>
+      <ha-card class="${this._config.display_type || 'compact'} layout-${layout} features-${featuresPosition} ${isOccupied ? 'occupied' : ''}" style=${cardStyle}>
         <div class="content">
           <!-- Large background entity icon - ONLY for icon display type -->
           ${this._config.display_type === "icon" && mainEntity ? html`
@@ -877,6 +889,13 @@ export class AreaCardElite extends LitElement {
                   <ha-icon icon="${areaIcon}" style="${areaIconColor}"></ha-icon>
                 ` : ''}
                 ${areaName}
+
+                ${showOccupancyNextToName && occupancyEntity ? html`
+                  <span class="occupancy-indicator" title="${isOccupied ? 'Occupied' : 'Not occupied'}">
+                    <ha-icon icon="mdi:account" style="color: ${occColor}; --mdc-icon-size: 14px"></ha-icon>
+                    ${isOccupied ? html`<span class="occupancy-count">1</span>` : nothing}
+                  </span>
+                ` : ''}
               </div>
               
               <!-- For vertical layout, show sensors under the name -->
@@ -1786,6 +1805,47 @@ export class AreaCardElite extends LitElement {
       .area-controls {
         gap: 8px;
       }
+    }
+
+    /* Occupancy indicator next to area name */
+    .occupancy-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 8px;
+      font-size: 0.85em;
+      color: var(--secondary-text-color);
+      vertical-align: middle;
+    }
+
+    .occupancy-indicator ha-icon {
+      --mdc-icon-size: 14px;
+      filter: drop-shadow(0 0 2px rgba(255,255,255,0.5));
+    }
+
+    .occupancy-count {
+      font-weight: 600;
+      font-size: 0.85em;
+      color: var(--primary-text-color);
+    }
+
+    /* Soft white whole-card glow when occupied */
+    ha-card.occupied {
+      transition: box-shadow 0.25s ease, transform 0.25s ease;
+      box-shadow: 0 0 18px rgba(255,255,255,0.08) !important;
+    }
+
+    ha-card.occupied::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: 0;
+      background: rgba(255,255,255,0.03);
     }
 
     /* Make controls scale down for smaller cards */

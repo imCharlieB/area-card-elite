@@ -685,6 +685,89 @@ export class AreaCardEliteEditor extends LitElement {
           </div>
         </ha-expansion-panel>
 
+        <!-- Occupancy / Presence -->
+        <ha-expansion-panel header="Occupancy / Presence" outlined>
+          <div class="content">
+            <div class="helper-text">Configure presence sources and display</div>
+
+                <!-- We intentionally only support a per-card occupancy binary_sensor (LD24xx / similar). -->
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  entity: {
+                    domain: "binary_sensor",
+                    device_class: "occupancy"
+                  }
+                }}
+                .value=${this._config.occupancy_sensor || ""}
+                .configValue=${"occupancy_sensor"}
+                .label=${"Occupancy Sensor (binary_sensor)"}
+                .helper=${"Select the occupancy/motion-like binary_sensor used for presence (per-card)."}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  select: {
+                    options: [
+                      { value: "count", label: "Count (icon + number)" },
+                      { value: "badge", label: "Pill / Badge" },
+                      { value: "sensor", label: "Sensor (in sensors row)" },
+                      { value: "overlay", label: "Corner Badge / Overlay" },
+                      { value: "auto", label: "Auto (adaptive)" },
+                      { value: "none", label: "None" }
+                    ]
+                  }
+                }}
+                .value=${this._config.occupancy_display || "auto"}
+                .configValue=${"occupancy_display"}
+                .label=${"Occupancy Display"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{ ui_color: { mode: "hex" } }}
+                .value=${this._config.occupancy_color || ""}
+                .configValue=${"occupancy_color"}
+                .label=${"Occupancy Color"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{ boolean: {} }}
+                .value=${this._config.occupancy_show_last_seen === true}
+                .configValue=${"occupancy_show_last_seen"}
+                .label=${"Show Last Seen"}
+                .helper=${"Show time since last seen in tooltip or next to indicator"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{ boolean: {} }}
+                .value=${this._config.occupancy_include_in_alerts === true}
+                .configValue=${"occupancy_include_in_alerts"}
+                .label=${"Include occupancy in Alerts"}
+                .helper=${"If enabled, occupancy will also appear in Alerts (legacy behaviour)"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+          </div>
+        </ha-expansion-panel>
+
         <!-- Alert Sensors -->
         <ha-expansion-panel header="Alert Sensors" outlined>
           <div class="content">
@@ -706,21 +789,7 @@ export class AreaCardEliteEditor extends LitElement {
               ></ha-selector>
             </div>
 
-            <div class="option">
-              <ha-selector
-                .hass=${this.hass}
-                .selector=${{
-                  entity: {
-                    domain: "binary_sensor",
-                    device_class: "occupancy"
-                  }
-                }}
-                .value=${this._config.occupancy_sensor || ""}
-                .configValue=${"occupancy_sensor"}
-                .label=${"Occupancy Sensor"}
-                @value-changed=${this._valueChanged}
-              ></ha-selector>
-            </div>
+            <!-- Occupancy handled in its own panel above. Use "Include occupancy in Alerts" in Occupancy panel to opt-in. -->
 
             <div class="option">
               <ha-selector
