@@ -328,6 +328,22 @@ export class AreaCardElite extends LitElement {
       }
     }
 
+    // If configured to show occupancy in the sensors row, add it here
+    const _occupancyEntity = this._config?.occupancy_sensor && this.hass.states[this._config.occupancy_sensor]
+      ? this.hass.states[this._config.occupancy_sensor]
+      : null;
+    const _isOccupied = _occupancyEntity ? _occupancyEntity.state === 'on' : false;
+    const _occDisplay = this._config?.occupancy_display || 'auto';
+    const _resolvedOccDisplay = _occDisplay === 'auto' ? (_occupancyEntity ? 'count' : 'none') : _occDisplay;
+    if (_occupancyEntity && (_resolvedOccDisplay === 'sensor')) {
+      sensors.unshift({
+        icon: 'mdi:account',
+        value: _isOccupied ? 'Occupied' : 'Vacant',
+        deviceClass: 'occupancy',
+        color: this._config?.occupancy_color || '#ffffff'
+      });
+    }
+
     if (sensors.length === 0) return nothing;
 
     return html`
@@ -801,8 +817,48 @@ export class AreaCardElite extends LitElement {
     const occupancyState = occupancyEntity ? occupancyEntity.state : undefined;
     const isOccupied = occupancyState === "on";
     const occDisplay = this._config?.occupancy_display || "auto";
-    const showOccupancyNextToName = occDisplay === "count" || occDisplay === "auto";
+    // Resolve 'auto' mode: for binary occupancy sensors prefer 'count'
+    const resolvedOccDisplay = occDisplay === 'auto' ? (occupancyEntity ? 'count' : 'none') : occDisplay;
     const occColor = this._config?.occupancy_color || "#ffffff";
+
+    // Prepare occupancy rendering for different display modes
+    let occupancyHtml: any = nothing;
+    if (occupancyEntity) {
+      const occIcon = "mdi:account";
+      const occLabel = isOccupied ? 'Occupied' : 'Not occupied';
+
+      switch (resolvedOccDisplay) {
+        case 'count':
+          occupancyHtml = html`
+            <span class="occupancy-indicator" title="${occLabel}">
+              <ha-icon icon="${occIcon}" style="color: ${occColor}; --mdc-icon-size: 14px"></ha-icon>
+              ${isOccupied ? html`<span class="occupancy-count">1</span>` : nothing}
+            </span>
+          `;
+          break;
+  case 'badge':
+          occupancyHtml = html`
+            <span class="occupancy-pill ${isOccupied ? 'on' : 'off'}" title="${occLabel}">
+              <ha-icon icon="${occIcon}"></ha-icon>
+              <span class="pill-label">${isOccupied ? 'Occupied' : 'Vacant'}</span>
+            </span>
+          `;
+          break;
+        case 'sensor':
+          // Rendered as a sensor item in the sensors row — handled below when building sensors
+          occupancyHtml = nothing;
+          break;
+        case 'overlay':
+          occupancyHtml = html`
+            <div class="occupancy-overlay" title="${occLabel}">
+              <ha-icon icon="${occIcon}"></ha-icon>
+            </div>
+          `;
+          break;
+        default:
+          occupancyHtml = nothing;
+      }
+    }
 
     const cardStyle = styleMap({
       '--state-active-color': stateColors.active.color,
@@ -811,6 +867,9 @@ export class AreaCardElite extends LitElement {
       '--state-inactive-rgb': stateColors.inactive.rgb,
       '--alert-color': alertInfo.color,
       '--alert-rgb': alertInfo.rgb,
+      // occupancy color variables for CSS use
+      '--occupancy-color': occColor,
+      '--occupancy-rgb': this._hexToRgb(occColor),
       '--temp-color': tempColor.color,
       '--temp-rgb': tempColor.rgb,
       '--humidity-intensity': humidityIntensity.toString(),
@@ -889,12 +948,7 @@ export class AreaCardElite extends LitElement {
                 ` : ''}
                 ${areaName}
 
-                ${showOccupancyNextToName && occupancyEntity ? html`
-                  <span class="occupancy-indicator" title="${isOccupied ? 'Occupied' : 'Not occupied'}">
-                    <ha-icon icon="mdi:account" style="color: ${occColor}; --mdc-icon-size: 14px"></ha-icon>
-                    ${isOccupied ? html`<span class="occupancy-count">1</span>` : nothing}
-                  </span>
-                ` : ''}
+                ${occupancyHtml !== nothing ? occupancyHtml : ''}
               </div>
               
               <!-- For vertical layout, show sensors under the name -->
@@ -1828,11 +1882,67 @@ export class AreaCardElite extends LitElement {
       color: var(--primary-text-color);
     }
 
-    /* Soft white whole-card glow when occupied (stronger, more visible) */
+    /* Pill / badge style for occupancy */
+    .occupancy-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.85em;
+      color: var(--secondary-text-color);
+      margin-left: 8px;
+    }
+
+    .occupancy-pill.on {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.12);
+      color: var(--primary-text-color);
+    }
+
+    .occupancy-pill ha-icon {
+      --mdc-icon-size: 16px;
+    }
+
+    .occupancy-pill .pill-label {
+      font-weight: 600;
+      font-size: 0.85em;
+    }
+
+    /* Corner overlay badge */
+    .occupancy-overlay {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 3;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      pointer-events: none;
+    }
+
+    .occupancy-overlay ha-icon {
+      --mdc-icon-size: 16px;
+      color: var(--primary-text-color);
+    }
+
+    /* Occupied glow — uses occupancy color (configurable) for visibility across themes */
     ha-card.occupied {
       transition: box-shadow 0.25s ease, transform 0.25s ease;
-      box-shadow: 0 0 30px rgba(255,255,255,0.14) !important;
-      border: 1px solid rgba(255,255,255,0.06);
+      /* layered glow using occupancy color */
+      box-shadow:
+        0 0 8px rgba(var(--occupancy-rgb, 255,255,255), 0.12),
+        0 0 24px rgba(var(--occupancy-rgb, 255,255,255), 0.10),
+        0 0 48px rgba(var(--occupancy-rgb, 255,255,255), 0.06) !important;
+      border: 1px solid rgba(var(--occupancy-rgb, 255,255,255), 0.06);
+      filter: drop-shadow(0 0 10px rgba(var(--occupancy-rgb, 255,255,255), 0.12));
     }
 
     ha-card.occupied::after {
@@ -1845,8 +1955,9 @@ export class AreaCardElite extends LitElement {
       border-radius: inherit;
       pointer-events: none;
       z-index: 1; /* sit above background overlays but below content (content z-index:2) */
-      background: radial-gradient(circle at center, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      background: radial-gradient(circle at center, rgba(var(--occupancy-rgb, 255,255,255), 0.08), rgba(var(--occupancy-rgb, 255,255,255), 0.02));
       mix-blend-mode: screen;
+      opacity: 1;
     }
 
     /* Make controls scale down for smaller cards */
