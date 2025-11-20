@@ -980,15 +980,21 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
       filter: drop-shadow(0 0 6px var(--occupancy-color, rgba(255,255,255,0.9)));
     }
 
-    /* Occupied glow — scaled by occupancy_glow_strength and using the configured color when possible */
+    /* Occupied glow — layered and softened so low strengths don't render as a hard line. */
     ha-card.occupied {
       transition: box-shadow 0.25s ease, transform 0.25s ease;
-      /* Use the configured color directly when available; fall back to translucent RGB when only hex provided */
+      /* Two layered shadows: a soft wide glow + a nearer, slightly stronger glow. Use min blur sizes
+         so very small strength values still render as a soft halo instead of a hard outline. We use
+         the RGB variable for predictable translucency (works whether user supplied a hex or var).
+      */
       box-shadow:
-        0 0 calc(var(--occupancy-glow-strength) * 10px) var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.12)),
-        0 0 calc(var(--occupancy-glow-strength) * 20px) var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.08));
+        /* soft wide halo (larger blur, lower opacity) */
+        0 0 calc(max(var(--occupancy-glow-strength) * 36px, 20px)) rgba(var(--occupancy-rgb, 255,255,255), calc(var(--occupancy-glow-strength) * 0.45)),
+        /* nearer glow (smaller blur, higher opacity) */
+        0 0 calc(max(var(--occupancy-glow-strength) * 18px, 6px)) rgba(var(--occupancy-rgb, 255,255,255), calc(var(--occupancy-glow-strength) * 0.9));
       border: 1px solid rgba(var(--occupancy-rgb, 255,255,255), 0.04);
-      filter: drop-shadow(0 0 calc(var(--occupancy-glow-strength) * 8px) var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.10)));
+      /* drop-shadow for subtle edge glow; also softened with a minimum blur */
+      filter: drop-shadow(0 0 calc(max(var(--occupancy-glow-strength) * 12px, 4px)) rgba(var(--occupancy-rgb, 255,255,255), calc(var(--occupancy-glow-strength) * 0.6)));
     }
 
     /* Make controls scale down for smaller cards */
