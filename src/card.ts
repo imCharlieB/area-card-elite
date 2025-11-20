@@ -1917,6 +1917,17 @@ export class AreaCardElite extends LitElement {
       vertical-align: middle;
     }
 
+    /* Ensure the inner SVG uses the currentColor so CSS vars take effect and icons are visible
+       even if the SVG path has an explicit fill in some themes or shadow DOM. Use !important
+       because ha-icon renders an internal svg that sometimes has fixed fills. */
+    .occupancy-indicator ha-icon svg,
+    .occupancy-overlay ha-icon svg,
+    .occupancy-pill ha-icon svg {
+      fill: currentColor !important;
+      stroke: none !important;
+      opacity: 1 !important;
+    }
+
     .occupancy-count {
       font-weight: 600;
       font-size: 0.85em;
