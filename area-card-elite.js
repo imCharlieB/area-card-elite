@@ -914,10 +914,11 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
       color: var(--primary-text-color);
     }
 
-    /* Soft white whole-card glow when occupied */
+    /* Soft white whole-card glow when occupied (stronger, more visible) */
     ha-card.occupied {
       transition: box-shadow 0.25s ease, transform 0.25s ease;
-      box-shadow: 0 0 18px rgba(255,255,255,0.08) !important;
+      box-shadow: 0 0 30px rgba(255,255,255,0.14) !important;
+      border: 1px solid rgba(255,255,255,0.06);
     }
 
     ha-card.occupied::after {
@@ -929,8 +930,9 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
       bottom: 0;
       border-radius: inherit;
       pointer-events: none;
-      z-index: 0;
-      background: rgba(255,255,255,0.03);
+      z-index: 1; /* sit above background overlays but below content (content z-index:2) */
+      background: radial-gradient(circle at center, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      mix-blend-mode: screen;
     }
 
     /* Make controls scale down for smaller cards */
