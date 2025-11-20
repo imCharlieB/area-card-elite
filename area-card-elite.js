@@ -100,22 +100,22 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
           </div>
         `:q}
       </div>
-    `:q}_handleControlClick(e){this._handleEntityClick(e)}_handleEntityClick(e){const t=new CustomEvent("hass-more-info",{detail:{entityId:e},bubbles:!0,composed:!0});this.dispatchEvent(t)}_getAreaCameras(){var e;return(null===(e=this._config)||void 0===e?void 0:e.area)?Object.entries(this.hass.states||{}).filter((([e,t])=>{var i,o;const[s]=e.split(".");return"camera"===s&&(null===(i=t.attributes)||void 0===i?void 0:i.area_id)===(null===(o=this._config)||void 0===o?void 0:o.area)})).map((([e,t])=>({entityId:e,name:t.attributes.friendly_name||e.split(".")[1]}))):[]}_getAreaName(){var e,t,i;if(null===(e=this._config)||void 0===e?void 0:e.name)return this._config.name;const o=this._areas[(null===(t=this._config)||void 0===t?void 0:t.area)||""];return(null==o?void 0:o.name)||(null===(i=this._config)||void 0===i?void 0:i.area)||"Unknown Area"}_getAreaIcon(){var e,t;if(null===(e=this._config)||void 0===e?void 0:e.icon)return this._config.icon;const i=this._areas[(null===(t=this._config)||void 0===t?void 0:t.area)||""];return(null==i?void 0:i.icon)||"mdi:home"}_getAreaFilteredEntities(e,t){var i;return(null===(i=this._config)||void 0===i?void 0:i.area)?Object.entries(this.hass.states||{}).filter((([i,o])=>{var s,a;const[n]=i.split(".");return n===e&&((!t||o.attributes.device_class===t)&&(null===(s=o.attributes)||void 0===s?void 0:s.area_id)===(null===(a=this._config)||void 0===a?void 0:a.area))})).map((([e])=>e)):[]}_isEntityActive(e){var t;if(!e)return!1;const i=e.entity_id.split(".")[0];if(De.includes(e.state))return!1;if("lock"===i)return"locked"===e.state;if("binary_sensor"===i){const i=null===(t=e.attributes)||void 0===t?void 0:t.device_class;if("door"===i||"window"===i||"opening"===i)return"off"===e.state||"closed"===e.state}return"cover"===i?"closed"===e.state:!Be.includes(e.state)}render(){var e,t,i,o,s,a;if(!this.hass||!this._config)return q;const n=this._getAreaName(),r=this._getAreaIcon(),c=this._config.area_name_color?`color: ${this._config.area_name_color};`:"",l=this._config.area_icon_color?`color: ${this._config.area_icon_color};`:"",d={active:{color:(null==(h=this._config)?void 0:h.state_active_color)||"#4caf50",rgb:Re((null==h?void 0:h.state_active_color)||"#4caf50")},inactive:{color:(null==h?void 0:h.state_inactive_color)||"#607d8b",rgb:Re((null==h?void 0:h.state_inactive_color)||"#607d8b")}};var h;const u=this._getActiveAlertInfo();let p,f;if(this._config.temperature_entity&&this.hass.states[this._config.temperature_entity]){const e=this.hass.states[this._config.temperature_entity].state;p=parseFloat(e),isNaN(p)&&(p=void 0)}if(this._config.humidity_entity&&this.hass.states[this._config.humidity_entity]){const e=this.hass.states[this._config.humidity_entity].state;f=parseFloat(e),isNaN(f)&&(f=void 0)}const g=Le(p),m=function(e){return null==e?.15:e>=70?.25:e>=60?.2:e>=40?.15:.12}(f),_=(null===(e=this._config)||void 0===e?void 0:e.occupancy_sensor)&&this.hass.states[this._config.occupancy_sensor]?this.hass.states[this._config.occupancy_sensor]:null,v="on"===(_?_.state:void 0),y=(null===(t=this._config)||void 0===t?void 0:t.occupancy_display)||"auto",b="auto"===y?_?"icon":"none":y,$=(null===(i=this._config)||void 0===i?void 0:i.occupancy_color)||"",x=e=>/^#([0-9A-F]{3}){1,2}$/i.test(e),w=x($)?$:"var(--primary-text-color, #000)",A=x($)?this._hexToRgb($):"255,255,255";let C=q;if(_){const e="mdi:account",t=v?"Occupied":"Not occupied";switch(b){case"icon":C=F`
+    `:q}_handleControlClick(e){this._handleEntityClick(e)}_handleEntityClick(e){const t=new CustomEvent("hass-more-info",{detail:{entityId:e},bubbles:!0,composed:!0});this.dispatchEvent(t)}_getAreaCameras(){var e;return(null===(e=this._config)||void 0===e?void 0:e.area)?Object.entries(this.hass.states||{}).filter((([e,t])=>{var i,o;const[s]=e.split(".");return"camera"===s&&(null===(i=t.attributes)||void 0===i?void 0:i.area_id)===(null===(o=this._config)||void 0===o?void 0:o.area)})).map((([e,t])=>({entityId:e,name:t.attributes.friendly_name||e.split(".")[1]}))):[]}_getAreaName(){var e,t,i;if(null===(e=this._config)||void 0===e?void 0:e.name)return this._config.name;const o=this._areas[(null===(t=this._config)||void 0===t?void 0:t.area)||""];return(null==o?void 0:o.name)||(null===(i=this._config)||void 0===i?void 0:i.area)||"Unknown Area"}_getAreaIcon(){var e,t;if(null===(e=this._config)||void 0===e?void 0:e.icon)return this._config.icon;const i=this._areas[(null===(t=this._config)||void 0===t?void 0:t.area)||""];return(null==i?void 0:i.icon)||"mdi:home"}_getAreaFilteredEntities(e,t){var i;return(null===(i=this._config)||void 0===i?void 0:i.area)?Object.entries(this.hass.states||{}).filter((([i,o])=>{var s,a;const[n]=i.split(".");return n===e&&((!t||o.attributes.device_class===t)&&(null===(s=o.attributes)||void 0===s?void 0:s.area_id)===(null===(a=this._config)||void 0===a?void 0:a.area))})).map((([e])=>e)):[]}_isEntityActive(e){var t;if(!e)return!1;const i=e.entity_id.split(".")[0];if(De.includes(e.state))return!1;if("lock"===i)return"locked"===e.state;if("binary_sensor"===i){const i=null===(t=e.attributes)||void 0===t?void 0:t.device_class;if("door"===i||"window"===i||"opening"===i)return"off"===e.state||"closed"===e.state}return"cover"===i?"closed"===e.state:!Be.includes(e.state)}render(){var e,t,i,o,s,a;if(!this.hass||!this._config)return q;const n=this._getAreaName(),r=this._getAreaIcon(),c=this._config.area_name_color?`color: ${this._config.area_name_color};`:"",l=this._config.area_icon_color?`color: ${this._config.area_icon_color};`:"",d={active:{color:(null==(h=this._config)?void 0:h.state_active_color)||"#4caf50",rgb:Re((null==h?void 0:h.state_active_color)||"#4caf50")},inactive:{color:(null==h?void 0:h.state_inactive_color)||"#607d8b",rgb:Re((null==h?void 0:h.state_inactive_color)||"#607d8b")}};var h;const u=this._getActiveAlertInfo();let p,f;if(this._config.temperature_entity&&this.hass.states[this._config.temperature_entity]){const e=this.hass.states[this._config.temperature_entity].state;p=parseFloat(e),isNaN(p)&&(p=void 0)}if(this._config.humidity_entity&&this.hass.states[this._config.humidity_entity]){const e=this.hass.states[this._config.humidity_entity].state;f=parseFloat(e),isNaN(f)&&(f=void 0)}const g=Le(p),m=function(e){return null==e?.15:e>=70?.25:e>=60?.2:e>=40?.15:.12}(f),_=(null===(e=this._config)||void 0===e?void 0:e.occupancy_sensor)&&this.hass.states[this._config.occupancy_sensor]?this.hass.states[this._config.occupancy_sensor]:null,v="on"===(_?_.state:void 0),y=(null===(t=this._config)||void 0===t?void 0:t.occupancy_display)||"auto",b="auto"===y?_?"icon":"none":y,$=((null===(i=this._config)||void 0===i?void 0:i.occupancy_color)||"").toString(),x=e=>/^#([0-9A-F]{3}){1,2}$/i.test(e),w=$||"var(--primary-text-color, #000)",A=x($)?this._hexToRgb($):"255,255,255";let C=q;if(_){const e="mdi:account",t=v?"Occupied":"Not occupied";switch(b){case"icon":C=F`
             <span class="occupancy-indicator" title="${t}" style="color: ${w}">
-              <ha-icon icon="${e}" style="--mdc-icon-size: 14px"></ha-icon>
+              <ha-icon .icon=${e} style="--mdc-icon-size: 18px"></ha-icon>
               ${(null===(o=this._config)||void 0===o?void 0:o.occupancy_show_last_seen)&&!v?F`<span class="occupancy-lastseen">${this._formatTimeSince(_)}</span>`:q}
             </span>
           `;break;case"badge":const i=x($)?`rgba(${A}, 0.12)`:"rgba(255,255,255,0.06)",a=x($)?`rgba(${A}, 0.18)`:"rgba(255,255,255,0.08)";C=F`
             <span class="occupancy-pill ${v?"on":"off"}" title="${t}"
                   style="color: ${w}; background: ${i}; border-color: ${a};">
-              <ha-icon icon="${e}"></ha-icon>
+              <ha-icon .icon=${e}></ha-icon>
               <span class="pill-label">${v?"Occupied":"Vacant"}</span>
               ${(null===(s=this._config)||void 0===s?void 0:s.occupancy_show_last_seen)&&!v?F`<span class="occupancy-lastseen">${this._formatTimeSince(_)}</span>`:q}
             </span>
           `;break;case"sensor":default:C=q;break;case"overlay":const n=x($)?`rgba(${A}, 0.12)`:"rgba(255,255,255,0.06)",r=x($)?`rgba(${A}, 0.18)`:"rgba(255,255,255,0.08)";C=F`
             <div class="occupancy-overlay" title="${t}"
                  style="background: ${n}; border-color: ${r}; color: ${w};">
-              <ha-icon icon="${e}"></ha-icon>
+              <ha-icon .icon=${e}></ha-icon>
             </div>
           `}}const k="overlay"===b,S=$e(Object.assign({"--state-active-color":d.active.color,"--state-active-rgb":d.active.rgb,"--state-inactive-color":d.inactive.color,"--state-inactive-rgb":d.inactive.rgb,"--alert-color":u.color,"--alert-rgb":u.rgb,"--occupancy-color":w,"--occupancy-rgb":A,"--temp-color":g.color,"--temp-rgb":g.rgb,"--humidity-intensity":m.toString()},this._config.color&&{backgroundColor:this._config.color})),E=this._config.layout||"compact",O=this._config.features_position||"bottom",I=null===(a=this._config.features)||void 0===a?void 0:a.includes("area-controls"),P=this._config.main_entity?this.hass.states[this._config.main_entity]:null;return F`
       <ha-card class="${this._config.display_type||"compact"} layout-${E} features-${O} ${v?"occupied":""}" style=${S}>
@@ -983,29 +983,31 @@ const de=e=>(t,i)=>{void 0!==i?i.addInitializer((()=>{customElements.define(e,t)
     /* Occupied glow — prefer using the configured occupancy color when provided */
     ha-card.occupied {
       transition: box-shadow 0.25s ease, transform 0.25s ease;
-      /* Try to use the CSS color variable directly for a colored glow; fall back to rgb fallback when available */
+      /* Prefer the configured occupancy color (hex or CSS var). If user provided a hex, the rgb fallback
+         will be used for translucent shadows when needed. */
       box-shadow:
         0 0 8px var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.12)),
-        0 0 24px var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.10)),
-        0 0 48px var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.06)) !important;
-      border: 1px solid rgba(var(--occupancy-rgb, 255,255,255), 0.06);
-      filter: drop-shadow(0 0 10px var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.12)));
+        0 0 18px var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.08)),
+        0 0 32px var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.05)) !important;
+      border: 1px solid rgba(var(--occupancy-rgb, 255,255,255), 0.04);
+      filter: drop-shadow(0 0 8px var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.10)));
     }
 
     ha-card.occupied::after {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      /* keep the highlight subtle and avoid a large centered blob */
+      top: 12%;
+      left: 12%;
+      right: 12%;
+      bottom: 12%;
       border-radius: inherit;
       pointer-events: none;
       z-index: 1; /* sit above background overlays but below content (content z-index:2) */
-      /* Use the occupancy color directly for the radial highlight when available */
-      background: radial-gradient(circle at center, var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.08)), transparent 40%);
+      /* Use the configured color when available; use the rgb fallback for translucency when only hex provided */
+      background: radial-gradient(circle at center, var(--occupancy-color, rgba(var(--occupancy-rgb, 255,255,255), 0.08)) 0%, rgba(var(--occupancy-rgb, 255,255,255), 0.02) 35%, transparent 60%);
       mix-blend-mode: screen;
-      opacity: 1;
+      opacity: 0.9;
     }
 
     /* Make controls scale down for smaller cards */
