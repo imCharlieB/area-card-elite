@@ -822,7 +822,8 @@ export class AreaCardElite extends LitElement {
   const occColorRaw = this._config?.occupancy_color || '';
   // If occupancy_color provided and is hex, use it; otherwise fall back to primary text color CSS var
   const isHexColor = (s: string) => /^#([0-9A-F]{3}){1,2}$/i.test(s);
-  const occColor = isHexColor(occColorRaw) ? occColorRaw : 'var(--primary-text-color, #000)';
+  const occColorVar = isHexColor(occColorRaw) ? occColorRaw : 'var(--primary-text-color, #000)';
+  const occRgbVar = isHexColor(occColorRaw) ? this._hexToRgb(occColorRaw) : '255,255,255';
 
     // Prepare occupancy rendering for different display modes
     let occupancyHtml: any = nothing;
@@ -834,16 +835,18 @@ export class AreaCardElite extends LitElement {
         case 'icon':
           // For binary occupancy sensors, show icon-only when occupied. If we later support multi-count, show number when count>1.
           occupancyHtml = html`
-            <span class="occupancy-indicator" title="${occLabel}">
-              <ha-icon icon="${occIcon}" style="color: ${occColor}; --mdc-icon-size: 14px"></ha-icon>
+            <span class="occupancy-indicator" title="${occLabel}" style="color: ${occColorVar}">
+              <ha-icon icon="${occIcon}" style="--mdc-icon-size: 14px"></ha-icon>
+              ${this._config?.occupancy_show_last_seen && !isOccupied ? html`<span class="occupancy-lastseen">${this._formatTimeSince(occupancyEntity)}</span>` : nothing}
             </span>
           `;
           break;
   case 'badge':
           occupancyHtml = html`
-            <span class="occupancy-pill ${isOccupied ? 'on' : 'off'}" title="${occLabel}">
+            <span class="occupancy-pill ${isOccupied ? 'on' : 'off'}" title="${occLabel}" style="--occ-pill-color: ${occColorVar}">
               <ha-icon icon="${occIcon}"></ha-icon>
               <span class="pill-label">${isOccupied ? 'Occupied' : 'Vacant'}</span>
+              ${this._config?.occupancy_show_last_seen && !isOccupied ? html`<span class="occupancy-lastseen">${this._formatTimeSince(occupancyEntity)}</span>` : nothing}
             </span>
           `;
           break;
@@ -853,7 +856,7 @@ export class AreaCardElite extends LitElement {
           break;
         case 'overlay':
           occupancyHtml = html`
-            <div class="occupancy-overlay" title="${occLabel}">
+            <div class="occupancy-overlay" title="${occLabel}" style="--occ-overlay-color: ${occColorVar}">
               <ha-icon icon="${occIcon}"></ha-icon>
             </div>
           `;
@@ -862,10 +865,9 @@ export class AreaCardElite extends LitElement {
           occupancyHtml = nothing;
       }
     }
+    const isOverlay = resolvedOccDisplay === 'overlay';
 
-    // Prepare occupancy color variables: only compute RGB when a hex color is provided
-    const occColorVar = isHexColor(occColorRaw) ? occColorRaw : 'var(--primary-text-color, #000)';
-    const occRgbVar = isHexColor(occColorRaw) ? this._hexToRgb(occColorRaw) : '255,255,255';
+  // occupancy color variables already computed above
 
     const cardStyle = styleMap({
       '--state-active-color': stateColors.active.color,
@@ -894,6 +896,7 @@ export class AreaCardElite extends LitElement {
 
     return html`
       <ha-card class="${this._config.display_type || 'compact'} layout-${layout} features-${featuresPosition} ${isOccupied ? 'occupied' : ''}" style=${cardStyle}>
+        ${isOverlay && occupancyHtml !== nothing ? occupancyHtml : ''}
         <div class="content">
           <!-- Large background entity icon - ONLY for icon display type -->
           ${this._config.display_type === "icon" && mainEntity ? html`
@@ -955,7 +958,7 @@ export class AreaCardElite extends LitElement {
                 ` : ''}
                 ${areaName}
 
-                ${occupancyHtml !== nothing ? occupancyHtml : ''}
+                ${!isOverlay && occupancyHtml !== nothing ? occupancyHtml : ''}
               </div>
               
               <!-- For vertical layout, show sensors under the name -->
@@ -1177,6 +1180,24 @@ export class AreaCardElite extends LitElement {
     return result 
       ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
       : '76, 175, 80'; // Default green fallback
+  }
+
+  private _formatTimeSince(entity: any): string {
+    if (!entity || !entity.last_changed) return '';
+    try {
+      const changed = new Date(entity.last_changed);
+      const now = new Date();
+      const diff = Math.floor((now.getTime() - changed.getTime()) / 1000); // seconds
+      if (diff < 60) return `${diff}s`;
+      const mins = Math.floor(diff / 60);
+      if (mins < 60) return `${mins}m`;
+      const hours = Math.floor(mins / 60);
+      if (hours < 24) return `${hours}h`;
+      const days = Math.floor(hours / 24);
+      return `${days}d`;
+    } catch (e) {
+      return '';
+    }
   }
 
   static getConfigElement() {
