@@ -715,7 +715,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .selector=${{
                   select: {
                     options: [
-                      { value: "count", label: "Count (icon + number)" },
+                      { value: "icon", label: "Icon (person)" },
                       { value: "badge", label: "Pill / Badge" },
                       { value: "sensor", label: "Sensor (in sensors row)" },
                       { value: "overlay", label: "Corner Badge / Overlay" },

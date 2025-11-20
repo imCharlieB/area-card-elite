@@ -817,9 +817,12 @@ export class AreaCardElite extends LitElement {
     const occupancyState = occupancyEntity ? occupancyEntity.state : undefined;
     const isOccupied = occupancyState === "on";
     const occDisplay = this._config?.occupancy_display || "auto";
-    // Resolve 'auto' mode: for binary occupancy sensors prefer 'count'
-    const resolvedOccDisplay = occDisplay === 'auto' ? (occupancyEntity ? 'count' : 'none') : occDisplay;
-    const occColor = this._config?.occupancy_color || "#ffffff";
+  // Resolve 'auto' mode: for binary occupancy sensors prefer 'icon'
+  const resolvedOccDisplay = occDisplay === 'auto' ? (occupancyEntity ? 'icon' : 'none') : occDisplay;
+  const occColorRaw = this._config?.occupancy_color || '';
+  // If occupancy_color provided and is hex, use it; otherwise fall back to primary text color CSS var
+  const isHexColor = (s: string) => /^#([0-9A-F]{3}){1,2}$/i.test(s);
+  const occColor = isHexColor(occColorRaw) ? occColorRaw : 'var(--primary-text-color, #000)';
 
     // Prepare occupancy rendering for different display modes
     let occupancyHtml: any = nothing;
@@ -828,11 +831,11 @@ export class AreaCardElite extends LitElement {
       const occLabel = isOccupied ? 'Occupied' : 'Not occupied';
 
       switch (resolvedOccDisplay) {
-        case 'count':
+        case 'icon':
+          // For binary occupancy sensors, show icon-only when occupied. If we later support multi-count, show number when count>1.
           occupancyHtml = html`
             <span class="occupancy-indicator" title="${occLabel}">
               <ha-icon icon="${occIcon}" style="color: ${occColor}; --mdc-icon-size: 14px"></ha-icon>
-              ${isOccupied ? html`<span class="occupancy-count">1</span>` : nothing}
             </span>
           `;
           break;
@@ -860,6 +863,10 @@ export class AreaCardElite extends LitElement {
       }
     }
 
+    // Prepare occupancy color variables: only compute RGB when a hex color is provided
+    const occColorVar = isHexColor(occColorRaw) ? occColorRaw : 'var(--primary-text-color, #000)';
+    const occRgbVar = isHexColor(occColorRaw) ? this._hexToRgb(occColorRaw) : '255,255,255';
+
     const cardStyle = styleMap({
       '--state-active-color': stateColors.active.color,
       '--state-active-rgb': stateColors.active.rgb,
@@ -868,8 +875,8 @@ export class AreaCardElite extends LitElement {
       '--alert-color': alertInfo.color,
       '--alert-rgb': alertInfo.rgb,
       // occupancy color variables for CSS use
-      '--occupancy-color': occColor,
-      '--occupancy-rgb': this._hexToRgb(occColor),
+      '--occupancy-color': occColorVar,
+      '--occupancy-rgb': occRgbVar,
       '--temp-color': tempColor.color,
       '--temp-rgb': tempColor.rgb,
       '--humidity-intensity': humidityIntensity.toString(),
@@ -1916,7 +1923,7 @@ export class AreaCardElite extends LitElement {
       position: absolute;
       top: 8px;
       right: 8px;
-      z-index: 3;
+      z-index: 5;
       display: inline-flex;
       align-items: center;
       justify-content: center;
