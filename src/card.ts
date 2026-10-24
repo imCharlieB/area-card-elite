@@ -381,7 +381,7 @@ export class AreaCardElite extends LitElement {
       const i = readingOrder.indexOf(readingKind(id) as string);
       return i === -1 ? readingOrder.length - 1.5 : i;  // unknown types sit just before battery
     };
-    const orderedDeviceReadings = [...(this._config.sensor_entities || []), ...(this._config.extra_sensors || [])]
+    const orderedDeviceReadings = [...new Set([...(this._config.sensor_entities || []), ...(this._config.extra_sensors || [])])]
       .sort((a, b) => readingRank(a) - readingRank(b));
     for (const entityId of orderedDeviceReadings) {
       const entity = this.hass.states[entityId];
