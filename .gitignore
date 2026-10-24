@@ -13,3 +13,5 @@ dist/**/*
 !.hass_dev/www
 !.hass_dev/packages
 .hass_dev/www/community/*
+
+debug.log
