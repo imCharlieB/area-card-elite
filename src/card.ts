@@ -365,21 +365,28 @@ export class AreaCardElite extends LitElement {
       battery: { icon: "mdi:battery", color: "#4caf50" },
       carbon_dioxide: { icon: "mdi:molecule-co2", color: "#8bc34a" },
       dew_point: { icon: "mdi:water-thermometer", color: "#03a9f4" },
+      vpd: { icon: "mdi:sprout", color: "#8bc34a" },
       voltage: { icon: "mdi:sine-wave", color: "#ffc107" },
       signal_strength: { icon: "mdi:wifi", color: "#9e9e9e" }
     };
-    const readingOrder = ["temperature", "humidity", "pressure", "atmospheric_pressure", "dew_point",
+    const readingOrder = ["temperature", "humidity", "pressure", "atmospheric_pressure", "dew_point", "vpd",
       "illuminance", "carbon_dioxide", "power", "energy", "voltage", "signal_strength", "battery"];
+    // Template sensors (dew point, VPD) usually have no device class, so fall back to the entity id
+    const readingKind = (id: string): string | undefined => {
+      if (/dew_?point/.test(id)) return "dew_point";
+      if (/vpd/.test(id)) return "vpd";
+      return this.hass.states[id]?.attributes?.device_class as string | undefined;
+    };
     const readingRank = (id: string) => {
-      const i = readingOrder.indexOf(this.hass.states[id]?.attributes?.device_class);
+      const i = readingOrder.indexOf(readingKind(id) as string);
       return i === -1 ? readingOrder.length - 1.5 : i;  // unknown types sit just before battery
     };
-    const orderedDeviceReadings = [...(this._config.sensor_entities || [])]
+    const orderedDeviceReadings = [...(this._config.sensor_entities || []), ...(this._config.extra_sensors || [])]
       .sort((a, b) => readingRank(a) - readingRank(b));
     for (const entityId of orderedDeviceReadings) {
       const entity = this.hass.states[entityId];
       if (!entity || UNAVAILABLE_STATES.includes(entity.state) || individualEntities.includes(entityId)) continue;
-      const deviceClass = entity.attributes.device_class as string | undefined;
+      const deviceClass = readingKind(entityId);
       const style = (deviceClass && deviceSensorStyles[deviceClass]) || { icon: "mdi:eye", color: "#9e9e9e" };
       if (deviceClass === "temperature" && !isNaN(parseFloat(entity.state))) {
         const temp = parseFloat(entity.state);

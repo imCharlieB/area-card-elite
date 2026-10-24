@@ -36,6 +36,7 @@ export interface AreaCardEliteConfig extends LovelaceCardConfig {
   pressure_entity?: string;
   sensor_device?: string;
   sensor_entities?: string[];
+  extra_sensors?: string[];
   illuminance_entity?: string;
   power_entity?: string;
   energy_entity?: string;

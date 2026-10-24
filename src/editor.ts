@@ -546,6 +546,18 @@ export class AreaCardEliteEditor extends LitElement {
               </div>
             ` : ""}
 
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{ entity: { domain: "sensor", multiple: true } }}
+                .value=${this._config.extra_sensors || []}
+                .configValue=${"extra_sensors"}
+                .label=${"Additional Sensors (e.g. dew point, VPD)"}
+                .helper=${"Any sensor, including template sensors"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
             <div class="helper-text">Or select individual sensors:</div>
 
             <div class="option">

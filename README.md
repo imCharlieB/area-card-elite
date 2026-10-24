@@ -151,6 +151,7 @@ Temperature and humidity sensors enable a subtle weather-style gradient overlay 
 | `battery_entity` | string | - | Battery sensor |
 | `sensor_device` | string | - | Device ID of a multi-sensor device (set via the editor's *Sensor Device* picker) |
 | `sensor_entities` | list | - | Entity IDs of the device's readings to show; each gets an icon/color by device class. Readings also set via an individual option above are not shown twice |
+| `extra_sensors` | list | - | Any additional sensor entities (e.g. template sensors for dew point or VPD). Shown after the device readings, ordered by type |
 
 Example using a multi-sensor device:
 
