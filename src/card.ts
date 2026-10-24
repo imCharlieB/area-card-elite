@@ -223,6 +223,13 @@ export class AreaCardElite extends LitElement {
     `;
   }
 
+  // First selected multi-sensor-device reading with the given device class
+  private _getDeviceReading(deviceClass: string): string | undefined {
+    return (this._config?.sensor_entities || []).find(
+      id => this.hass.states[id]?.attributes?.device_class === deviceClass
+    );
+  }
+
   private _renderSensors() {
     if (!this._config) return nothing;
 
@@ -366,6 +373,18 @@ export class AreaCardElite extends LitElement {
       if (!entity || UNAVAILABLE_STATES.includes(entity.state) || individualEntities.includes(entityId)) continue;
       const deviceClass = entity.attributes.device_class as string | undefined;
       const style = (deviceClass && deviceSensorStyles[deviceClass]) || { icon: "mdi:eye", color: "#9e9e9e" };
+      if (deviceClass === "temperature" && !isNaN(parseFloat(entity.state))) {
+        const temp = parseFloat(entity.state);
+        const tempIcon = getTemperatureIcon(temp);
+        sensors.push({
+          icon: tempIcon.icon,
+          value: this.hass.formatEntityState(entity),
+          deviceClass,
+          color: getTemperatureColor(temp).color,
+          animate: tempIcon.animate
+        });
+        continue;
+      }
       sensors.push({
         icon: entity.attributes.icon || style.icon,
         value: this.hass.formatEntityState(entity),
@@ -842,14 +861,17 @@ export class AreaCardElite extends LitElement {
     let temperature: number | undefined;
     let humidity: number | undefined;
 
-    if (this._config.temperature_entity && this.hass.states[this._config.temperature_entity]) {
-      const tempState = this.hass.states[this._config.temperature_entity].state;
+    const gradientTempId = this._config.temperature_entity || this._getDeviceReading("temperature");
+    const gradientHumidityId = this._config.humidity_entity || this._getDeviceReading("humidity");
+
+    if (gradientTempId && this.hass.states[gradientTempId]) {
+      const tempState = this.hass.states[gradientTempId].state;
       temperature = parseFloat(tempState);
       if (isNaN(temperature)) temperature = undefined;
     }
 
-    if (this._config.humidity_entity && this.hass.states[this._config.humidity_entity]) {
-      const humidityState = this.hass.states[this._config.humidity_entity].state;
+    if (gradientHumidityId && this.hass.states[gradientHumidityId]) {
+      const humidityState = this.hass.states[gradientHumidityId].state;
       humidity = parseFloat(humidityState);
       if (isNaN(humidity)) humidity = undefined;
     }

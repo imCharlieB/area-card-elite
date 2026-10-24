@@ -168,6 +168,20 @@ export class AreaCardEliteEditor extends LitElement {
     }
   }
 
+  private _clearButton(key: string) {
+    const value = (this._config as any)?.[key];
+    if (value === undefined || value === null || value === "") return nothing;
+    return html`<button class="clear-btn" type="button" @click=${() => this._clearOption(key)}>✕ Clear</button>`;
+  }
+
+  private _clearOption(key: string): void {
+    if (!this._config) return;
+    const { [key]: _removed, ...rest } = this._config as any;
+    this._config = rest;
+    fireEvent(this, "config-changed", { config: this._config });
+    this.requestUpdate();
+  }
+
   private _getDeviceSensors(deviceId: string): { value: string; label: string }[] {
     return this._entities
       .filter((e: any) => e.device_id === deviceId && e.entity_id.startsWith("sensor.") && !e.disabled_by)
@@ -299,6 +313,7 @@ export class AreaCardEliteEditor extends LitElement {
             .helper=${"Choose the main entity whose icon will appear large in the background"}
             @value-changed=${this._valueChanged}
           ></ha-selector>
+              ${this._clearButton("main_entity")}
         </div>
 
         <!-- Appearance Section -->
@@ -313,6 +328,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Area Icon"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("icon")}
             </div>
 
             <div class="option">
@@ -324,6 +340,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Area Name Color"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("area_name_color")}
             </div>
 
             <div class="option">
@@ -335,6 +352,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Area Icon Color"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("area_icon_color")}
             </div>
 
             <div class="option">
@@ -347,6 +365,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .helper=${"Color for circle and icon when entity is active/on"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("state_active_color")}
             </div>
 
             <div class="option">
@@ -359,6 +378,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .helper=${"Color for circle and icon when entity is inactive/off"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("state_inactive_color")}
             </div>
 
             <div class="option">
@@ -411,6 +431,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Card Background Color"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("color")}
             </div>
 
             ${this._config.display_type === "camera" ? html`
@@ -434,6 +455,7 @@ export class AreaCardEliteEditor extends LitElement {
                   .helper=${this._config.area ? "Filtered to cameras in selected area" : "Select an area first to filter cameras"}
                   @value-changed=${this._valueChanged}
                 ></ha-selector>
+              ${this._clearButton("camera_entity")}
               </div>
               <div class="option">
                 <ha-selector
@@ -485,6 +507,7 @@ export class AreaCardEliteEditor extends LitElement {
                   .helper=${"Select an image from your media folder or upload new"}
                   @value-changed=${this._valueChanged}
                 ></ha-selector>
+              ${this._clearButton("background_image")}
               </div>
             ` : ''}
           </div>
@@ -539,6 +562,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Temperature Sensor"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("temperature_entity")}
             </div>
 
             <div class="option">
@@ -555,6 +579,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Humidity Sensor"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("humidity_entity")}
             </div>
 
             <div class="option">
@@ -571,6 +596,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Pressure Sensor"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("pressure_entity")}
             </div>
 
             <div class="option">
@@ -587,6 +613,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Light Level Sensor"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("illuminance_entity")}
             </div>
 
             <div class="option">
@@ -603,6 +630,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Power Sensor"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("power_entity")}
             </div>
 
             <div class="option">
@@ -619,6 +647,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Energy Sensor"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("energy_entity")}
             </div>
 
             <div class="option">
@@ -635,6 +664,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Battery Sensor"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("battery_entity")}
             </div>
           </div>
         </ha-expansion-panel>
@@ -657,6 +687,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Main Light"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("light_entity")}
             </div>
 
             <div class="option">
@@ -672,6 +703,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Climate Control"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("climate_entity")}
             </div>
 
             <div class="option">
@@ -687,6 +719,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Main Switch"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("switch_entity")}
             </div>
 
             <div class="option">
@@ -702,6 +735,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Fan Control"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("fan_entity")}
             </div>
 
             <div class="option">
@@ -718,6 +752,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .helper=${"Click opens media player controls"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("media_player_entity")}
             </div>
 
             <div class="option">
@@ -772,6 +807,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .helper=${"Select the occupancy/motion-like binary_sensor used for presence (per-card)."}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("occupancy_sensor")}
             </div>
 
             <div class="option">
@@ -805,6 +841,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Occupancy Color"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("occupancy_color")}
             </div>
 
             <div class="option">
@@ -864,6 +901,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Motion Sensor"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("motion_sensor")}
             </div>
 
             <!-- Occupancy handled in its own panel above. Use "Include occupancy in Alerts" in Occupancy panel to opt-in. -->
@@ -882,6 +920,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Door Sensor"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("door_sensor")}
             </div>
 
             <div class="option">
@@ -898,6 +937,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Window Sensor"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("window_sensor")}
             </div>
 
             <div class="option">
@@ -914,6 +954,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Moisture Sensor"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("moisture_sensor")}
             </div>
 
             <div class="option">
@@ -992,6 +1033,7 @@ export class AreaCardEliteEditor extends LitElement {
                 .label=${"Navigation Path"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
+              ${this._clearButton("navigation_path")}
             </div>
 
             <div class="option">
@@ -1081,6 +1123,20 @@ export class AreaCardEliteEditor extends LitElement {
       }
       ha-selector {
         width: 100%;
+      }
+
+      .clear-btn {
+        align-self: flex-end;
+        background: none;
+        border: none;
+        padding: 0 4px;
+        cursor: pointer;
+        font-size: 0.85em;
+        color: var(--secondary-text-color);
+      }
+
+      .clear-btn:hover {
+        color: var(--error-color, #f44336);
       }
       
       .switch-label {
