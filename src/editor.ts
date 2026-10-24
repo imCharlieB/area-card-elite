@@ -134,32 +134,29 @@ export class AreaCardEliteEditor extends LitElement {
     let value = ev.detail?.value;
     let configValue = target.configValue;
     
-    console.log('Value changed:', {
-      type: ev.type,
-      tagName: target.tagName,
-      configValue: configValue,
-      value: value,
-      detail: ev.detail
-    });
-    
-    // Handle different event types and components
-    if (value === undefined || value === null) {
-      if (ev.type === 'input' && target.value !== undefined) {
-        value = target.value;
-      } else if (target.value !== undefined) {
-        value = target.value;
-      }
-    }
-    
     // Handle specific components
     if (target.tagName === 'HA-AREA-PICKER') {
       configValue = 'area';
     } else if (target.tagName === 'HA-ENTITY-PICKER') {
       configValue = target.configValue || 'exclude_entities';
     }
-    
+
+    // A cleared selector reports undefined/null/"" - remove the key so it can be unset
+    if (configValue && ev.detail && 'value' in ev.detail &&
+        (value === undefined || value === null || value === "")) {
+      const { [configValue]: _removed, ...rest } = this._config as any;
+      this._config = rest;
+      fireEvent(this, "config-changed", { config: this._config });
+      this.requestUpdate();
+      return;
+    }
+
+    // Non-selector events (e.g. native inputs) carry the value on the target
+    if (value === undefined || value === null) {
+      value = target.value;
+    }
+
     if (configValue && value !== undefined) {
-      console.log('Setting config:', configValue, '=', value);
       
       this._config = {
         ...this._config,
@@ -169,6 +166,28 @@ export class AreaCardEliteEditor extends LitElement {
       fireEvent(this, "config-changed", { config: this._config });
       this.requestUpdate();
     }
+  }
+
+  private _getDeviceSensors(deviceId: string): { value: string; label: string }[] {
+    return this._entities
+      .filter((e: any) => e.device_id === deviceId && e.entity_id.startsWith("sensor.") && !e.disabled_by)
+      .map((e: any) => {
+        const state = this.hass.states[e.entity_id];
+        const name = state?.attributes?.friendly_name || e.name || e.original_name || e.entity_id;
+        const unit = state?.attributes?.unit_of_measurement;
+        return { value: e.entity_id, label: unit ? `${name} (${unit})` : name };
+      });
+  }
+
+  private _sensorDeviceChanged(ev: CustomEvent): void {
+    ev.stopPropagation();
+    if (!this._config) return;
+    const deviceId = ev.detail?.value;
+    const { sensor_device: _d, sensor_entities: _s, ...rest } = this._config as any;
+    // New device: start with no readings selected, user ticks the ones they want
+    this._config = deviceId ? { ...rest, sensor_device: deviceId, sensor_entities: [] } : rest;
+    fireEvent(this, "config-changed", { config: this._config });
+    this.requestUpdate();
   }
 
   private _getDeviceClasses(domain: string): string[] {
@@ -474,8 +493,38 @@ export class AreaCardEliteEditor extends LitElement {
         <!-- Sensor Display -->
         <ha-expansion-panel header="Sensor Display" outlined>
           <div class="content">
-            <div class="helper-text">Select specific sensors to display on the card</div>
-            
+            <div class="helper-text">Pick a multi-sensor device, then choose which of its readings to show</div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{ device: { entity: { domain: "sensor" } } }}
+                .value=${this._config.sensor_device || ""}
+                .label=${"Sensor Device"}
+                @value-changed=${this._sensorDeviceChanged}
+              ></ha-selector>
+            </div>
+
+            ${this._config.sensor_device ? html`
+              <div class="option">
+                <ha-selector
+                  .hass=${this.hass}
+                  .selector=${{
+                    select: {
+                      multiple: true,
+                      options: this._getDeviceSensors(this._config.sensor_device)
+                    }
+                  }}
+                  .value=${this._config.sensor_entities || []}
+                  .configValue=${"sensor_entities"}
+                  .label=${"Readings to show"}
+                  @value-changed=${this._valueChanged}
+                ></ha-selector>
+              </div>
+            ` : ""}
+
+            <div class="helper-text">Or select individual sensors:</div>
+
             <div class="option">
               <ha-selector
                 .hass=${this.hass}
@@ -504,6 +553,22 @@ export class AreaCardEliteEditor extends LitElement {
                 .value=${this._config.humidity_entity || ""}
                 .configValue=${"humidity_entity"}
                 .label=${"Humidity Sensor"}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+            </div>
+
+            <div class="option">
+              <ha-selector
+                .hass=${this.hass}
+                .selector=${{
+                  entity: {
+                    domain: "sensor",
+                    device_class: ["atmospheric_pressure", "pressure"]
+                  }
+                }}
+                .value=${this._config.pressure_entity || ""}
+                .configValue=${"pressure_entity"}
+                .label=${"Pressure Sensor"}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
             </div>

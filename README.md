@@ -6,7 +6,8 @@ An enhanced area card for Home Assistant that displays comprehensive information
 
 - 🎨 **Multiple Display Types**: Compact, Icon, Picture, and Camera modes
 - 📐 **Flexible Layouts**: Vertical, Horizontal, and Compact layouts
-- 🌡️ **Smart Sensor Display**: Temperature, humidity, illuminance, power, energy, and battery with color-coded icons
+- 🌡️ **Smart Sensor Display**: Temperature, humidity, pressure, illuminance, power, energy, and battery with color-coded icons
+- 📟 **Multi-Sensor Devices**: Pick one device (e.g. SONOFF SNZB-02M) and tick which of its readings to show
 - 🎮 **Quick Controls**: Lights, climate, switches, fans, media players, and more
 - 💡 **Smart Lights Toggle**: Automatic button that toggles all lights in the area - turns off when any are on, turns on when all are off, with dynamic icon feedback
 - 🚨 **Alert Monitoring**: Motion, occupancy, door, window, and moisture sensors with visual alerts
@@ -143,10 +144,25 @@ Temperature and humidity sensors enable a subtle weather-style gradient overlay 
 |--------|------|---------|-------------|
 | `temperature_entity` | string | - | Temperature sensor - enables temperature-based gradient overlay |
 | `humidity_entity` | string | - | Humidity sensor - affects gradient overlay intensity |
+| `pressure_entity` | string | - | Pressure sensor (`pressure` or `atmospheric_pressure`) |
 | `illuminance_entity` | string | - | Light level sensor |
 | `power_entity` | string | - | Power sensor |
 | `energy_entity` | string | - | Energy sensor |
 | `battery_entity` | string | - | Battery sensor |
+| `sensor_device` | string | - | Device ID of a multi-sensor device (set via the editor's *Sensor Device* picker) |
+| `sensor_entities` | list | - | Entity IDs of the device's readings to show; each gets an icon/color by device class. Readings also set via an individual option above are not shown twice |
+
+Example using a multi-sensor device:
+
+```yaml
+sensor_device: 0a1b2c3d4e5f   # device ID, easiest to set from the visual editor
+sensor_entities:
+  - sensor.backyard_temperature
+  - sensor.backyard_humidity
+  - sensor.backyard_pressure
+```
+
+In the visual editor, clearing a picker removes that option from the config.
 
 ### Controls
 

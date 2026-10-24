@@ -259,6 +259,19 @@ export class AreaCardElite extends LitElement {
       }
     }
 
+    // Pressure sensor
+    if (this._config.pressure_entity && this.hass.states[this._config.pressure_entity]) {
+      const entity = this.hass.states[this._config.pressure_entity];
+      if (!UNAVAILABLE_STATES.includes(entity.state)) {
+        sensors.push({
+          icon: "mdi:gauge",
+          value: this.hass.formatEntityState(entity),
+          deviceClass: "pressure",
+          color: "#26a69a"
+        });
+      }
+    }
+
     // Other sensors with appropriate colors...
     if (this._config.illuminance_entity && this.hass.states[this._config.illuminance_entity]) {
       const entity = this.hass.states[this._config.illuminance_entity];
@@ -326,6 +339,39 @@ export class AreaCardElite extends LitElement {
           color: color
         });
       }
+    }
+
+    // Readings picked from a multi-sensor device (skip any already shown via an individual picker)
+    const individualEntities = [
+      this._config.temperature_entity, this._config.humidity_entity, this._config.pressure_entity,
+      this._config.illuminance_entity, this._config.power_entity, this._config.energy_entity,
+      this._config.battery_entity
+    ];
+    const deviceSensorStyles: Record<string, { icon: string; color: string }> = {
+      temperature: { icon: "mdi:thermometer", color: "#ff9800" },
+      humidity: { icon: "mdi:water-percent", color: "#2196f3" },
+      pressure: { icon: "mdi:gauge", color: "#26a69a" },
+      atmospheric_pressure: { icon: "mdi:gauge", color: "#26a69a" },
+      illuminance: { icon: "mdi:brightness-6", color: "#ffeb3b" },
+      power: { icon: "mdi:flash", color: "#ff9800" },
+      energy: { icon: "mdi:lightning-bolt", color: "#9c27b0" },
+      battery: { icon: "mdi:battery", color: "#4caf50" },
+      carbon_dioxide: { icon: "mdi:molecule-co2", color: "#8bc34a" },
+      dew_point: { icon: "mdi:water-thermometer", color: "#03a9f4" },
+      voltage: { icon: "mdi:sine-wave", color: "#ffc107" },
+      signal_strength: { icon: "mdi:wifi", color: "#9e9e9e" }
+    };
+    for (const entityId of this._config.sensor_entities || []) {
+      const entity = this.hass.states[entityId];
+      if (!entity || UNAVAILABLE_STATES.includes(entity.state) || individualEntities.includes(entityId)) continue;
+      const deviceClass = entity.attributes.device_class as string | undefined;
+      const style = (deviceClass && deviceSensorStyles[deviceClass]) || { icon: "mdi:eye", color: "#9e9e9e" };
+      sensors.push({
+        icon: entity.attributes.icon || style.icon,
+        value: this.hass.formatEntityState(entity),
+        deviceClass: deviceClass || "sensor",
+        color: style.color
+      });
     }
 
     // If configured to show occupancy in the sensors row, add it here
