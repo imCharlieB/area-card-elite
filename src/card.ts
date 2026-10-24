@@ -368,7 +368,15 @@ export class AreaCardElite extends LitElement {
       voltage: { icon: "mdi:sine-wave", color: "#ffc107" },
       signal_strength: { icon: "mdi:wifi", color: "#9e9e9e" }
     };
-    for (const entityId of this._config.sensor_entities || []) {
+    const readingOrder = ["temperature", "humidity", "pressure", "atmospheric_pressure", "dew_point",
+      "illuminance", "carbon_dioxide", "power", "energy", "voltage", "signal_strength", "battery"];
+    const readingRank = (id: string) => {
+      const i = readingOrder.indexOf(this.hass.states[id]?.attributes?.device_class);
+      return i === -1 ? readingOrder.length - 1.5 : i;  // unknown types sit just before battery
+    };
+    const orderedDeviceReadings = [...(this._config.sensor_entities || [])]
+      .sort((a, b) => readingRank(a) - readingRank(b));
+    for (const entityId of orderedDeviceReadings) {
       const entity = this.hass.states[entityId];
       if (!entity || UNAVAILABLE_STATES.includes(entity.state) || individualEntities.includes(entityId)) continue;
       const deviceClass = entity.attributes.device_class as string | undefined;
